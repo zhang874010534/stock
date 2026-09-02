@@ -5,17 +5,22 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:worker": "wrangler dev --test-scheduled",
     "build": "vite build",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --test",
     "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.20.0",
+    "echarts": "^6.1.0",
     "lucide-vue-next": "^0.577.0",
     "naive-ui": "^2.45.3",
     "vue": "^3.5.41"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.8",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "wrangler": "^4.128.0"
   }
 }

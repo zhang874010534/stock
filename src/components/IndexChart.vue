@@ -1,60 +1,153 @@
 <script setup>
-import { Info, ChartNoAxesCombined, CalendarDays } from 'lucide-vue-next'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { Info } from 'lucide-vue-next'
+import { NButton, NTooltip } from 'naive-ui'
+import { INDEX_RANGES, normalizeHistory, getRangeWindow, getZoomWindow, getWindowSummary } from '../utils/indexHistory.js'
 
-defineProps({
-  title: { type: String, required: true },
-  subtitle: { type: String, default: '' },
-  showRanges: Boolean,
-  legends: { type: Array, default: () => [] },
+const props = defineProps({
+  history: { type: Array, default: () => [] },
+  isDemo: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
+  error: { type: String, default: '' },
 })
-const ranges = ['近1月', '近3月', '近6月', '近1年', '近3年', '近5年', '全部']
+const emit = defineEmits(['retry'])
+
+const chartElement = ref(null)
+const history = computed(() => normalizeHistory(props.history))
+const selectedRange = ref('1y')
+const visibleWindow = ref(getRangeWindow(history.value, selectedRange.value))
+const summary = computed(() => getWindowSummary(history.value, visibleWindow.value))
+const isLoading = ref(true)
+const chartError = ref('')
+const isBusy = computed(() => isLoading.value || props.loading)
+const displayError = computed(() => props.error || chartError.value)
+const changeLabel = computed(() => {
+  if (!summary.value) return '—'
+  const change = summary.value.changePercent
+  return `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`
+})
+
+let runtime
+let chart
+let observer
+let resizeFrame
+let disposed = false
+
+function handleZoom() {
+  const zoom = chart.getOption().dataZoom[0]
+  visibleWindow.value = getZoomWindow(history.value.length, zoom.start, zoom.end)
+  selectedRange.value = 'custom'
+}
+
+function renderChart() {
+  if (!runtime || !chartElement.value?.clientWidth || disposed) return
+  if (!history.value.length) {
+    chart?.clear()
+    return
+  }
+  if (!chart) {
+    chart = runtime.initIndexTrend(chartElement.value)
+    chart.on('datazoom', handleZoom)
+  }
+  if (selectedRange.value === 'custom') selectedRange.value = '1y'
+  visibleWindow.value = getRangeWindow(history.value, selectedRange.value)
+  chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, props.isDemo), { notMerge: true })
+}
+
+function selectRange(key) {
+  if (!chart || !history.value.length) return
+  const window = getRangeWindow(history.value, key)
+  chart.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: window.startIndex, endValue: window.endIndex })
+  // dispatchAction 也会触发 datazoom；按钮操作之后恢复相应的预设选中态。
+  selectedRange.value = key
+  visibleWindow.value = window
+}
+
+async function loadChart() {
+  isLoading.value = true
+  chartError.value = ''
+  try {
+    runtime = await import('../charts/indexTrend.js')
+    if (disposed) return
+    renderChart()
+  } catch {
+    if (!disposed) chartError.value = '图表加载失败，请重试'
+  } finally {
+    if (!disposed) isLoading.value = false
+  }
+}
+
+watch([history, () => props.isDemo], renderChart, { flush: 'post' })
+
+onMounted(() => {
+  observer = new ResizeObserver(() => {
+    cancelAnimationFrame(resizeFrame)
+    resizeFrame = requestAnimationFrame(() => {
+      if (disposed) return
+      if (chart) chart.resize()
+      else if (!isLoading.value && !chartError.value) renderChart()
+    })
+  })
+  observer.observe(chartElement.value)
+  loadChart()
+})
+
+onBeforeUnmount(() => {
+  disposed = true
+  observer?.disconnect()
+  cancelAnimationFrame(resizeFrame)
+  chart?.dispose()
+})
 </script>
 
 <template>
-  <section class="index-chart panel" :aria-label="title">
+  <section class="index-chart panel" aria-label="H30269 指数走势">
     <div class="chart-heading">
-      <h2 class="panel-heading">{{ title }}<Info :size="14" class="muted" aria-hidden="true" /></h2>
-      <span class="reserved-badge">预留区域</span>
+      <h2 class="panel-heading">指数走势
+        <NTooltip trigger="hover">
+          <template #trigger><button class="info-button" aria-label="指数走势说明"><Info :size="14" /></button></template>
+          按观测日期展示指数点位，可切换时间范围或拖动底部时间轴。
+        </NTooltip>
+      </h2>
+      <span v-if="isDemo" class="demo-badge">模拟数据</span>
     </div>
-    <div v-if="showRanges" class="chart-ranges" aria-label="时间范围筛选，后续开放">
-      <button v-for="range in ranges" :key="range" disabled :class="{ 'is-selected': range === '近1年' }">{{ range }}</button>
-      <CalendarDays :size="15" class="muted" aria-hidden="true" />
+
+    <div class="chart-ranges" role="group" aria-label="指数走势时间范围">
+      <NButton v-for="range in INDEX_RANGES" :key="range.key" size="tiny" :type="selectedRange === range.key ? 'primary' : 'default'" :ghost="selectedRange === range.key" :aria-pressed="selectedRange === range.key" :disabled="isBusy || !history.length || !!displayError" @click="selectRange(range.key)">
+        {{ range.label }}
+      </NButton>
     </div>
-    <div v-else class="chart-legends">
-      <span v-for="legend in legends" :key="legend.label"><i :style="{ background: legend.color }" />{{ legend.label }}</span>
-    </div>
-    <div class="chart-placeholder">
-      <div class="placeholder-label">
-        <span class="placeholder-icon"><ChartNoAxesCombined :size="25" :stroke-width="1.2" /></span>
-        <p>{{ subtitle }}</p>
-        <span>完成数据接入后绘制</span>
+
+    <div class="chart-body" :aria-busy="isBusy">
+      <div ref="chartElement" class="chart-canvas" :style="{ visibility: isBusy || displayError || !history.length ? 'hidden' : 'visible' }" />
+      <div v-if="isBusy || displayError || !history.length" class="chart-state" role="status">
+        <span>{{ displayError || (isBusy ? '正在加载行情…' : '等待首次行情同步') }}</span>
+        <NButton v-if="displayError" size="tiny" secondary @click="error ? emit('retry') : loadChart()">重试</NButton>
       </div>
-      <span class="chart-axis-label">时间</span>
     </div>
-    <div v-if="showRanges" class="chart-range-preview" aria-hidden="true"><i /><span>时间轴预留</span><i /></div>
+
+    <div v-if="summary && !displayError" class="range-summary" aria-live="polite" aria-atomic="true">
+      <span class="range-dates">{{ summary.startDate }} — {{ summary.endDate }}</span>
+      <span class="range-change" :class="{ 'is-negative': summary.changePercent < 0 }">区间 {{ changeLabel }}</span>
+    </div>
+    <p class="chart-footnote">{{ isDemo ? '模拟数据仅供交互验收，不代表真实行情。' : '区间变化按首尾观测点位计算。' }}<span v-if="selectedRange === 'custom'">自定义区间</span></p>
   </section>
 </template>
 
 <style scoped>
-.index-chart { display: flex; flex-direction: column; min-height: 278px; padding: 14px 17px 13px; }
+.index-chart { display: flex; flex-direction: column; min-width: 0; min-height: 316px; padding: 14px 15px 11px; }
 .chart-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.reserved-badge { flex-shrink: 0; padding: 2px 5px; border: 1px solid #273348; border-radius: 4px; color: #65738a; font-size: 9px; }
-.chart-ranges { display: flex; align-items: center; gap: 0; margin-top: 12px; min-height: 24px; }
-.chart-ranges button { border: 1px solid #283347; border-right: 0; background: #0c1525; color: #728098; font-size: 10px; padding: 3px 7px; white-space: nowrap; }
-.chart-ranges button:first-child { border-radius: 4px 0 0 4px; }
-.chart-ranges button:nth-last-child(2) { border-right: 1px solid #283347; border-radius: 0 4px 4px 0; }
-.chart-ranges button.is-selected { color: #84a8e8; background: #1e345b; border-color: #35598e; }
-.chart-ranges svg { flex-shrink: 0; margin-left: 9px; }
-.chart-legends { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 13px; min-height: 24px; margin-top: 12px; }
-.chart-legends span { display: inline-flex; align-items: center; gap: 5px; color: #8c99af; font-size: 10px; }
-.chart-legends i { width: 10px; height: 5px; border-radius: 2px; opacity: .8; }
-.chart-placeholder { position: relative; flex: 1; min-height: 155px; margin-top: 13px; border-left: 1px solid #26334988; border-bottom: 1px solid #26334988; background-image: linear-gradient(#24334c44 1px, transparent 1px), linear-gradient(90deg, #24334c25 1px, transparent 1px); background-size: 100% 25%, 20% 100%; }
-.placeholder-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: radial-gradient(ellipse, #0b1423e8 0%, #0b142388 38%, transparent 72%); }
-.placeholder-icon { display: flex; color: #3d5477; padding-bottom: 2px; }
-.placeholder-label p { color: #7d8fae; font-size: 12px; letter-spacing: .5px; }
-.placeholder-label > span:last-child { color: #4f5f79; font-size: 10px; }
-.chart-axis-label { position: absolute; right: 2px; bottom: 4px; font-size: 9px; color: #4b5c75; }
-.chart-range-preview { display: flex; align-items: center; justify-content: space-between; height: 18px; margin-top: 11px; background: #18243977; border: 1px solid #293852; border-radius: 3px; font-size: 9px; color: #53637d; }
-.chart-range-preview i { width: 3px; height: 14px; border: 1px solid #607089; border-radius: 1px; }
-@media (max-width: 420px) { .chart-ranges button { padding-inline: 5px; } }
+.info-button { display: inline-flex; padding: 0; border: 0; background: none; color: var(--color-text-muted); }
+.demo-badge { padding: 2px 6px; border: 1px solid #53472e; border-radius: 4px; background: #3d321521; color: #c4a56c; font-size: 10px; }
+.chart-ranges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+.chart-ranges :deep(.n-button) { height: 23px; padding-inline: 6px; font-size: 10px; }
+.chart-body { position: relative; flex: 1; min-height: 213px; margin-top: 4px; }
+.chart-canvas { position: absolute; inset: 0; min-height: 213px; }
+.chart-state { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; font-size: 12px; color: #7d8fae; }
+.range-summary { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 3px 8px; margin-top: 5px; font-size: 10px; font-variant-numeric: tabular-nums; }
+.range-dates { color: #8596b1; font-family: var(--font-mono); }
+.range-change { color: #6da9ff; }
+.range-change.is-negative { color: #38d6ac; }
+.chart-footnote { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 6px; font-size: 9px; color: #62738d; line-height: 1.5; }
+.chart-footnote span { color: #89a4cc; }
 </style>

@@ -6,6 +6,7 @@ defineProps({
   description: { type: String, default: '' },
   period: { type: String, default: '' },
   accent: { type: String, default: 'blue' },
+  value: { type: String, default: '—' },
   signal: Boolean,
 })
 </script>
@@ -16,7 +17,7 @@ defineProps({
       <h2>{{ title }}</h2>
       <Info :size="16" aria-hidden="true" />
     </div>
-    <p class="metric-value" :class="{ 'signal-value': signal }">{{ signal ? '待评估' : '—' }}</p>
+    <p class="metric-value" :class="{ 'signal-value': signal }">{{ signal ? '待评估' : value }}</p>
     <p class="metric-description">{{ description }}</p>
     <div v-if="signal" class="signal-placeholder" aria-hidden="true">
       <span v-for="position in 5" :key="position" />

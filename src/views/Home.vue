@@ -1,16 +1,53 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue'
 import { ArrowUpRight, Database, Clock3, ShieldCheck, ChartColumn, Globe2, ScanLine, PieChart, Grid2X2, ArrowRight } from 'lucide-vue-next'
 import MetricCard from '../components/MetricCard.vue'
 import IndexChart from '../components/IndexChart.vue'
+import ChartPlaceholder from '../components/ChartPlaceholder.vue'
+import { getH30269 } from '../api/h30269.js'
+import { formatIndexValue } from '../utils/indexHistory.js'
 
-// 第一步只确认布局，所有真实指标和图表数据都留到后续接入。
-const metrics = [
-  { title: '指数点位', description: '最新收盘点位', period: '更新时间：—', accent: 'blue' },
+const data = ref(null)
+const loading = ref(true)
+const error = ref('')
+const history = computed(() => data.value?.history ?? [])
+const latest = computed(() => history.value.at(-1))
+const syncLabel = computed(() => {
+  if (loading.value) return '正在读取行情'
+  if (error.value) return '行情暂时无法读取'
+  if (data.value?.sync?.status === 'paused') return '同步已暂停'
+  if (data.value?.sync?.status === 'failed') return '更新失败，等待后续同步'
+  if (!history.value.length) return '等待首次同步'
+  return data.value?.sync?.historyComplete ? '每日更新' : '历史数据逐步补齐'
+})
+const updatedAt = computed(() => {
+  const time = Date.parse(data.value?.updatedAt)
+  return Number.isFinite(time) ? new Intl.DateTimeFormat('zh-CN', {
+    timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
+  }).format(time) : '—'
+})
+
+async function loadHistory() {
+  loading.value = true
+  error.value = ''
+  try {
+    data.value = await getH30269()
+  } catch {
+    error.value = '行情加载失败，请稍后重试'
+  } finally {
+    loading.value = false
+  }
+}
+onMounted(loadHistory)
+
+// 仅日线接入真实数据；估值、股息率需要各自的数据来源和计算口径。
+const metrics = computed(() => [
+  { title: '指数点位', value: formatIndexValue(latest.value?.close), description: '最新收盘点位', period: `交易日期：${latest.value?.date ?? '—'}`, accent: 'blue' },
   { title: '股息率', description: '近12个月股息率', period: '近12个月', accent: 'cyan' },
   { title: 'PE (TTM)', description: '滚动市盈率', period: '近12个月', accent: 'cyan' },
   { title: 'PB', description: '市净率', period: '近12个月', accent: 'purple' },
   { title: '历史分位', description: '历史区间相对位置', period: '近5年 · 口径待确认', accent: 'purple' },
-]
+])
 const futureModules = [
   { title: '行业分析', subtitle: '行业分布与轮动', icon: ChartColumn, accent: 'cyan' },
   { title: '宏观环境', subtitle: '宏观观察与流动性', icon: Globe2, accent: 'purple' },
@@ -28,28 +65,29 @@ const futureModules = [
         <h1 id="index-title"><span class="mono">H30269</span> 中证红利低波动指数</h1>
         <p>以长期视角，观察红利与低波动的价值。</p>
       </div>
-      <div class="banner-meta"><span class="preview-badge">布局预览</span><span>阶段 01 / 07</span></div>
+      <div class="banner-meta"><span class="preview-badge">{{ history.length ? '真实日线' : '行情同步' }}</span><span>{{ syncLabel }}</span></div>
       <span class="banner-watermark" aria-hidden="true">H30269</span>
     </section>
 
-    <section class="metrics-grid" aria-label="指数关键指标，数据暂未接入">
+    <section class="metrics-grid" aria-label="指数关键指标">
       <MetricCard v-for="metric in metrics" :key="metric.title" v-bind="metric" />
       <MetricCard title="信号状态" description="等待数据与计算规则" period="基于多因子综合信号" signal />
     </section>
 
-    <section class="charts-grid" aria-label="指数分析图表预留区">
-      <IndexChart title="指数走势" subtitle="指数历史走势" show-ranges />
-      <IndexChart title="股息率与历史分位" subtitle="股息率与历史分位对照" :legends="[{ label: '股息率（近12个月）', color: '#22c6d8' }, { label: '历史分位（近5年，右轴）', color: '#a574ed' }]" />
-      <IndexChart title="估值区间观察（PE-TTM）" subtitle="估值水平与区间分布" :legends="[{ label: '极低区间', color: '#6467dc' }, { label: '低估区间', color: '#26a7d0' }, { label: '合理区间', color: '#3b9d85' }, { label: '偏高区间', color: '#d09648' }, { label: '高估区间', color: '#c95e51' }]" />
+    <section class="charts-grid" aria-label="指数分析图表">
+      <IndexChart :history="history" :loading="loading" :error="error" @retry="loadHistory" />
+      <ChartPlaceholder title="股息率与历史分位" subtitle="股息率与历史分位对照" :legends="[{ label: '股息率（近12个月）', color: '#22c6d8' }, { label: '历史分位（近5年，右轴）', color: '#a574ed' }]" />
+      <ChartPlaceholder title="估值区间观察（PE-TTM）" subtitle="估值水平与区间分布" :legends="[{ label: '极低区间', color: '#6467dc' }, { label: '低估区间', color: '#26a7d0' }, { label: '合理区间', color: '#3b9d85' }, { label: '偏高区间', color: '#d09648' }, { label: '高估区间', color: '#c95e51' }]" />
     </section>
 
     <section class="bottom-grid" aria-label="说明与未来功能预留区">
       <article class="data-notes panel">
         <h2 class="panel-heading">数据说明 / 更新说明</h2>
-        <div class="note-row"><Database :size="16" /><p>当前为 <strong>V0.1 布局预览</strong>，仅展示 H30269 首页结构，尚未接入行情数据。</p></div>
-        <div class="note-row"><Clock3 :size="16" /><p>数据来源、更新频率和计算口径将在接口接入阶段确认。</p></div>
+        <div class="note-row"><Database :size="16" /><p>日线来源：<strong>中证指数</strong>。<template v-if="history.length">已收录 {{ history[0].date }} 至 {{ latest.date }}，共 {{ history.length }} 条。</template><template v-else>等待首次同步后展示真实走势。</template></p></div>
+        <div class="note-row"><Clock3 :size="16" /><p>每日北京时间 18:00 同步近期行情，并逐步补齐历史数据。估值与股息率待接入。</p></div>
+        <div v-if="data?.sync?.lastError" class="note-row"><Clock3 :size="16" /><p>{{ data.sync.lastError }}</p></div>
         <div class="note-row"><ShieldCheck :size="16" /><p>指标及信号仅供研究参考，不构成投资建议。</p></div>
-        <div class="notes-footer"><span>最后更新：<span class="mono">—</span></span><span class="pending-data"><i />待接入数据</span></div>
+        <div class="notes-footer"><span>最近同步：<span class="mono">{{ updatedAt }}</span></span><span class="pending-data"><i />{{ syncLabel }}</span></div>
       </article>
 
       <article class="future-panel panel">
