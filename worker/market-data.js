@@ -53,7 +53,8 @@ export async function fetchHistory(instrument, range, { fetcher = fetch, now = n
   const timer = setTimeout(() => controller.abort(), timeoutMs)
   try {
     const response = await fetcher(url, {
-      headers: { Accept: 'application/json' }, signal: controller.signal, redirect: 'manual',
+      headers: { Accept: 'application/json', 'User-Agent': 'stock-dashboard/0.0.0' },
+      signal: controller.signal, redirect: 'manual',
     })
     const status = { upstreamStatus: response.status }
     if (response.status === 403) throw new MarketDataError('东方财富暂时拒绝访问，请稍后再试', 900, status)

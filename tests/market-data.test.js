@@ -27,6 +27,7 @@ test('请求正确的东方财富市场、日线与日期；取收盘字段、�
       assert.equal(url.searchParams.get('beg'), '20250824')
       assert.equal(url.searchParams.get('end'), '20260903')
       assert.equal(options.redirect, 'manual')
+      assert.equal(options.headers['User-Agent'], 'stock-dashboard/0.0.0')
       return Response.json(payload([lines[1], lines[0], '2026-09-03,100,102', '2026-09-04,100,103', '2024-01-01,100,99']))
     },
   })
