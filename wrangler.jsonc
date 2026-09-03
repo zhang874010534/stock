@@ -9,19 +9,8 @@
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*"]
   },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "stock-data",
-      "database_id": "732e8c4d-5130-4886-9b81-9468a88d95c1"
-    }
-  ],
   "triggers": {
-    "crons": ["0 10 * * *"]
-  },
-  "vars": {
-    "HISTORY_START_DATE": "2005-12-30",
-    "SYNC_ENABLED": "true"
+    "crons": []
   },
   "observability": {
     "enabled": true

@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { NButton } from 'naive-ui'
 import { ArrowUpRight, Database, Clock3, ShieldCheck, ChartColumn, Globe2, ScanLine, PieChart, Grid2X2, ArrowRight } from 'lucide-vue-next'
 import MetricCard from '../components/MetricCard.vue'
 import IndexChart from '../components/IndexChart.vue'
@@ -8,17 +9,16 @@ import { getH30269 } from '../api/h30269.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
 
 const data = ref(null)
-const loading = ref(true)
+const loading = ref(false)
 const error = ref('')
+const selectedRange = ref('1y')
 const history = computed(() => data.value?.history ?? [])
 const latest = computed(() => history.value.at(-1))
-const syncLabel = computed(() => {
+const statusLabel = computed(() => {
   if (loading.value) return '正在读取行情'
   if (error.value) return '行情暂时无法读取'
-  if (data.value?.sync?.status === 'paused') return '同步已暂停'
-  if (data.value?.sync?.status === 'failed') return '更新失败，等待后续同步'
-  if (!history.value.length) return '等待首次同步'
-  return data.value?.sync?.historyComplete ? '每日更新' : '历史数据逐步补齐'
+  if (!history.value.length) return '暂无行情数据'
+  return '按需更新'
 })
 const updatedAt = computed(() => {
   const time = Date.parse(data.value?.updatedAt)
@@ -27,13 +27,17 @@ const updatedAt = computed(() => {
   }).format(time) : '—'
 })
 
-async function loadHistory() {
+async function loadHistory(range = selectedRange.value) {
+  if (loading.value) return
+  selectedRange.value = range
   loading.value = true
   error.value = ''
+  data.value = null
   try {
-    data.value = await getH30269()
-  } catch {
-    error.value = '行情加载失败，请稍后重试'
+    data.value = await getH30269(range)
+  } catch (cause) {
+    const message = cause.response?.data?.message
+    error.value = typeof message === 'string' ? message : '行情加载失败，请稍后重试'
   } finally {
     loading.value = false
   }
@@ -42,7 +46,7 @@ onMounted(loadHistory)
 
 // 仅日线接入真实数据；估值、股息率需要各自的数据来源和计算口径。
 const metrics = computed(() => [
-  { title: '指数点位', value: formatIndexValue(latest.value?.close), description: '最新收盘点位', period: `交易日期：${latest.value?.date ?? '—'}`, accent: 'blue' },
+  { title: '指数点位', value: formatIndexValue(latest.value?.close), description: '日线最新点位', period: `交易日期：${latest.value?.date ?? '—'}`, accent: 'blue' },
   { title: '股息率', description: '近12个月股息率', period: '近12个月', accent: 'cyan' },
   { title: 'PE (TTM)', description: '滚动市盈率', period: '近12个月', accent: 'cyan' },
   { title: 'PB', description: '市净率', period: '近12个月', accent: 'purple' },
@@ -65,7 +69,7 @@ const futureModules = [
         <h1 id="index-title"><span class="mono">H30269</span> 中证红利低波动指数</h1>
         <p>以长期视角，观察红利与低波动的价值。</p>
       </div>
-      <div class="banner-meta"><span class="preview-badge">{{ history.length ? '真实日线' : '行情同步' }}</span><span>{{ syncLabel }}</span></div>
+      <div class="banner-meta"><span class="preview-badge">东方财富 · 日线</span><span>{{ statusLabel }}</span></div>
       <span class="banner-watermark" aria-hidden="true">H30269</span>
     </section>
 
@@ -75,19 +79,18 @@ const futureModules = [
     </section>
 
     <section class="charts-grid" aria-label="指数分析图表">
-      <IndexChart :history="history" :loading="loading" :error="error" @retry="loadHistory" />
+      <IndexChart :history="history" :range="selectedRange" :loading="loading" :error="error" @retry="loadHistory()" @range-change="loadHistory" />
       <ChartPlaceholder title="股息率与历史分位" subtitle="股息率与历史分位对照" :legends="[{ label: '股息率（近12个月）', color: '#22c6d8' }, { label: '历史分位（近5年，右轴）', color: '#a574ed' }]" />
       <ChartPlaceholder title="估值区间观察（PE-TTM）" subtitle="估值水平与区间分布" :legends="[{ label: '极低区间', color: '#6467dc' }, { label: '低估区间', color: '#26a7d0' }, { label: '合理区间', color: '#3b9d85' }, { label: '偏高区间', color: '#d09648' }, { label: '高估区间', color: '#c95e51' }]" />
     </section>
 
     <section class="bottom-grid" aria-label="说明与未来功能预留区">
       <article class="data-notes panel">
-        <h2 class="panel-heading">数据说明 / 更新说明</h2>
-        <div class="note-row"><Database :size="16" /><p>日线来源：<strong>中证指数</strong>。<template v-if="history.length">已收录 {{ history[0].date }} 至 {{ latest.date }}，共 {{ history.length }} 条。</template><template v-else>等待首次同步后展示真实走势。</template></p></div>
-        <div class="note-row"><Clock3 :size="16" /><p>每日北京时间 18:00 同步近期行情，并逐步补齐历史数据。估值与股息率待接入。</p></div>
-        <div v-if="data?.sync?.lastError" class="note-row"><Clock3 :size="16" /><p>{{ data.sync.lastError }}</p></div>
+        <div class="notes-heading"><h2 class="panel-heading">数据说明 / 更新说明</h2><NButton size="tiny" secondary :disabled="loading" @click="loadHistory()">刷新行情</NButton></div>
+        <div class="note-row"><Database :size="16" /><p>日线来源：<strong>东方财富</strong>。<template v-if="history.length">本次加载 {{ history[0].date }} 至 {{ latest.date }}，共 {{ history.length }} 条。</template><template v-else>打开页面或选择时间范围时获取行情。</template></p></div>
+        <div class="note-row"><Clock3 :size="16" /><p>按需获取，60 秒内复用结果。日线随来源更新，当日点位盘中可能变化。估值与股息率待接入。</p></div>
         <div class="note-row"><ShieldCheck :size="16" /><p>指标及信号仅供研究参考，不构成投资建议。</p></div>
-        <div class="notes-footer"><span>最近同步：<span class="mono">{{ updatedAt }}</span></span><span class="pending-data"><i />{{ syncLabel }}</span></div>
+        <div class="notes-footer"><span>最近获取：<span class="mono">{{ updatedAt }}</span></span><span class="pending-data"><i />{{ statusLabel }}</span></div>
       </article>
 
       <article class="future-panel panel">
@@ -128,6 +131,8 @@ const futureModules = [
 .bottom-grid { display: grid; grid-template-columns: .95fr 1.6fr 1.2fr; gap: var(--space-grid); }
 .data-notes, .future-panel, .brand-panel { padding: 15px 18px; min-height: 214px; }
 .data-notes { display: flex; flex-direction: column; }
+.notes-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.notes-heading :deep(.n-button) { font-size: 10px; }
 .note-row { display: flex; align-items: flex-start; gap: 9px; margin-top: 12px; font-size: 10px; line-height: 1.65; color: #8695af; }
 .note-row svg { flex-shrink: 0; margin-top: 1px; color: #91a4c5; }
 .note-row strong { font-weight: 500; color: #9ab5df; }

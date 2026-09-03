@@ -6,15 +6,16 @@ import { INDEX_RANGES, normalizeHistory, getRangeWindow, getZoomWindow, getWindo
 
 const props = defineProps({
   history: { type: Array, default: () => [] },
+  range: { type: String, default: '1y' },
   isDemo: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   error: { type: String, default: '' },
 })
-const emit = defineEmits(['retry'])
+const emit = defineEmits(['retry', 'range-change'])
 
 const chartElement = ref(null)
 const history = computed(() => normalizeHistory(props.history))
-const selectedRange = ref('1y')
+const selectedRange = ref(props.range)
 const visibleWindow = ref(getRangeWindow(history.value, selectedRange.value))
 const summary = computed(() => getWindowSummary(history.value, visibleWindow.value))
 const isLoading = ref(true)
@@ -49,12 +50,16 @@ function renderChart() {
     chart = runtime.initIndexTrend(chartElement.value)
     chart.on('datazoom', handleZoom)
   }
-  if (selectedRange.value === 'custom') selectedRange.value = '1y'
+  if (selectedRange.value === 'custom') selectedRange.value = props.range
   visibleWindow.value = getRangeWindow(history.value, selectedRange.value)
   chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, props.isDemo), { notMerge: true })
 }
 
 function selectRange(key) {
+  if (key !== props.range || !history.value.length) {
+    emit('range-change', key)
+    return
+  }
   if (!chart || !history.value.length) return
   const window = getRangeWindow(history.value, key)
   chart.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: window.startIndex, endValue: window.endIndex })
@@ -77,7 +82,10 @@ async function loadChart() {
   }
 }
 
-watch([history, () => props.isDemo], renderChart, { flush: 'post' })
+watch([history, () => props.isDemo, () => props.range], () => {
+  selectedRange.value = props.range
+  renderChart()
+}, { flush: 'post' })
 
 onMounted(() => {
   observer = new ResizeObserver(() => {
@@ -106,14 +114,14 @@ onBeforeUnmount(() => {
       <h2 class="panel-heading">指数走势
         <NTooltip trigger="hover">
           <template #trigger><button class="info-button" aria-label="指数走势说明"><Info :size="14" /></button></template>
-          按观测日期展示指数点位，可切换时间范围或拖动底部时间轴。
+          按所选时间范围获取日线，可拖动底部时间轴查看区间。
         </NTooltip>
       </h2>
       <span v-if="isDemo" class="demo-badge">模拟数据</span>
     </div>
 
     <div class="chart-ranges" role="group" aria-label="指数走势时间范围">
-      <NButton v-for="range in INDEX_RANGES" :key="range.key" size="tiny" :type="selectedRange === range.key ? 'primary' : 'default'" :ghost="selectedRange === range.key" :aria-pressed="selectedRange === range.key" :disabled="isBusy || !history.length || !!displayError" @click="selectRange(range.key)">
+      <NButton v-for="range in INDEX_RANGES" :key="range.key" size="tiny" :type="selectedRange === range.key ? 'primary' : 'default'" :ghost="selectedRange === range.key" :aria-pressed="selectedRange === range.key" :disabled="isBusy" @click="selectRange(range.key)">
         {{ range.label }}
       </NButton>
     </div>
@@ -121,12 +129,12 @@ onBeforeUnmount(() => {
     <div class="chart-body" :aria-busy="isBusy">
       <div ref="chartElement" class="chart-canvas" :style="{ visibility: isBusy || displayError || !history.length ? 'hidden' : 'visible' }" />
       <div v-if="isBusy || displayError || !history.length" class="chart-state" role="status">
-        <span>{{ displayError || (isBusy ? '正在加载行情…' : '等待首次行情同步') }}</span>
+        <span>{{ displayError || (isBusy ? '正在加载行情…' : '暂无行情数据') }}</span>
         <NButton v-if="displayError" size="tiny" secondary @click="error ? emit('retry') : loadChart()">重试</NButton>
       </div>
     </div>
 
-    <div v-if="summary && !displayError" class="range-summary" aria-live="polite" aria-atomic="true">
+    <div v-if="summary && !isBusy && !displayError" class="range-summary" aria-live="polite" aria-atomic="true">
       <span class="range-dates">{{ summary.startDate }} — {{ summary.endDate }}</span>
       <span class="range-change" :class="{ 'is-negative': summary.changePercent < 0 }">区间 {{ changeLabel }}</span>
     </div>
