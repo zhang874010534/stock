@@ -127,7 +127,9 @@ test('403冷却15分钟；普通故障短缓存避免反复刷新连续请求', 
     const response = await h.request()
     assert.equal(response.status, 503)
     assert.equal(response.headers.get('Retry-After'), String(seconds))
-    assert.equal((await response.json()).history, undefined)
+    const body = await response.json()
+    assert.equal(body.history, undefined)
+    assert.equal(body.upstreamStatus, status)
     await h.request()
     assert.equal(h.calls(), 1)
   }

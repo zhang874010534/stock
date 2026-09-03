@@ -13,6 +13,7 @@ export class MarketDataError extends Error {
     super(message, options)
     this.name = 'MarketDataError'
     this.cooldownSeconds = cooldownSeconds
+    this.upstreamStatus = options?.upstreamStatus
   }
 }
 
@@ -54,9 +55,10 @@ export async function fetchHistory(instrument, range, { fetcher = fetch, now = n
     const response = await fetcher(url, {
       headers: { Accept: 'application/json' }, signal: controller.signal, redirect: 'manual',
     })
-    if (response.status === 403) throw new MarketDataError('东方财富暂时拒绝访问，请稍后再试', 900)
-    if (response.status === 429) throw new MarketDataError('东方财富请求受限，请稍后再试', retryDelay(response.headers.get('Retry-After'), now))
-    if (!response.ok) throw new MarketDataError('东方财富行情暂时不可用，请稍后再试')
+    const status = { upstreamStatus: response.status }
+    if (response.status === 403) throw new MarketDataError('东方财富暂时拒绝访问，请稍后再试', 900, status)
+    if (response.status === 429) throw new MarketDataError('东方财富请求受限，请稍后再试', retryDelay(response.headers.get('Retry-After'), now), status)
+    if (!response.ok) throw new MarketDataError('东方财富行情暂时不可用，请稍后再试', 0, status)
     const payload = await response.json()
     const source = payload?.data
     if (payload?.rc !== 0 || source?.code !== instrument.code || String(source?.market) !== instrument.secid.split('.')[0] || !Array.isArray(source?.klines)) {

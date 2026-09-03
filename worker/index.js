@@ -65,11 +65,14 @@ export function createWorker({ fetcher = fetch, now = () => new Date(), getCache
             const body = await fetchHistory(instrument, range, { fetcher, now: now() })
             entry = { status: 200, body, expiresAt: now().getTime() + CACHE_SECONDS * 1000 }
           } catch (error) {
-            console.warn('东方财富行情请求失败', error.cause?.message ?? error.message)
+            console.warn('东方财富行情请求失败', error.upstreamStatus ?? '', error.cause?.message ?? error.message)
             const delay = error instanceof MarketDataError ? error.cooldownSeconds : 0
             entry = {
               status: 503,
-              body: { status: 'error', message: error instanceof MarketDataError ? error.message : '行情暂时不可用，请稍后再试' },
+              body: {
+                status: 'error', message: error instanceof MarketDataError ? error.message : '行情暂时不可用，请稍后再试',
+                upstreamStatus: error.upstreamStatus,
+              },
               expiresAt: now().getTime() + (delay || CACHE_SECONDS) * 1000,
             }
             if (delay) {
