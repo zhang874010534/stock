@@ -69,7 +69,7 @@ const futureModules = [
         <h1 id="index-title"><span class="mono">H30269</span> 中证红利低波动指数</h1>
         <p>以长期视角，观察红利与低波动的价值。</p>
       </div>
-      <div class="banner-meta"><span class="preview-badge">东方财富 · 日线</span><span>{{ statusLabel }}</span></div>
+      <div class="banner-meta"><span class="preview-badge">AKShare · 日线</span><span>{{ statusLabel }}</span></div>
       <span class="banner-watermark" aria-hidden="true">H30269</span>
     </section>
 
@@ -87,8 +87,8 @@ const futureModules = [
     <section class="bottom-grid" aria-label="说明与未来功能预留区">
       <article class="data-notes panel">
         <div class="notes-heading"><h2 class="panel-heading">数据说明 / 更新说明</h2><NButton size="tiny" secondary :disabled="loading" @click="loadHistory()">刷新行情</NButton></div>
-        <div class="note-row"><Database :size="16" /><p>日线来源：<strong>东方财富</strong>。<template v-if="history.length">本次加载 {{ history[0].date }} 至 {{ latest.date }}，共 {{ history.length }} 条。</template><template v-else>打开页面或选择时间范围时获取行情。</template></p></div>
-        <div class="note-row"><Clock3 :size="16" /><p>按需获取，60 秒内复用结果。日线随来源更新，当日点位盘中可能变化。估值与股息率待接入。</p></div>
+        <div class="note-row"><Database :size="16" /><p>通过 <strong>AKShare</strong> 获取{{ data?.source ?? '中证指数' }}日线。<template v-if="history.length">本次加载 {{ history[0].date }} 至 {{ latest.date }}，共 {{ history.length }} 条。</template><template v-else>打开页面或选择时间范围时获取行情。</template></p></div>
+        <div class="note-row"><Clock3 :size="16" /><p>按需获取，60 秒内复用结果。行情时效以来源为准；估值与股息率待接入。</p></div>
         <div class="note-row"><ShieldCheck :size="16" /><p>指标及信号仅供研究参考，不构成投资建议。</p></div>
         <div class="notes-footer"><span>最近获取：<span class="mono">{{ updatedAt }}</span></span><span class="pending-data"><i />{{ statusLabel }}</span></div>
       </article>

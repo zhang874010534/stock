@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "dev:worker": "wrangler dev",
+    "dev:api": "uv run --project backend uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000",
+    "test:api": "uv run --project backend pytest backend/tests",
     "build": "vite build",
     "deploy": "npm run build && wrangler deploy",
     "test": "node --test",

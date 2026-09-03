@@ -1,0 +1,19 @@
+# 试用版从此分支部署；合入 main 后同步修改这里的 branch。
+services:
+  - type: web
+    name: stock-akshare-api
+    runtime: python
+    plan: free
+    region: singapore
+    branch: codex/akshare-on-demand
+    rootDir: backend
+    buildCommand: pip install --require-hashes -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.5"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: AKSHARE_API_TOKEN
+        generateValue: true

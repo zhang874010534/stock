@@ -5,7 +5,7 @@ const H30269_API_URL = '/api/history'
 export async function getH30269(range = '1y') {
   const { data } = await axios.get(H30269_API_URL, {
     params: { symbol: 'H30269', range },
-    timeout: 20000,
+    timeout: 75000,
     headers: {
       Accept: 'application/json',
     },

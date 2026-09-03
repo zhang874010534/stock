@@ -12,6 +12,11 @@ node_modules
 .dev.vars
 .env
 .env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
 dist
 dist-ssr
 *.local

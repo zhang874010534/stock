@@ -1,42 +1,12 @@
-import { INSTRUMENTS, RANGES, MarketDataError, fetchHistory } from './market-data.js'
+const RANGES = new Set(['1m', '3m', '6m', '1y', '3y', '5y', 'all'])
 
-const CACHE_SECONDS = 60
+function unavailable(message = '行情服务暂时不可用，请稍后再试', code = 'backend_unavailable') {
+  return Response.json({ status: 'error', code, message }, {
+    status: 503, headers: { 'Cache-Control': 'no-store', 'Retry-After': '60' },
+  })
+}
 
-export function createWorker({ fetcher = fetch, now = () => new Date(), getCache = () => globalThis.caches?.default } = {}) {
-  const pending = new Map()
-  let cooldown = null
-
-  async function readCache(key) {
-    try {
-      const response = await getCache()?.match(key)
-      const entry = response ? await response.json() : null
-      return entry?.expiresAt > now().getTime() ? entry : null
-    } catch {
-      return null
-    }
-  }
-
-  async function writeCache(key, entry) {
-    try {
-      // 内部统一存为 200，错误对外仍返回 503 且禁止浏览器缓存。
-      await getCache()?.put(key, Response.json(entry, {
-        headers: { 'Cache-Control': `public, max-age=${Math.max(1, Math.ceil((entry.expiresAt - now().getTime()) / 1000))}` },
-      }))
-    } catch (error) {
-      console.warn('行情短缓存写入失败', error.message)
-    }
-  }
-
-  function respond(entry) {
-    const remaining = Math.max(0, Math.ceil((entry.expiresAt - now().getTime()) / 1000))
-    return Response.json(entry.body, {
-      status: entry.status,
-      headers: entry.status === 200
-        ? { 'Cache-Control': `public, max-age=${remaining}` }
-        : { 'Cache-Control': 'no-store', 'Retry-After': String(remaining) },
-    })
-  }
-
+export function createWorker({ fetcher = fetch, timeoutMs = 65_000 } = {}) {
   return {
     async fetch(request, env) {
       const url = new URL(request.url)
@@ -47,46 +17,49 @@ export function createWorker({ fetcher = fetch, now = () => new Date(), getCache
       if (request.method !== 'GET') return new Response('Method Not Allowed', { status: 405, headers: { Allow: 'GET' } })
       const symbol = url.pathname === '/api/h30269' ? 'H30269' : (url.searchParams.get('symbol') ?? 'H30269').toUpperCase()
       const range = url.searchParams.get('range') ?? '1y'
-      const instrument = INSTRUMENTS.get(symbol)
-      if (!instrument || !RANGES.has(range)) return Response.json({ status: 'error', message: '不支持的证券代码或时间范围' }, { status: 400 })
-
-      // 固定参数形成缓存键；时间戳等多余参数不能强制绕过缓存。
-      const key = new Request(`${url.origin}/__market_cache/v1/${symbol}/${range}`)
-      const cooldownKey = new Request(`${url.origin}/__market_cache/v1/eastmoney-cooldown`)
-      const cached = await readCache(key)
-      if (cached) return respond(cached)
-      if (!cooldown || cooldown.expiresAt <= now().getTime()) cooldown = await readCache(cooldownKey)
-      if (cooldown) return respond(cooldown)
-
-      if (!pending.has(key.url)) {
-        const job = (async () => {
-          let entry
-          try {
-            const body = await fetchHistory(instrument, range, { fetcher, now: now() })
-            entry = { status: 200, body, expiresAt: now().getTime() + CACHE_SECONDS * 1000 }
-          } catch (error) {
-            console.warn('东方财富行情请求失败', error.upstreamStatus ?? '', error.cause?.message ?? error.message)
-            const delay = error instanceof MarketDataError ? error.cooldownSeconds : 0
-            entry = {
-              status: 503,
-              body: {
-                status: 'error', message: error instanceof MarketDataError ? error.message : '行情暂时不可用，请稍后再试',
-                upstreamStatus: error.upstreamStatus,
-              },
-              expiresAt: now().getTime() + (delay || CACHE_SECONDS) * 1000,
-            }
-            if (delay) {
-              cooldown = entry
-              await writeCache(cooldownKey, entry)
-            }
-          }
-          await writeCache(key, entry)
-          return entry
-        })()
-        pending.set(key.url, job)
-        job.finally(() => pending.delete(key.url))
+      if (symbol !== 'H30269' || !RANGES.has(range)) {
+        return Response.json({ status: 'error', message: '不支持的证券代码或时间范围' }, { status: 400 })
       }
-      return respond(await pending.get(key.url))
+      if (!env.AKSHARE_API_URL) return unavailable('行情服务尚未就绪，请稍后再试', 'backend_not_configured')
+
+      let upstream
+      try {
+        const base = new URL(env.AKSHARE_API_URL)
+        const localHttp = base.protocol === 'http:' && ['127.0.0.1', 'localhost', '[::1]'].includes(base.hostname)
+        if ((!localHttp && base.protocol !== 'https:') || base.username || base.password || base.origin === url.origin) throw new Error('Invalid backend URL')
+        upstream = new URL('/api/history', base)
+        upstream.search = new URLSearchParams({ symbol, range }).toString()
+      } catch {
+        return unavailable('行情服务配置异常，请稍后再试', 'invalid_backend_url')
+      }
+
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), timeoutMs)
+      try {
+        const headers = { Accept: 'application/json' }
+        if (env.AKSHARE_API_TOKEN) headers.Authorization = `Bearer ${env.AKSHARE_API_TOKEN}`
+        const response = await fetcher(upstream, { headers, signal: controller.signal, redirect: 'manual' })
+        if (!response.headers.get('Content-Type')?.includes('application/json')) return unavailable()
+        const data = await response.json()
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) return unavailable('行情服务暂时不可用，请稍后再试', 'backend_auth_failed')
+          const retry = response.headers.get('Retry-After')
+          return Response.json({ status: 'error', code: data.code, message: typeof data.message === 'string' ? data.message.slice(0, 200) : '行情获取失败，请稍后再试' }, {
+            status: response.status === 400 ? 400 : 503,
+            headers: { 'Cache-Control': 'no-store', 'Retry-After': /^\d+$/.test(retry ?? '') ? retry : '60' },
+          })
+        }
+        if (data.provider !== 'AKShare' || data.code !== symbol || data.range !== range || !Array.isArray(data.history)) {
+          return unavailable('行情返回格式异常，请稍后再试', 'invalid_backend_response')
+        }
+        // 短缓存由 Python 服务统一管理；不在边缘再续期60秒。
+        const maxAge = Math.min(60, Number(response.headers.get('Cache-Control')?.match(/max-age=(\d+)/)?.[1] ?? 0))
+        return Response.json(data, { headers: { 'Cache-Control': `public, max-age=${maxAge}` } })
+      } catch {
+        return unavailable(controller.signal.aborted ? '行情服务启动或查询超时，请稍后重试' : '行情服务暂时无法连接，请稍后重试')
+      } finally {
+        clearTimeout(timer)
+      }
     },
   }
 }

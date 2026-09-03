@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
     <div class="chart-body" :aria-busy="isBusy">
       <div ref="chartElement" class="chart-canvas" :style="{ visibility: isBusy || displayError || !history.length ? 'hidden' : 'visible' }" />
       <div v-if="isBusy || displayError || !history.length" class="chart-state" role="status">
-        <span>{{ displayError || (isBusy ? '正在加载行情…' : '暂无行情数据') }}</span>
+        <span>{{ displayError || (isBusy ? '正在获取行情，首次启动可能稍慢…' : '暂无行情数据') }}</span>
         <NButton v-if="displayError" size="tiny" secondary @click="error ? emit('retry') : loadChart()">重试</NButton>
       </div>
     </div>
