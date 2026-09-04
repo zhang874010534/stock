@@ -7,18 +7,22 @@ import IndexChart from '../components/IndexChart.vue'
 import ChartPlaceholder from '../components/ChartPlaceholder.vue'
 import { getH30269 } from '../api/h30269.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
+import { aggregateKlines, filterKlinesByRange } from '../utils/kline.js'
 
 const data = ref(null)
 const loading = ref(false)
 const error = ref('')
 const selectedRange = ref('1y')
-const history = computed(() => data.value?.history ?? [])
-const latest = computed(() => history.value.at(-1))
+const selectedPeriod = ref('day')
+const dailyHistory = computed(() => data.value?.history ?? [])
+const displayHistory = computed(() => aggregateKlines(filterKlinesByRange(dailyHistory.value, selectedRange.value), selectedPeriod.value))
+const latest = computed(() => data.value?.latest)
+const backfillCompleted = computed(() => data.value?.backfill?.completed === true)
 const statusLabel = computed(() => {
   if (loading.value) return '正在读取行情'
   if (error.value) return '行情暂时无法读取'
-  if (!history.value.length) return '暂无行情数据'
-  return '按需更新'
+  if (!dailyHistory.value.length) return '暂无行情数据'
+  return '定时更新'
 })
 const updatedAt = computed(() => {
   const time = Date.parse(data.value?.updatedAt)
@@ -27,22 +31,19 @@ const updatedAt = computed(() => {
   }).format(time) : '—'
 })
 
-async function loadHistory(range = selectedRange.value) {
+async function loadMarketData() {
   if (loading.value) return
-  selectedRange.value = range
   loading.value = true
   error.value = ''
-  data.value = null
   try {
-    data.value = await getH30269(range)
+    data.value = await getH30269()
   } catch (cause) {
-    const message = cause.response?.data?.message
-    error.value = typeof message === 'string' ? message : '行情加载失败，请稍后重试'
+    error.value = typeof cause?.message === 'string' ? cause.message : '行情加载失败，请稍后重试'
   } finally {
     loading.value = false
   }
 }
-onMounted(loadHistory)
+onMounted(loadMarketData)
 
 // 仅日线接入真实数据；估值、股息率需要各自的数据来源和计算口径。
 const metrics = computed(() => [
@@ -69,7 +70,7 @@ const futureModules = [
         <h1 id="index-title"><span class="mono">H30269</span> 中证红利低波动指数</h1>
         <p>以长期视角，观察红利与低波动的价值。</p>
       </div>
-      <div class="banner-meta"><span class="preview-badge">AKShare · 日线</span><span>{{ statusLabel }}</span></div>
+      <div class="banner-meta"><span class="preview-badge">定时同步 · 日线</span><span>{{ statusLabel }}</span></div>
       <span class="banner-watermark" aria-hidden="true">H30269</span>
     </section>
 
@@ -79,18 +80,28 @@ const futureModules = [
     </section>
 
     <section class="charts-grid" aria-label="指数分析图表">
-      <IndexChart :history="history" :range="selectedRange" :loading="loading" :error="error" @retry="loadHistory()" @range-change="loadHistory" />
+      <IndexChart
+        :history="displayHistory"
+        :range="selectedRange"
+        :period="selectedPeriod"
+        :backfill-completed="backfillCompleted"
+        :loading="loading"
+        :error="error"
+        @retry="loadMarketData"
+        @range-change="selectedRange = $event"
+        @period-change="selectedPeriod = $event"
+      />
       <ChartPlaceholder title="股息率与历史分位" subtitle="股息率与历史分位对照" :legends="[{ label: '股息率（近12个月）', color: '#22c6d8' }, { label: '历史分位（近5年，右轴）', color: '#a574ed' }]" />
       <ChartPlaceholder title="估值区间观察（PE-TTM）" subtitle="估值水平与区间分布" :legends="[{ label: '极低区间', color: '#6467dc' }, { label: '低估区间', color: '#26a7d0' }, { label: '合理区间', color: '#3b9d85' }, { label: '偏高区间', color: '#d09648' }, { label: '高估区间', color: '#c95e51' }]" />
     </section>
 
     <section class="bottom-grid" aria-label="说明与未来功能预留区">
       <article class="data-notes panel">
-        <div class="notes-heading"><h2 class="panel-heading">数据说明 / 更新说明</h2><NButton size="tiny" secondary :disabled="loading" @click="loadHistory()">刷新行情</NButton></div>
-        <div class="note-row"><Database :size="16" /><p>通过 <strong>AKShare</strong> 获取{{ data?.source ?? '中证指数' }}日线。<template v-if="history.length">本次加载 {{ history[0].date }} 至 {{ latest.date }}，共 {{ history.length }} 条。</template><template v-else>打开页面或选择时间范围时获取行情。</template></p></div>
-        <div class="note-row"><Clock3 :size="16" /><p>按需获取，60 秒内复用结果。行情时效以来源为准；估值与股息率待接入。</p></div>
+        <div class="notes-heading"><h2 class="panel-heading">数据说明 / 更新说明</h2><NButton size="tiny" secondary :disabled="loading" @click="loadMarketData">刷新行情</NButton></div>
+        <div class="note-row"><Database :size="16" /><p>页面读取 GitHub Actions 定时生成的行情数据。<template v-if="dailyHistory.length">已同步 {{ dailyHistory[0].date }} 至 {{ latest.date }}，共 {{ dailyHistory.length }} 条日 K。</template><template v-else>打开页面时读取最近一次生成的数据。</template></p></div>
+        <div class="note-row"><Clock3 :size="16" /><p>工作日收盘后自动同步。{{ backfillCompleted ? '历史数据已完成同步。' : '历史数据正在逐步补充，超出范围时展示已同步数据。' }}</p></div>
         <div class="note-row"><ShieldCheck :size="16" /><p>指标及信号仅供研究参考，不构成投资建议。</p></div>
-        <div class="notes-footer"><span>最近获取：<span class="mono">{{ updatedAt }}</span></span><span class="pending-data"><i />{{ statusLabel }}</span></div>
+        <div class="notes-footer"><span>数据更新：<span class="mono">{{ updatedAt }}</span></span><span class="pending-data"><i />{{ statusLabel }}</span></div>
       </article>
 
       <article class="future-panel panel">

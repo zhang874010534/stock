@@ -1,17 +1,20 @@
-import axios from 'axios'
+import { validateMarketData } from '../utils/kline.js'
 
-const H30269_API_URL = '/api/history'
+const H30269_DATA_URL = '/data/h30269.json'
 
-export async function getH30269(range = '1y') {
-  const { data } = await axios.get(H30269_API_URL, {
-    params: { symbol: 'H30269', range },
-    timeout: 75000,
+export async function getH30269({ fetcher = fetch, cacheKey = Date.now() } = {}) {
+  const response = await fetcher(`${H30269_DATA_URL}?t=${encodeURIComponent(cacheKey)}`, {
+    cache: 'no-store',
     headers: {
       Accept: 'application/json',
     },
   })
-
-  if (!Array.isArray(data?.history)) throw new Error('行情接口返回格式异常')
-
-  return data
+  if (!response.ok) throw new Error(`静态行情文件读取失败（HTTP ${response.status}）`)
+  let data
+  try {
+    data = await response.json()
+  } catch {
+    throw new Error('静态行情文件 JSON 格式异常')
+  }
+  return validateMarketData(data)
 }

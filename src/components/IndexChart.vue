@@ -2,21 +2,25 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Info } from 'lucide-vue-next'
 import { NButton, NTooltip } from 'naive-ui'
-import { INDEX_RANGES, normalizeHistory, getRangeWindow, getZoomWindow, getWindowSummary } from '../utils/indexHistory.js'
+import { INDEX_RANGES, getZoomWindow, getWindowSummary } from '../utils/indexHistory.js'
+import { KLINE_PERIODS } from '../utils/kline.js'
 
 const props = defineProps({
   history: { type: Array, default: () => [] },
   range: { type: String, default: '1y' },
-  isDemo: { type: Boolean, default: false },
+  period: { type: String, default: 'day' },
+  backfillCompleted: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   error: { type: String, default: '' },
 })
-const emit = defineEmits(['retry', 'range-change'])
+const emit = defineEmits(['retry', 'range-change', 'period-change'])
 
 const chartElement = ref(null)
-const history = computed(() => normalizeHistory(props.history))
+const history = computed(() => props.history)
 const selectedRange = ref(props.range)
-const visibleWindow = ref(getRangeWindow(history.value, selectedRange.value))
+const selectedPeriod = ref(props.period)
+const fullWindow = () => ({ startIndex: 0, endIndex: Math.max(0, history.value.length - 1) })
+const visibleWindow = ref(fullWindow())
 const summary = computed(() => getWindowSummary(history.value, visibleWindow.value))
 const isLoading = ref(true)
 const chartError = ref('')
@@ -50,22 +54,26 @@ function renderChart() {
     chart = runtime.initIndexTrend(chartElement.value)
     chart.on('datazoom', handleZoom)
   }
-  if (selectedRange.value === 'custom') selectedRange.value = props.range
-  visibleWindow.value = getRangeWindow(history.value, selectedRange.value)
-  chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, props.isDemo), { notMerge: true })
+  selectedRange.value = props.range
+  selectedPeriod.value = props.period
+  visibleWindow.value = fullWindow()
+  chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value), { notMerge: true })
 }
 
 function selectRange(key) {
-  if (key !== props.range || !history.value.length) {
+  if (key !== props.range) {
     emit('range-change', key)
     return
   }
   if (!chart || !history.value.length) return
-  const window = getRangeWindow(history.value, key)
+  const window = fullWindow()
   chart.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: window.startIndex, endValue: window.endIndex })
-  // dispatchAction 也会触发 datazoom；按钮操作之后恢复相应的预设选中态。
   selectedRange.value = key
   visibleWindow.value = window
+}
+
+function selectPeriod(key) {
+  if (key !== props.period) emit('period-change', key)
 }
 
 async function loadChart() {
@@ -82,8 +90,9 @@ async function loadChart() {
   }
 }
 
-watch([history, () => props.isDemo, () => props.range], () => {
+watch([history, () => props.range, () => props.period], () => {
   selectedRange.value = props.range
+  selectedPeriod.value = props.period
   renderChart()
 }, { flush: 'post' })
 
@@ -109,27 +118,34 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="index-chart panel" aria-label="H30269 指数走势">
+  <section class="index-chart panel" aria-label="H30269 指数 K 线">
     <div class="chart-heading">
-      <h2 class="panel-heading">指数走势
+      <h2 class="panel-heading">指数 K 线
         <NTooltip trigger="hover">
-          <template #trigger><button class="info-button" aria-label="指数走势说明"><Info :size="14" /></button></template>
-          按所选时间范围获取日线，可拖动底部时间轴查看区间。
+          <template #trigger><button class="info-button" aria-label="指数 K 线说明"><Info :size="14" /></button></template>
+          日 K 在本地聚合为周 K 或月 K，可拖动底部时间轴查看区间。
         </NTooltip>
       </h2>
-      <span v-if="isDemo" class="demo-badge">模拟数据</span>
+      <span class="period-label">{{ KLINE_PERIODS.find((item) => item.key === selectedPeriod)?.label }}</span>
     </div>
 
-    <div class="chart-ranges" role="group" aria-label="指数走势时间范围">
-      <NButton v-for="range in INDEX_RANGES" :key="range.key" size="tiny" :type="selectedRange === range.key ? 'primary' : 'default'" :ghost="selectedRange === range.key" :aria-pressed="selectedRange === range.key" :disabled="isBusy" @click="selectRange(range.key)">
-        {{ range.label }}
-      </NButton>
+    <div class="chart-controls">
+      <div class="chart-periods" role="group" aria-label="K 线周期">
+        <NButton v-for="item in KLINE_PERIODS" :key="item.key" size="tiny" :type="selectedPeriod === item.key ? 'primary' : 'default'" :ghost="selectedPeriod === item.key" :aria-pressed="selectedPeriod === item.key" :disabled="isBusy" @click="selectPeriod(item.key)">
+          {{ item.label }}
+        </NButton>
+      </div>
+      <div class="chart-ranges" role="group" aria-label="指数 K 线时间范围">
+        <NButton v-for="item in INDEX_RANGES" :key="item.key" size="tiny" :type="selectedRange === item.key ? 'primary' : 'default'" :ghost="selectedRange === item.key" :aria-pressed="selectedRange === item.key" :disabled="isBusy" @click="selectRange(item.key)">
+          {{ item.label }}
+        </NButton>
+      </div>
     </div>
 
     <div class="chart-body" :aria-busy="isBusy">
       <div ref="chartElement" class="chart-canvas" :style="{ visibility: isBusy || displayError || !history.length ? 'hidden' : 'visible' }" />
       <div v-if="isBusy || displayError || !history.length" class="chart-state" role="status">
-        <span>{{ displayError || (isBusy ? '正在获取行情，首次启动可能稍慢…' : '暂无行情数据') }}</span>
+        <span>{{ displayError || (isBusy ? '正在读取行情…' : '暂无行情数据') }}</span>
         <NButton v-if="displayError" size="tiny" secondary @click="error ? emit('retry') : loadChart()">重试</NButton>
       </div>
     </div>
@@ -138,24 +154,25 @@ onBeforeUnmount(() => {
       <span class="range-dates">{{ summary.startDate }} — {{ summary.endDate }}</span>
       <span class="range-change" :class="{ 'is-negative': summary.changePercent < 0 }">区间 {{ changeLabel }}</span>
     </div>
-    <p class="chart-footnote">{{ isDemo ? '模拟数据仅供交互验收，不代表真实行情。' : '区间变化按首尾观测点位计算。' }}<span v-if="selectedRange === 'custom'">自定义区间</span></p>
+    <p v-if="history.length && !displayError" class="chart-footnote"><span>{{ backfillCompleted ? '历史数据已完成同步。' : '历史数据正在逐步补充，当前展示已同步的数据范围。' }}</span><span v-if="selectedRange === 'custom'">自定义区间</span></p>
   </section>
 </template>
 
 <style scoped>
-.index-chart { display: flex; flex-direction: column; min-width: 0; min-height: 316px; padding: 14px 15px 11px; }
+.index-chart { display: flex; flex-direction: column; min-width: 0; min-height: 430px; padding: 14px 15px 11px; }
 .chart-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .info-button { display: inline-flex; padding: 0; border: 0; background: none; color: var(--color-text-muted); }
-.demo-badge { padding: 2px 6px; border: 1px solid #53472e; border-radius: 4px; background: #3d321521; color: #c4a56c; font-size: 10px; }
-.chart-ranges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
-.chart-ranges :deep(.n-button) { height: 23px; padding-inline: 6px; font-size: 10px; }
-.chart-body { position: relative; flex: 1; min-height: 213px; margin-top: 4px; }
-.chart-canvas { position: absolute; inset: 0; min-height: 213px; }
+.period-label { padding: 2px 6px; border: 1px solid #294569; border-radius: 4px; background: #172d4c; color: #94b9ee; font-size: 10px; }
+.chart-controls { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; }
+.chart-periods, .chart-ranges { display: flex; flex-wrap: wrap; gap: 4px; }
+.chart-controls :deep(.n-button) { height: 23px; padding-inline: 6px; font-size: 10px; }
+.chart-body { position: relative; flex: 1; min-height: 300px; margin-top: 4px; }
+.chart-canvas { position: absolute; inset: 0; min-height: 300px; }
 .chart-state { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; font-size: 12px; color: #7d8fae; }
 .range-summary { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 3px 8px; margin-top: 5px; font-size: 10px; font-variant-numeric: tabular-nums; }
 .range-dates { color: #8596b1; font-family: var(--font-mono); }
 .range-change { color: #6da9ff; }
 .range-change.is-negative { color: #38d6ac; }
 .chart-footnote { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 6px; font-size: 9px; color: #62738d; line-height: 1.5; }
-.chart-footnote span { color: #89a4cc; }
+.chart-footnote span:last-child { color: #89a4cc; }
 </style>

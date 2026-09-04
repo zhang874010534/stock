@@ -4,6 +4,19 @@ import { h30269DemoHistory } from '../src/data/h30269.mock.js'
 import { INDEX_RANGES, normalizeHistory, getRangeWindow, getZoomWindow, getWindowSummary, formatIndexValue } from '../src/utils/indexHistory.js'
 import { initIndexTrend, createIndexTrendOption } from '../src/charts/indexTrend.js'
 
+const klineHistory = h30269DemoHistory.map(({ date, close }, index) => {
+  const open = close + (index % 2 ? 3 : -3)
+  return {
+    date,
+    open,
+    close,
+    high: Math.max(open, close) + 2,
+    low: Math.min(open, close) - 2,
+    volume: 10_000 + index,
+    amount: 100_000 + index,
+  }
+})
+
 test('模拟数据有序、有效且覆盖全部预设范围', () => {
   const normalized = normalizeHistory(h30269DemoHistory)
   assert.deepEqual(normalized, h30269DemoHistory)
@@ -50,15 +63,19 @@ test('滑动窗口与区间变化计算正确，包括单点和空数据', () =>
   assert.equal(formatIndexValue(9852.36), '9,852.36')
 })
 
-test('ECharts 能渲染走势，预设窗口与缩放事件保持一致', () => {
-  const chart = initIndexTrend(null, { ssr: true, width: 430, height: 230 })
+test('ECharts 能渲染 K 线与成交量，两图共用缩放窗口', () => {
+  const chart = initIndexTrend(null, { ssr: true, width: 430, height: 300 })
   try {
-    const history = h30269DemoHistory
-    chart.setOption(createIndexTrendOption(history, getRangeWindow(history, '1y'), true))
+    const history = klineHistory
+    chart.setOption(createIndexTrendOption(history, getRangeWindow(history, '1y')))
     const svg = chart.renderToSVGString()
     assert.match(svg, /<svg/)
-    assert.match(svg, /9,852.36/)
     assert.doesNotMatch(svg, /NaN/)
+    const option = chart.getOption()
+    assert.equal(option.series[0].type, 'candlestick')
+    assert.equal(option.series[1].type, 'bar')
+    assert.notEqual(option.series[1].data[0].itemStyle.color, option.series[1].data[1].itemStyle.color)
+    assert.deepEqual(option.dataZoom[0].xAxisIndex, [0, 1])
     let zoomEvents = 0
     chart.on('datazoom', () => zoomEvents++)
     for (const { key } of INDEX_RANGES) {
@@ -78,11 +95,14 @@ test('ECharts 能渲染走势，预设窗口与缩放事件保持一致', () => 
   }
 })
 
-test('少量数据也可绘图，提示文本明确说明模拟状态', () => {
-  const history = [{ date: '2026-08-31', close: 100 }]
-  const option = createIndexTrendOption(history, getRangeWindow(history, '1y'), true)
-  assert.match(option.tooltip.formatter([{ axisValue: '2026-08-31', value: 100 }]), /模拟数据/)
-  const chart = initIndexTrend(null, { ssr: true, width: 320, height: 213 })
+test('少量数据也可绘制 K 线，tooltip 包含 OHLC 和成交数据', () => {
+  const history = [{ date: '2026-08-31', open: 99, close: 100, high: 102, low: 98, volume: 36_100_000, amount: 3_610_000_000 }]
+  const option = createIndexTrendOption(history, getRangeWindow(history, '1y'))
+  const tooltip = option.tooltip.formatter([{ dataIndex: 0 }])
+  assert.match(tooltip, /开盘  99\.00/)
+  assert.match(tooltip, /成交量  3610\.00万/)
+  assert.match(tooltip, /成交额  36\.10亿/)
+  const chart = initIndexTrend(null, { ssr: true, width: 320, height: 260 })
   try {
     chart.setOption(option)
     assert.doesNotMatch(chart.renderToSVGString(), /NaN/)
