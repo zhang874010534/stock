@@ -1,0 +1,58 @@
+name: Update H30269
+
+on:
+  schedule:
+    - cron: '30 8 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-h30269
+  cancel-in-progress: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update H30269 data
+        run: npm run data:update
+
+      - name: Check for data changes
+        id: data-changes
+        shell: bash
+        run: |
+          if git diff --quiet -- public/data/h30269.json && \
+             [[ -z "$(git ls-files --others --exclude-standard -- public/data/h30269.json)" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No H30269 data changes"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "H30269 data changes detected"
+          fi
+
+      - name: Commit and push data
+        if: steps.data-changes.outputs.changed == 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- public/data/h30269.json
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(data): update H30269 market data"
+          git push

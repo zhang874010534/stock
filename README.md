@@ -93,6 +93,15 @@ Render Free 闲置 15 分钟会休眠，下一次启动约需一分钟；启动�
 
 原有 D1 数据库不会被删除，本项目不再绑定或使用它。`triggers.crons: []` 用于清除旧定时器。
 
+## H30269 数据更新
+
+GitHub Actions 在每个工作日北京时间 16:30（UTC 08:30）运行 `npm run data:update`，更新
+`public/data/h30269.json`。数据有变化时只提交该 JSON，commit 信息为
+`chore(data): update H30269 market data`；没有变化时不产生 commit。
+
+需要手动执行时，进入 GitHub **Actions → Update H30269 → Run workflow**。GitHub Actions
+只负责数据更新与提交；Cloudflare 仍由原有 GitHub 集成在检测到新 commit 后负责 Build 和 Deploy。
+
 ## API 与扩展
 
 ```text
