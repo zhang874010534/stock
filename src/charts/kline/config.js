@@ -1,0 +1,41 @@
+export const KLINE_COLORS = {
+  background: '#101116',
+  grid: '#252730',
+  text: '#b8bbc6',
+  muted: '#808592',
+  up: '#ff454f',
+  down: '#00bec7',
+  pointer: '#9297a6',
+}
+
+export const MA_OPTIONS = [
+  { period: 5, enabled: false, color: '#ffd43b' },
+  { period: 10, enabled: false, color: '#e4e8f1' },
+  { period: 20, enabled: false, color: '#ba89ff' },
+  { period: 30, enabled: true, color: '#00da75' },
+  { period: 60, enabled: true, color: '#00aaff' },
+]
+
+export const KDJ_PARAMETERS = { rsvPeriod: 9, kSmoothing: 3, dSmoothing: 3 }
+
+// 图形区域与副图标题共用布局，缩放容器时无需分别计算位置。
+export function getKlineLayout(height = 360) {
+  const available = Math.max(30, height - 108)
+  const priceHeight = available * .62
+  const volumeHeight = available * .16
+  const volumeLabel = 8 + priceHeight + 4
+  const volumeTop = volumeLabel + 22
+  const indicatorLabel = volumeTop + volumeHeight + 4
+  return {
+    left: 62,
+    right: 16,
+    priceTop: 8,
+    priceHeight,
+    volumeLabel,
+    volumeTop,
+    volumeHeight,
+    indicatorLabel,
+    indicatorTop: indicatorLabel + 22,
+    indicatorHeight: available * .22,
+  }
+}

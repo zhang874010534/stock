@@ -7,15 +7,11 @@ import IndexChart from '../components/IndexChart.vue'
 import ChartPlaceholder from '../components/ChartPlaceholder.vue'
 import { getH30269 } from '../api/h30269.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
-import { aggregateKlines, filterKlinesByRange } from '../utils/kline.js'
 
 const data = ref(null)
 const loading = ref(false)
 const error = ref('')
-const selectedRange = ref('1y')
-const selectedPeriod = ref('day')
 const dailyHistory = computed(() => data.value?.history ?? [])
-const displayHistory = computed(() => aggregateKlines(filterKlinesByRange(dailyHistory.value, selectedRange.value), selectedPeriod.value))
 const latest = computed(() => data.value?.latest)
 const backfillCompleted = computed(() => data.value?.backfill?.completed === true)
 const statusLabel = computed(() => {
@@ -81,15 +77,11 @@ const futureModules = [
 
     <section class="charts-grid" aria-label="指数分析图表">
       <IndexChart
-        :history="displayHistory"
-        :range="selectedRange"
-        :period="selectedPeriod"
+        :history="dailyHistory"
         :backfill-completed="backfillCompleted"
         :loading="loading"
         :error="error"
         @retry="loadMarketData"
-        @range-change="selectedRange = $event"
-        @period-change="selectedPeriod = $event"
       />
       <ChartPlaceholder title="股息率与历史分位" subtitle="股息率与历史分位对照" :legends="[{ label: '股息率（近12个月）', color: '#22c6d8' }, { label: '历史分位（近5年，右轴）', color: '#a574ed' }]" />
       <ChartPlaceholder title="估值区间观察（PE-TTM）" subtitle="估值水平与区间分布" :legends="[{ label: '极低区间', color: '#6467dc' }, { label: '低估区间', color: '#26a7d0' }, { label: '合理区间', color: '#3b9d85' }, { label: '偏高区间', color: '#d09648' }, { label: '高估区间', color: '#c95e51' }]" />

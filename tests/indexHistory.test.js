@@ -3,6 +3,10 @@ import assert from 'node:assert/strict'
 import { h30269DemoHistory } from '../src/data/h30269.mock.js'
 import { INDEX_RANGES, normalizeHistory, getRangeWindow, getZoomWindow, getWindowSummary, formatIndexValue } from '../src/utils/indexHistory.js'
 import { initIndexTrend, createIndexTrendOption } from '../src/charts/indexTrend.js'
+import { createKlineSeries } from '../src/charts/kline/series.js'
+import { MA_OPTIONS } from '../src/charts/kline/config.js'
+import { buildSubIndicator } from '../src/charts/kline/subIndicators.js'
+import { calculateMA } from '../src/utils/indicators.js'
 
 const klineHistory = h30269DemoHistory.map(({ date, close }, index) => {
   const open = close + (index % 2 ? 3 : -3)
@@ -63,7 +67,7 @@ test('滑动窗口与区间变化计算正确，包括单点和空数据', () =>
   assert.equal(formatIndexValue(9852.36), '9,852.36')
 })
 
-test('ECharts 能渲染 K 线与成交量，两图共用缩放窗口', () => {
+test('ECharts 能渲染 K 线、均线、成交量与 KDJ，三图共用缩放窗口', () => {
   const chart = initIndexTrend(null, { ssr: true, width: 430, height: 300 })
   try {
     const history = klineHistory
@@ -75,7 +79,9 @@ test('ECharts 能渲染 K 线与成交量，两图共用缩放窗口', () => {
     assert.equal(option.series[0].type, 'candlestick')
     assert.equal(option.series[1].type, 'bar')
     assert.notEqual(option.series[1].data[0].itemStyle.color, option.series[1].data[1].itemStyle.color)
-    assert.deepEqual(option.dataZoom[0].xAxisIndex, [0, 1])
+    assert.deepEqual(option.dataZoom[0].xAxisIndex, [0, 1, 2])
+    assert.deepEqual(option.dataZoom[1].xAxisIndex, [0, 1, 2])
+    assert.deepEqual(option.series.map((item) => item.id), ['index-kline', 'index-volume', 'ma-30', 'ma-60', 'kdj-K', 'kdj-D', 'kdj-J'])
     let zoomEvents = 0
     chart.on('datazoom', () => zoomEvents++)
     for (const { key } of INDEX_RANGES) {
@@ -95,16 +101,41 @@ test('ECharts 能渲染 K 线与成交量，两图共用缩放窗口', () => {
   }
 })
 
-test('少量数据也可绘制 K 线，tooltip 包含 OHLC 和成交数据', () => {
+test('单根行情也可绘制三联图，十字光标启用且不显示浮动卡片', () => {
   const history = [{ date: '2026-08-31', open: 99, close: 100, high: 102, low: 98, volume: 36_100_000, amount: 3_610_000_000 }]
   const option = createIndexTrendOption(history, getRangeWindow(history, '1y'))
-  const tooltip = option.tooltip.formatter([{ dataIndex: 0 }])
-  assert.match(tooltip, /开盘  99\.00/)
-  assert.match(tooltip, /成交量  3610\.00万/)
-  assert.match(tooltip, /成交额  36\.10亿/)
+  assert.equal(option.tooltip.showContent, false)
+  assert.equal(option.tooltip.axisPointer.type, 'cross')
+  assert.deepEqual(option.axisPointer.link, [{ xAxisIndex: 'all' }])
   const chart = initIndexTrend(null, { ssr: true, width: 320, height: 260 })
   try {
     chart.setOption(option)
+    assert.doesNotMatch(chart.renderToSVGString(), /NaN/)
+  } finally {
+    chart.dispose()
+  }
+})
+
+test('同一实例开关均线不会丢失缩放，副图触发的缩放同步到三个时间轴', () => {
+  const chart = initIndexTrend(null, { ssr: true, width: 1366, height: 580 })
+  const history = klineHistory
+  const movingAverages = MA_OPTIONS.map((item) => ({ ...item, data: calculateMA(history, item.period) }))
+  const subIndicator = buildSubIndicator(history)
+  try {
+    chart.setOption(createIndexTrendOption(history, getRangeWindow(history, '1y'), { height: 580 }))
+    chart.dispatchAction({ type: 'dataZoom', dataZoomIndex: 1, start: 50, end: 75 })
+    const before = chart.getOption().dataZoom.map(({ startValue, endValue }) => [startValue, endValue])
+    const noMA = movingAverages.map((item) => ({ ...item, enabled: false }))
+    chart.setOption({ series: createKlineSeries(history, noMA, subIndicator) }, { replaceMerge: ['series'] })
+    assert.ok(chart.getOption().series.filter(Boolean).every((item) => !item.id.startsWith('ma-')))
+    const allMA = movingAverages.map((item) => ({ ...item, enabled: true }))
+    chart.setOption({ series: createKlineSeries(history, allMA, subIndicator) }, { replaceMerge: ['series'] })
+    const after = chart.getOption()
+    assert.deepEqual(after.dataZoom.map(({ startValue, endValue }) => [startValue, endValue]), before)
+    const series = after.series.filter(Boolean)
+    assert.equal(series.filter((item) => item.id.startsWith('ma-')).length, 5)
+    assert.equal(new Set(series.map((item) => item.id)).size, series.length)
+    assert.ok(after.xAxis.every((axis) => axis.data.length === history.length))
     assert.doesNotMatch(chart.renderToSVGString(), /NaN/)
   } finally {
     chart.dispose()

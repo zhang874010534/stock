@@ -1,169 +1,124 @@
 import { init, use } from 'echarts/core'
-import { BarChart, CandlestickChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent, DataZoomComponent, AriaComponent } from 'echarts/components'
+import { BarChart, CandlestickChart, LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent } from 'echarts/components'
 import { SVGRenderer } from 'echarts/renderers'
+import { calculateMA } from '../utils/indicators.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
-import { formatAmount, formatVolume, toCandlestickData } from '../utils/kline.js'
+import { formatVolume } from '../utils/kline.js'
+import { getKlineLayout, KLINE_COLORS, MA_OPTIONS } from './kline/config.js'
+import { createKlineSeries } from './kline/series.js'
+import { buildSubIndicator } from './kline/subIndicators.js'
 
-const UP_COLOR = '#4f91ff'
-const DOWN_COLOR = '#38d6ac'
-
-use([BarChart, CandlestickChart, GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, SVGRenderer])
+use([BarChart, CandlestickChart, LineChart, GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent, SVGRenderer])
 
 export function initIndexTrend(container, options = {}) {
   return init(container, null, { renderer: 'svg', ...options })
 }
 
-function tooltipFormatter(history, params) {
-  const item = history[Array.isArray(params) ? params[0]?.dataIndex : params?.dataIndex]
-  if (!item) return ''
-  const date = item.startDate && item.startDate !== item.endDate ? `${item.startDate} — ${item.endDate}` : item.date
-  const rows = [
-    date,
-    `开盘  ${formatIndexValue(item.open)}`,
-    `收盘  ${formatIndexValue(item.close)}`,
-    `最高  ${formatIndexValue(item.high)}`,
-    `最低  ${formatIndexValue(item.low)}`,
-  ]
-  if (Number.isFinite(item.volume)) rows.push(`成交量  ${formatVolume(item.volume)}`)
-  if (Number.isFinite(item.amount)) rows.push(`成交额  ${formatAmount(item.amount)}`)
-  return rows.join('\n')
+export function createKlineGrids(height) {
+  const layout = getKlineLayout(height)
+  return [
+    { top: layout.priceTop, height: layout.priceHeight },
+    { top: layout.volumeTop, height: layout.volumeHeight },
+    { top: layout.indicatorTop, height: layout.indicatorHeight },
+  ].map((grid) => ({ ...grid, left: layout.left, right: layout.right }))
 }
 
-function formatVolumeAxis(value) {
-  if (!Number.isFinite(value)) return '—'
-  if (Math.abs(value) >= 1e8) return `${(value / 1e8).toFixed(0)}亿`
-  if (Math.abs(value) >= 1e4) return `${(value / 1e4).toFixed(0)}万`
-  return String(value)
-}
-
-export function createIndexTrendOption(history, window) {
+export function createIndexTrendOption(history, window, {
+  height = 360,
+  movingAverages = MA_OPTIONS.map((item) => ({ ...item, data: calculateMA(history, item.period) })),
+  subIndicator = buildSubIndicator(history),
+} = {}) {
   const dates = history.map((point) => point.date)
+  const layout = getKlineLayout(height)
   return {
     animation: false,
+    backgroundColor: KLINE_COLORS.background,
     textStyle: { fontFamily: 'Segoe UI, Microsoft YaHei, sans-serif' },
     aria: {
       enabled: true,
-      label: { description: 'H30269 指数 K 线与成交量。可通过上方按钮切换周期和时间范围。' },
+      label: { description: 'H30269 指数 K 线、均线、成交量与副图指标。可切换周期、勾选均线、滚轮缩放或拖动查看历史行情。' },
     },
-    grid: [
-      { top: 10, right: 15, bottom: '36%', left: 55 },
-      { top: '72%', right: 15, bottom: 47, left: 55 },
-    ],
+    grid: createKlineGrids(height),
+    axisPointer: {
+      link: [{ xAxisIndex: 'all' }],
+      label: { backgroundColor: '#373a45', color: '#f0f1f5', fontSize: 11 },
+      lineStyle: { color: KLINE_COLORS.pointer, type: 'dashed', width: 1 },
+    },
     tooltip: {
       trigger: 'axis',
-      renderMode: 'richText',
-      confine: true,
-      backgroundColor: '#101d32',
-      borderColor: '#334a6e',
-      borderWidth: 1,
-      padding: [9, 11],
-      textStyle: { color: '#dbe8ff', fontSize: 11 },
-      axisPointer: { type: 'cross', lineStyle: { color: '#7196cb', type: 'dashed' } },
-      formatter: (params) => tooltipFormatter(history, params),
+      showContent: false,
+      axisPointer: { type: 'cross', crossStyle: { color: KLINE_COLORS.pointer, type: 'dashed' } },
     },
-    xAxis: [
-      {
-        type: 'category',
-        gridIndex: 0,
-        boundaryGap: true,
-        data: dates,
-        axisLine: { lineStyle: { color: '#27364d' } },
-        axisTick: { show: false },
-        axisLabel: { show: false },
-        splitLine: { show: false },
+    xAxis: [0, 1, 2].map((gridIndex) => ({
+      type: 'category',
+      gridIndex,
+      boundaryGap: true,
+      data: dates,
+      axisLine: { lineStyle: { color: KLINE_COLORS.grid } },
+      axisTick: { show: false },
+      axisLabel: {
+        show: gridIndex === 2,
+        color: KLINE_COLORS.text,
+        fontSize: 10,
+        hideOverlap: true,
+        margin: 8,
+        formatter: (value) => value.slice(2),
       },
-      {
-        type: 'category',
-        gridIndex: 1,
-        boundaryGap: true,
-        data: dates,
-        axisLine: { lineStyle: { color: '#27364d' } },
-        axisTick: { show: false },
-        axisLabel: { color: '#8c9bb3', fontSize: 9, hideOverlap: true, margin: 7, formatter: (value) => value.slice(2) },
-        splitLine: { show: false },
+      axisPointer: { show: true, snap: true, label: { show: gridIndex === 2 } },
+      splitLine: { show: false },
+    })),
+    yAxis: [0, 1, 2].map((gridIndex) => ({
+      type: 'value',
+      gridIndex,
+      scale: gridIndex !== 1,
+      splitNumber: gridIndex === 0 ? 4 : 2,
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: {
+        color: KLINE_COLORS.text,
+        fontSize: 10,
+        showMaxLabel: gridIndex === 0,
+        formatter: gridIndex === 1 ? (value) => formatVolume(value).replace('.00', '') : (value) => Number(value).toLocaleString('en-US', { maximumFractionDigits: 0 }),
       },
-    ],
-    yAxis: [
-      {
-        type: 'value',
-        gridIndex: 0,
-        scale: true,
-        splitNumber: 4,
-        axisLine: { show: false },
-        axisTick: { show: false },
-        axisLabel: { color: '#8c9bb3', fontSize: 10, formatter: (value) => Number(value).toLocaleString('en-US', { maximumFractionDigits: 0 }) },
-        splitLine: { lineStyle: { color: '#26354b88', type: 'dashed' } },
-      },
-      {
-        type: 'value',
-        gridIndex: 1,
-        scale: true,
-        splitNumber: 2,
-        axisLine: { show: false },
-        axisTick: { show: false },
-        axisLabel: { color: '#71829d', fontSize: 9, formatter: formatVolumeAxis },
-        splitLine: { lineStyle: { color: '#26354b55', type: 'dashed' } },
-      },
-    ],
+      axisPointer: { label: { formatter: ({ value }) => gridIndex === 1 ? formatVolume(value) : formatIndexValue(value) } },
+      splitLine: { lineStyle: { color: KLINE_COLORS.grid, width: 1 } },
+    })),
     dataZoom: [
       {
         type: 'slider',
-        xAxisIndex: [0, 1],
+        xAxisIndex: [0, 1, 2],
         startValue: window.startIndex,
         endValue: window.endIndex,
-        bottom: 3,
-        left: 55,
-        right: 15,
-        height: 18,
+        filterMode: 'filter',
+        bottom: 2,
+        left: layout.left,
+        right: layout.right,
+        height: 16,
         brushSelect: false,
         showDetail: false,
         throttle: 40,
-        borderColor: '#31405d',
-        backgroundColor: '#101b2d',
-        fillerColor: '#408cff1a',
+        borderColor: '#3a3d48',
+        backgroundColor: '#17191f',
+        fillerColor: '#9299b029',
         handleSize: '110%',
-        handleStyle: { color: '#203955', borderColor: '#7c9cc6' },
+        handleStyle: { color: '#505664', borderColor: '#a5aabc' },
         moveHandleSize: 0,
-        dataBackground: { lineStyle: { color: '#3f608e', opacity: .65 }, areaStyle: { color: '#274670', opacity: .35 } },
-        selectedDataBackground: { lineStyle: { color: '#7099d5' }, areaStyle: { color: '#32629c', opacity: .3 } },
+        dataBackground: { lineStyle: { color: '#626979' }, areaStyle: { color: '#363b47' } },
+        selectedDataBackground: { lineStyle: { color: '#a2aabd' }, areaStyle: { color: '#656e82' } },
       },
       {
         type: 'inside',
-        xAxisIndex: [0, 1],
+        xAxisIndex: [0, 1, 2],
         startValue: window.startIndex,
         endValue: window.endIndex,
+        filterMode: 'filter',
         zoomOnMouseWheel: true,
         moveOnMouseMove: true,
+        moveOnMouseWheel: false,
+        preventDefaultMouseMove: true,
       },
     ],
-    series: [
-      {
-        id: 'index-kline',
-        name: '指数 K 线',
-        type: 'candlestick',
-        xAxisIndex: 0,
-        yAxisIndex: 0,
-        data: toCandlestickData(history),
-        itemStyle: {
-          color: UP_COLOR,
-          color0: DOWN_COLOR,
-          borderColor: UP_COLOR,
-          borderColor0: DOWN_COLOR,
-        },
-      },
-      {
-        id: 'index-volume',
-        name: '成交量',
-        type: 'bar',
-        xAxisIndex: 1,
-        yAxisIndex: 1,
-        barMaxWidth: 8,
-        data: history.map((point) => ({
-          value: Number.isFinite(point.volume) ? point.volume : null,
-          itemStyle: { color: point.close >= point.open ? UP_COLOR : DOWN_COLOR, opacity: .62 },
-        })),
-      },
-    ],
+    series: createKlineSeries(history, movingAverages, subIndicator),
   }
 }

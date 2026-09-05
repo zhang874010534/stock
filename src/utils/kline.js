@@ -1,9 +1,10 @@
 import { getRangeWindow } from './indexHistory.js'
 
 export const KLINE_PERIODS = [
-  { key: 'day', label: '日K' },
-  { key: 'week', label: '周K' },
-  { key: 'month', label: '月K' },
+  { key: 'day', label: '日线', visibleBars: 150 },
+  { key: 'week', label: '周线', visibleBars: 100 },
+  { key: 'month', label: '月线', visibleBars: 60 },
+  { key: 'quarter', label: '季线', visibleBars: 40 },
 ]
 
 function isValidDate(value) {
@@ -100,10 +101,33 @@ export function aggregateMonthlyKlines(history) {
   return aggregateBy(history, (date) => date.slice(0, 7))
 }
 
+export function aggregateQuarterlyKlines(history) {
+  return aggregateBy(history, (date) => `${date.slice(0, 4)}-Q${Math.ceil(Number(date.slice(5, 7)) / 3)}`)
+}
+
 export function aggregateKlines(history, period) {
   if (period === 'week') return aggregateWeeklyKlines(history)
   if (period === 'month') return aggregateMonthlyKlines(history)
+  if (period === 'quarter') return aggregateQuarterlyKlines(history)
   return history.map((point) => ({ ...point }))
+}
+
+// 时间范围只改变视窗，聚合和指标始终使用已加载的完整历史。
+export function getDefaultKlineWindow(history, period = 'day') {
+  const count = KLINE_PERIODS.find((item) => item.key === period)?.visibleBars ?? 150
+  return { startIndex: Math.max(0, history.length - count), endIndex: Math.max(0, history.length - 1) }
+}
+
+export function getKlineQuote(history, index) {
+  const point = history[index]
+  if (!point) return null
+  const previousClose = history[index - 1]?.close
+  const change = Number.isFinite(previousClose) ? point.close - previousClose : null
+  return {
+    ...point,
+    change,
+    changePercent: change === null ? null : change / previousClose * 100,
+  }
 }
 
 export function toCandlestickData(history) {

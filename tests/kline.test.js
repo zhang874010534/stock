@@ -1,13 +1,16 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { getH30269 } from '../src/api/h30269.js'
-import { INDEX_RANGES } from '../src/utils/indexHistory.js'
+import { getRangeWindow, INDEX_RANGES } from '../src/utils/indexHistory.js'
 import {
   aggregateKlines,
   aggregateMonthlyKlines,
+  aggregateQuarterlyKlines,
   aggregateWeeklyKlines,
   filterKlinesByRange,
   formatAmount,
+  getDefaultKlineWindow,
+  getKlineQuote,
   toCandlestickData,
   validateKlineData,
   validateMarketData,
@@ -52,16 +55,18 @@ test('所有时间范围都在本地过滤，历史不足时返回已有数据',
   assert.deepEqual(filterKlinesByRange(history, 'all'), history)
 })
 
-test('计算链先过滤 range 再聚合，周月边界不混入范围外日 K', () => {
+test('视窗在聚合之后选择，保留完整自然周期和指标计算所需历史', () => {
   const history = [
     point('2026-08-03', 10, 11, 12, 9),
     point('2026-08-04', 20, 21, 22, 19),
     point('2026-09-04', 30, 31, 32, 29),
   ]
-  const ranged = filterKlinesByRange(history, '1m')
-  assert.equal(ranged[0].date, '2026-08-04')
-  assert.equal(aggregateKlines(ranged, 'week')[0].open, 20)
-  assert.equal(aggregateKlines(ranged, 'month')[0].open, 20)
+  for (const period of ['week', 'month']) {
+    const aggregated = aggregateKlines(history, period)
+    const window = getRangeWindow(aggregated, '1m')
+    assert.equal(aggregated[window.startIndex].startDate, '2026-08-03')
+    assert.equal(aggregated[window.startIndex].open, 10)
+  }
 })
 
 test('周 K 按周一至周日的自然周聚合，覆盖五日、四日、跨月和跨年', () => {
@@ -137,7 +142,55 @@ test('首次加载只请求一次静态 JSON，本地切换 range 和 period 不
   aggregateKlines(loaded.history, 'day')
   aggregateKlines(loaded.history, 'week')
   aggregateKlines(loaded.history, 'month')
+  aggregateKlines(loaded.history, 'quarter')
   assert.equal(requests, 1)
   await getH30269({ fetcher, cacheKey: 123 })
   assert.equal(requests, 2)
+})
+
+test('季 K 按自然季度聚合，覆盖季度边界、闰日与跨年，不修改原始数据', () => {
+  const history = [
+    point('2023-12-29', 10, 11, 12, 9, 1, 10),
+    point('2024-01-02', 11, 12, 13, 10, 2, 20),
+    point('2024-02-29', 12, 14, 15, 11, 3, 30),
+    point('2024-03-29', 14, 13, 16, 8, 4, 40),
+    point('2024-04-01', 13, 14, 15, 12),
+    point('2024-06-28', 14, 16, 17, 13),
+    point('2024-07-01', 16, 15, 18, 14),
+    point('2024-09-30', 15, 17, 19, 13),
+    point('2024-10-01', 17, 18, 20, 16),
+    point('2024-12-31', 18, 19, 21, 17),
+    point('2025-01-02', 19, 20, 22, 18),
+  ]
+  const original = structuredClone(history)
+  const quarters = aggregateQuarterlyKlines(history)
+  assert.equal(quarters.length, 6)
+  assert.deepEqual(quarters[1], {
+    date: '2024-03-29', startDate: '2024-01-02', endDate: '2024-03-29',
+    open: 11, close: 13, high: 16, low: 8, volume: 9, amount: 90,
+  })
+  assert.deepEqual(aggregateKlines(history, 'quarter'), quarters)
+  assert.deepEqual(history, original)
+  assert.deepEqual(aggregateQuarterlyKlines([]), [])
+  delete history[2].volume
+  assert.equal(aggregateQuarterlyKlines(history)[1].volume, undefined)
+})
+
+test('默认日线显示最近150根，其他周期和历史不足时限制在已有数据内', () => {
+  const history = Array.from({ length: 201 }, () => ({}))
+  assert.deepEqual(getDefaultKlineWindow(history), { startIndex: 51, endIndex: 200 })
+  assert.deepEqual(getDefaultKlineWindow(history, 'week'), { startIndex: 101, endIndex: 200 })
+  assert.deepEqual(getDefaultKlineWindow(history, 'month'), { startIndex: 141, endIndex: 200 })
+  assert.deepEqual(getDefaultKlineWindow(history, 'quarter'), { startIndex: 161, endIndex: 200 })
+  assert.deepEqual(getDefaultKlineWindow([{}], 'quarter'), { startIndex: 0, endIndex: 0 })
+  assert.deepEqual(getDefaultKlineWindow([]), { startIndex: 0, endIndex: 0 })
+})
+
+test('顶部行情涨跌使用前一根同周期收盘价，首根不伪造前收盘', () => {
+  const history = [point('2026-01-02', 80, 100, 110, 70), point('2026-04-01', 95, 90, 105, 85)]
+  assert.equal(getKlineQuote(history, 0).change, null)
+  assert.equal(getKlineQuote(history, 1).change, -10)
+  assert.equal(getKlineQuote(history, 1).changePercent, -10)
+  assert.equal(getKlineQuote(aggregateKlines(history, 'quarter'), 1).change, -10)
+  assert.equal(getKlineQuote([], 0), null)
 })
