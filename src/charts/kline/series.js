@@ -17,7 +17,12 @@ export function createLineSeries({ id, name, color, data }, axisIndex = 0) {
   }
 }
 
-export function createKlineSeries(history, movingAverages, subIndicator) {
+export function createKlineSeries(history, movingAverages, mainIndicators = [], subIndicator) {
+  // 兼容旧调用签名 createKlineSeries(history, movingAverages, subIndicator)。
+  if (!Array.isArray(mainIndicators)) {
+    subIndicator = mainIndicators
+    mainIndicators = []
+  }
   return [
     {
       id: 'index-kline',
@@ -50,6 +55,7 @@ export function createKlineSeries(history, movingAverages, subIndicator) {
     ...movingAverages.filter((item) => item.enabled).map((item) => createLineSeries({
       ...item, id: `ma-${item.period}`, name: `MA${item.period}`,
     })),
+    ...mainIndicators.flatMap((indicator) => indicator.createSeries(0)),
     ...subIndicator.createSeries(2),
   ]
 }

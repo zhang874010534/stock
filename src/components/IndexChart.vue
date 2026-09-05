@@ -4,7 +4,8 @@ import { Info, Maximize2, Minimize2 } from 'lucide-vue-next'
 import { formatIndexValue, getWindowSummary } from '../utils/indexHistory.js'
 import { aggregateKlines, formatVolume, getKlineQuote, KLINE_PERIODS } from '../utils/kline.js'
 import { calculateMA } from '../utils/indicators.js'
-import { getKlineLayout, MA_OPTIONS } from '../charts/kline/config.js'
+import { BOLL_PARAMETERS, getKlineLayout, KDJ_PARAMETERS, MACD_PARAMETERS, MA_OPTIONS, RSI_PARAMETERS } from '../charts/kline/config.js'
+import { buildMainIndicator } from '../charts/kline/mainIndicators.js'
 import { buildSubIndicator } from '../charts/kline/subIndicators.js'
 import KLineToolbar from './kline/KLineToolbar.vue'
 import KLineQuote from './kline/KLineQuote.vue'
@@ -22,13 +23,27 @@ const chartElement = ref(null)
 const panelElement = ref(null)
 const period = ref('day')
 const maOptions = ref(MA_OPTIONS.map((item) => ({ ...item })))
+const bollEnabled = ref(false)
 const subIndicatorKey = ref('kdj')
+const indicatorSettings = ref({
+  boll: { ...BOLL_PARAMETERS },
+  kdj: { ...KDJ_PARAMETERS },
+  macd: { ...MACD_PARAMETERS },
+  rsi: { ...RSI_PARAMETERS },
+})
+
 const history = computed(() => aggregateKlines(props.history, period.value))
 const maData = computed(() => Object.fromEntries(MA_OPTIONS.map(({ period }) => [period, calculateMA(history.value, period)])))
 const movingAverages = computed(() => maOptions.value.map((item) => ({ ...item, data: maData.value[item.period] })))
-const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value))
+const mainIndicators = computed(() => bollEnabled.value ? [buildMainIndicator(history.value, 'boll', indicatorSettings.value.boll)] : [])
+const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
 const { loading: chartLoading, error: chartError, range, activeIndex, visibleWindow, height, selectRange, resetHover, resize, load } = useKlineChart({
-  element: chartElement, history, period, movingAverages, subIndicator,
+  element: chartElement,
+  history,
+  period,
+  movingAverages,
+  mainIndicators,
+  subIndicator,
 })
 const { expanded, inlineHeight, toggle } = useKlineFullscreen(panelElement, resize)
 const isBusy = computed(() => chartLoading.value || props.loading)
@@ -43,6 +58,11 @@ function setMA(period, enabled) {
   const item = maOptions.value.find((item) => item.period === period)
   if (item) item.enabled = enabled
 }
+
+function setIndicatorSettings(key, settings) {
+  if (!(key in indicatorSettings.value)) return
+  indicatorSettings.value[key] = { ...settings }
+}
 </script>
 
 <template>
@@ -50,18 +70,32 @@ function setMA(period, enabled) {
     <Teleport to="body" :disabled="!expanded">
       <section ref="panelElement" class="index-chart" :class="{ 'is-expanded': expanded }" :role="expanded ? 'dialog' : undefined" :aria-modal="expanded ? true : undefined" aria-label="H30269 指数 K 线" tabindex="-1">
         <div class="chart-heading">
-          <h2>指数 K 线 <button type="button" class="info-button" aria-label="指数 K 线说明" title="日线在本地按自然周、月、季度聚合；均线按当前周期计算。滚轮缩放，拖动查看历史。"><Info :size="14" /></button></h2>
+          <h2>指数 K 线 <button type="button" class="info-button" aria-label="指数 K 线说明" title="日线在本地按自然周、月、季度聚合；MA、BOLL、KDJ、MACD、RSI 均按当前周期的完整已加载历史计算。滚轮缩放，拖动查看历史。"><Info :size="14" /></button></h2>
           <div class="heading-actions"><span class="instrument">H30269 · {{ periodLabel }}</span><button type="button" class="expand-button" :aria-label="expanded ? '退出全屏' : '放大全屏'" :title="expanded ? '退出全屏（ESC）' : '放大全屏'" @click="toggle"><Minimize2 v-if="expanded" :size="15" /><Maximize2 v-else :size="15" /><span>{{ expanded ? '退出 · ESC' : '放大' }}</span></button></div>
         </div>
 
-        <KLineToolbar :period="period" :range="range" :ma-options="maOptions" :sub-indicator="subIndicatorKey" :disabled="isBusy" @period-change="period = $event" @range-change="selectRange" @ma-change="setMA" @indicator-change="subIndicatorKey = $event" />
-        <KLineQuote :quote="quote" :moving-averages="movingAverages" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
+        <KLineToolbar
+          :period="period"
+          :range="range"
+          :ma-options="maOptions"
+          :boll-enabled="bollEnabled"
+          :sub-indicator="subIndicatorKey"
+          :indicator-settings="indicatorSettings"
+          :disabled="isBusy"
+          @period-change="period = $event"
+          @range-change="selectRange"
+          @ma-change="setMA"
+          @boll-change="bollEnabled = $event"
+          @indicator-change="subIndicatorKey = $event"
+          @settings-change="setIndicatorSettings"
+        />
+        <KLineQuote :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
         <div class="chart-body" :aria-busy="isBusy" @mouseleave="resetHover">
           <div ref="chartElement" class="chart-canvas" :style="{ visibility: showChart ? 'visible' : 'hidden' }" />
           <template v-if="showChart">
             <div class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
-            <div class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex]) }}</b></div>
+            <div class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex]) }}</b></div>
           </template>
           <div v-else class="chart-state" role="status">
             <span>{{ displayError || (isBusy ? '正在读取行情…' : '暂无行情数据') }}</span>

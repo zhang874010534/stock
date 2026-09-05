@@ -5,6 +5,7 @@ import { formatVolume } from '../../utils/kline.js'
 defineProps({
   quote: { type: Object, default: null },
   movingAverages: { type: Array, required: true },
+  mainIndicators: { type: Array, default: () => [] },
   activeIndex: { type: Number, required: true },
   isLatest: Boolean,
 })
@@ -27,9 +28,12 @@ function signed(value, suffix = '') {
       <span>涨跌幅 <b :class="{ up: quote?.changePercent > 0, down: quote?.changePercent < 0 }">{{ signed(quote?.changePercent, '%') }}</b></span>
       <span>成交量 <b>{{ formatVolume(quote?.volume) }}</b></span>
     </div>
-    <div class="ma-values" aria-label="当前均线数值">
+    <div class="ma-values" aria-label="当前主图指标数值">
       <span v-for="item in movingAverages.filter((ma) => ma.enabled)" :key="item.period" :style="{ color: item.color }" :title="`最近 ${item.period} 根当前周期 K 线的平均收盘价；不足 ${item.period} 根时显示 —`">MA{{ item.period }}: {{ formatIndexValue(item.data[activeIndex]) }}</span>
-      <span v-if="!movingAverages.some((item) => item.enabled)" class="ma-empty">均线已隐藏</span>
+      <template v-for="indicator in mainIndicators" :key="indicator.key">
+        <span v-for="line in indicator.lines" :key="line.id" :style="{ color: line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex]) }}</span>
+      </template>
+      <span v-if="!movingAverages.some((item) => item.enabled) && !mainIndicators.length" class="ma-empty">主图指标已隐藏</span>
     </div>
   </div>
 </template>

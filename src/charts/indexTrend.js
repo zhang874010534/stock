@@ -27,17 +27,19 @@ export function createKlineGrids(height) {
 export function createIndexTrendOption(history, window, {
   height = 360,
   movingAverages = MA_OPTIONS.map((item) => ({ ...item, data: calculateMA(history, item.period) })),
+  mainIndicators = [],
   subIndicator = buildSubIndicator(history),
 } = {}) {
   const dates = history.map((point) => point.date)
   const layout = getKlineLayout(height)
+  const subAxis = subIndicator.axis ?? {}
   return {
     animation: false,
     backgroundColor: KLINE_COLORS.background,
     textStyle: { fontFamily: 'Segoe UI, Microsoft YaHei, sans-serif' },
     aria: {
       enabled: true,
-      label: { description: 'H30269 指数 K 线、均线、成交量与副图指标。可切换周期、勾选均线、滚轮缩放或拖动查看历史行情。' },
+      label: { description: 'H30269 指数 K 线、主图指标、成交量与副图指标。可切换周期、设置指标参数、滚轮缩放或拖动查看历史行情。' },
     },
     grid: createKlineGrids(height),
     axisPointer: {
@@ -71,15 +73,17 @@ export function createIndexTrendOption(history, window, {
     yAxis: [0, 1, 2].map((gridIndex) => ({
       type: 'value',
       gridIndex,
-      scale: gridIndex !== 1,
-      splitNumber: gridIndex === 0 ? 4 : 2,
+      scale: gridIndex !== 1 && !(gridIndex === 2 && Number.isFinite(subAxis.min) && Number.isFinite(subAxis.max)),
+      min: gridIndex === 2 ? subAxis.min : undefined,
+      max: gridIndex === 2 ? subAxis.max : undefined,
+      splitNumber: gridIndex === 0 ? 4 : gridIndex === 2 ? (subAxis.splitNumber ?? 2) : 2,
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
         color: KLINE_COLORS.text,
         fontSize: 10,
         showMaxLabel: gridIndex === 0,
-        formatter: gridIndex === 1 ? (value) => formatVolume(value).replace('.00', '') : (value) => Number(value).toLocaleString('en-US', { maximumFractionDigits: 0 }),
+        formatter: gridIndex === 1 ? (value) => formatVolume(value).replace('.00', '') : (value) => Number(value).toLocaleString('en-US', { maximumFractionDigits: gridIndex === 2 ? 2 : 0 }),
       },
       axisPointer: { label: { formatter: ({ value }) => gridIndex === 1 ? formatVolume(value) : formatIndexValue(value) } },
       splitLine: { lineStyle: { color: KLINE_COLORS.grid, width: 1 } },
@@ -119,6 +123,6 @@ export function createIndexTrendOption(history, window, {
         preventDefaultMouseMove: true,
       },
     ],
-    series: createKlineSeries(history, movingAverages, subIndicator),
+    series: createKlineSeries(history, movingAverages, mainIndicators, subIndicator),
   }
 }

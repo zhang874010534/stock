@@ -3,7 +3,7 @@ import { getRangeWindow, getZoomWindow } from '../../utils/indexHistory.js'
 import { getDefaultKlineWindow } from '../../utils/kline.js'
 import { createKlineSeries } from '../../charts/kline/series.js'
 
-export function useKlineChart({ element, history, period, movingAverages, subIndicator }) {
+export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator }) {
   const loading = ref(true)
   const error = ref('')
   const range = ref('recent')
@@ -69,6 +69,7 @@ export function useKlineChart({ element, history, period, movingAverages, subInd
       chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, {
         height: height.value,
         movingAverages: movingAverages.value,
+        mainIndicators: mainIndicators.value,
         subIndicator: subIndicator.value,
       }), { notMerge: true })
       error.value = ''
@@ -108,9 +109,21 @@ export function useKlineChart({ element, history, period, movingAverages, subInd
   }, { flush: 'post' })
 
   // 只替换指标 series，保留用户缩放、拖动与当前行情位置。
-  watch([movingAverages, subIndicator], () => {
+  watch([movingAverages, mainIndicators, subIndicator], () => {
     if (!chart || !history.value.length) return
-    chart.setOption({ series: createKlineSeries(history.value, movingAverages.value, subIndicator.value) }, { replaceMerge: ['series'] })
+    chart.setOption({
+      yAxis: [
+        {},
+        {},
+        {
+          min: subIndicator.value.axis?.min ?? null,
+          max: subIndicator.value.axis?.max ?? null,
+          splitNumber: subIndicator.value.axis?.splitNumber ?? 2,
+          scale: !(Number.isFinite(subIndicator.value.axis?.min) && Number.isFinite(subIndicator.value.axis?.max)),
+        },
+      ],
+      series: createKlineSeries(history.value, movingAverages.value, mainIndicators.value, subIndicator.value),
+    }, { replaceMerge: ['series'] })
   }, { flush: 'post' })
 
   onMounted(() => {
