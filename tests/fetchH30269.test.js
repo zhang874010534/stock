@@ -13,6 +13,7 @@ import {
 } from '../scripts/lib/market-data.mjs'
 import {
   createDataset,
+  fetchRangeWithRetry,
   updateH30269,
   validateDataset,
 } from '../scripts/fetch-h30269.mjs'
@@ -130,7 +131,7 @@ test('历史回补失败不推进 earliestDate 或回补游标', async () => {
     const replies = [response([latest]), new Response('unavailable', { status: 503 })]
     const result = await updateH30269({
       filePath, now: NOW, fetcher: async () => replies.shift(), logger: silentLogger,
-      requestDelayMs: 0,
+      requestDelayMs: 0, retryDelaysMs: [],
     })
     assert.equal(result.changed, false)
     assert.equal(result.data.backfill.earliestDate, old.backfill.earliestDate)
@@ -147,7 +148,7 @@ test('近期行情成功而历史回补失败时，仍保存近期更新', async
     const replies = [response([newLatest]), new Response('unavailable', { status: 503 })]
     const result = await updateH30269({
       filePath, now: NOW, fetcher: async () => replies.shift(), logger: silentLogger,
-      requestDelayMs: 0,
+      requestDelayMs: 0, retryDelaysMs: [],
     })
     assert.equal(result.changed, true)
     assert.equal(result.errors[0].task, 'backfill')
@@ -200,4 +201,96 @@ test('回补空窗口逐段向前，连续三段才完成', async () => {
       assert.equal(current.backfill.completed, attempt === 3)
     })
   }
+})
+
+test('网络异常会按退避策略重试，并在后续成功后继续更新', async () => {
+  const latest = point('2026-09-04', 100)
+  const old = validDataset([latest], { completed: true })
+  await withDatasetFile(old, async (filePath) => {
+    let calls = 0
+    const waits = []
+    const result = await updateH30269({
+      filePath,
+      now: NOW,
+      fetcher: async () => {
+        calls++
+        if (calls < 3) throw new TypeError('fetch failed')
+        return response([latest])
+      },
+      delay: async (milliseconds) => { waits.push(milliseconds) },
+      retryDelaysMs: [5_000, 15_000, 30_000],
+      requestDelayMs: 0,
+      logger: silentLogger,
+    })
+    assert.equal(calls, 3)
+    assert.deepEqual(waits, [5_000, 15_000])
+    assert.equal(result.requestCount, 3)
+    assert.equal(result.successfulRequests, 1)
+    assert.equal(result.errors.length, 0)
+  })
+})
+
+test('503 连续失败会耗尽重试并停止后续回补请求', async () => {
+  const latest = point('2026-09-04', 100)
+  const old = validDataset([latest])
+  await withDatasetFile(old, async (filePath) => {
+    let calls = 0
+    const waits = []
+    const result = await updateH30269({
+      filePath,
+      now: NOW,
+      fetcher: async () => {
+        calls++
+        return new Response('unavailable', { status: 503 })
+      },
+      delay: async (milliseconds) => { waits.push(milliseconds) },
+      retryDelaysMs: [5_000, 15_000],
+      requestDelayMs: 0,
+      logger: silentLogger,
+    })
+    assert.equal(calls, 3)
+    assert.deepEqual(waits, [5_000, 15_000])
+    assert.equal(result.requestCount, 3)
+    assert.equal(result.successfulRequests, 0)
+    assert.equal(result.errors.length, 1)
+    assert.equal(result.errors[0].task, 'recent')
+    assert.equal(result.errors[0].error.upstreamStatus, 503)
+  })
+})
+
+test('429 的 Retry-After 会参与等待计算，同时限制单次等待不超过 60 秒', async () => {
+  let calls = 0
+  const waits = []
+  const history = await fetchRangeWithRetry(H30269, { start: '2026-09-01', end: '2026-09-04' }, {
+    now: NOW,
+    fetcher: async () => {
+      calls++
+      if (calls === 1) return new Response('limited', { status: 429, headers: { 'Retry-After': '120' } })
+      return response([point('2026-09-04', 100)])
+    },
+    delay: async (milliseconds) => { waits.push(milliseconds) },
+    retryDelaysMs: [5_000],
+    logger: silentLogger,
+  })
+  assert.equal(calls, 2)
+  assert.deepEqual(waits, [60_000])
+  assert.equal(history.length, 1)
+})
+
+test('数据格式错误属于非瞬时错误，不进行重试', async () => {
+  let calls = 0
+  await assert.rejects(
+    fetchRangeWithRetry(H30269, { start: '2026-09-01', end: '2026-09-04' }, {
+      now: NOW,
+      fetcher: async () => {
+        calls++
+        return new Response('{bad json')
+      },
+      delay: async () => { throw new Error('non-retryable error should not wait') },
+      retryDelaysMs: [5_000, 15_000, 30_000],
+      logger: silentLogger,
+    }),
+    (error) => error instanceof MarketDataError && error.kind === 'invalid_json',
+  )
+  assert.equal(calls, 1)
 })

@@ -18,6 +18,8 @@ export const RECENT_DAYS = 30
 export const BACKFILL_DAYS = 90
 export const EMPTY_RANGES_TO_COMPLETE = 3
 export const REQUEST_DELAY_MS = 3_000
+export const RETRY_DELAYS_MS = [5_000, 15_000, 30_000]
+export const MAX_RETRY_DELAY_MS = 60_000
 
 function clone(value) {
   return structuredClone(value)
@@ -121,15 +123,65 @@ function refreshEarliestState(candidate, previousEarliest) {
   }
 }
 
-function blocksFurtherRequests(error) {
+function isRetryableRequestError(error) {
   return error instanceof MarketDataError && (
-    [403, 429, 503].includes(error.upstreamStatus) || error.kind === 'timeout' || error.kind === 'network'
+    [403, 408, 429, 500, 502, 503, 504].includes(error.upstreamStatus) ||
+    error.kind === 'timeout' ||
+    error.kind === 'network'
   )
+}
+
+function blocksFurtherRequests(error) {
+  return isRetryableRequestError(error)
 }
 
 function describeError(error) {
   const status = error.upstreamStatus ? ` HTTP ${error.upstreamStatus}` : ''
   return `${error.message}${status}`
+}
+
+function retryWaitMs(error, fallbackMs) {
+  const retryAfterMs = Number.isFinite(error?.retryAfterSeconds) && error.retryAfterSeconds > 0
+    ? error.retryAfterSeconds * 1_000
+    : 0
+  return Math.min(Math.max(fallbackMs, retryAfterMs), MAX_RETRY_DELAY_MS)
+}
+
+function describeWait(milliseconds) {
+  return milliseconds % 1_000 === 0 ? `${milliseconds / 1_000} 秒` : `${milliseconds} 毫秒`
+}
+
+export async function fetchRangeWithRetry(instrument, bounds, {
+  fetcher = fetch,
+  now = new Date(),
+  timeoutMs = 15_000,
+  delay = (milliseconds) => new Promise((resolveDelay) => setTimeout(resolveDelay, milliseconds)),
+  retryDelaysMs = RETRY_DELAYS_MS,
+  logger = console,
+  label = '行情',
+  onAttempt = () => {},
+} = {}) {
+  if (!Array.isArray(retryDelaysMs) || retryDelaysMs.some((value) => !Number.isFinite(value) || value < 0)) {
+    throw new Error('Invalid retry delays')
+  }
+
+  const maxAttempts = retryDelaysMs.length + 1
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    onAttempt(attempt)
+    try {
+      const history = await fetchEastmoneyRange(instrument, bounds, { fetcher, now, timeoutMs })
+      if (attempt > 1) logger.log(`${label}请求重试成功（第 ${attempt}/${maxAttempts} 次尝试）`)
+      return history
+    } catch (error) {
+      const retryIndex = attempt - 1
+      if (!isRetryableRequestError(error) || retryIndex >= retryDelaysMs.length) throw error
+      const waitMs = retryWaitMs(error, retryDelaysMs[retryIndex])
+      logger.warn(`${label}请求失败：${describeError(error)}；${describeWait(waitMs)}后重试（下一次 ${attempt + 1}/${maxAttempts}）`)
+      await delay(waitMs)
+    }
+  }
+
+  throw new Error('Unreachable retry state')
 }
 
 export async function updateH30269({
@@ -139,6 +191,7 @@ export async function updateH30269({
   timeoutMs = 15_000,
   delay = (milliseconds) => new Promise((resolveDelay) => setTimeout(resolveDelay, milliseconds)),
   requestDelayMs = REQUEST_DELAY_MS,
+  retryDelaysMs = RETRY_DELAYS_MS,
   logger = console,
   writer = atomicWriteJson,
 } = {}) {
@@ -151,8 +204,16 @@ export async function updateH30269({
 
   const recent = recentBounds(now)
   try {
-    requestCount++
-    const history = await fetchEastmoneyRange(H30269, recent, { fetcher, now, timeoutMs })
+    const history = await fetchRangeWithRetry(H30269, recent, {
+      fetcher,
+      now,
+      timeoutMs,
+      delay,
+      retryDelaysMs,
+      logger,
+      label: '近期行情',
+      onAttempt: () => { requestCount++ },
+    })
     if (!history.length) throw new MarketDataError('东方财富未返回近期有效行情', { kind: 'empty_recent' })
     successfulRequests++
     if (candidate) {
@@ -179,8 +240,16 @@ export async function updateH30269({
     if (requestCount > 0 && requestDelayMs > 0) await delay(requestDelayMs)
     const bounds = backfillBounds(candidate.backfill, candidate.history)
     try {
-      requestCount++
-      const history = await fetchEastmoneyRange(H30269, bounds, { fetcher, now, timeoutMs })
+      const history = await fetchRangeWithRetry(H30269, bounds, {
+        fetcher,
+        now,
+        timeoutMs,
+        delay,
+        retryDelaysMs,
+        logger,
+        label: '历史回补',
+        onAttempt: () => { requestCount++ },
+      })
       successfulRequests++
       if (history.length) {
         candidate.history = mergeHistory(candidate.history, history)
