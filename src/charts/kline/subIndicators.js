@@ -1,6 +1,7 @@
 import { calculateKDJ, calculateMACD, calculateRSI } from '../../utils/indicators.js'
 import { KDJ_PARAMETERS, KLINE_COLORS, MACD_PARAMETERS, RSI_PARAMETERS } from './config.js'
 import { createLineSeries } from './series.js'
+import { waveDefinition } from './waveIndicator.js'
 
 function line(id, name, color, data) {
   return { id, name, color, data, type: 'line' }
@@ -82,6 +83,7 @@ export const SUB_INDICATORS = {
     createSeries: (lines, axisIndex) => lines.map((item) => createLineSeries(item, axisIndex)),
     axis: { min: 0, max: 100, splitNumber: 4 },
   },
+  wave: waveDefinition,
 }
 
 export const SUB_INDICATOR_OPTIONS = Object.entries(SUB_INDICATORS).map(([key, indicator]) => ({ key, label: indicator.label }))
@@ -101,7 +103,8 @@ export function buildSubIndicator(history, key = 'kdj', parameters) {
     title: definition.title(settings),
     parameters: settings,
     lines,
+    values,
     axis: definition.axis,
-    createSeries: (axisIndex) => definition.createSeries(lines, axisIndex),
+    createSeries: (axisIndex) => definition.createSeries(lines, axisIndex, values, history),
   }
 }

@@ -22,9 +22,9 @@ export const RSI_PARAMETERS = { shortPeriod: 6, mediumPeriod: 12, longPeriod: 24
 export const BOLL_PARAMETERS = { period: 20, multiplier: 2 }
 
 // 图形区域与副图标题共用布局，缩放容器时无需分别计算位置。
-export function getKlineLayout(height = 360) {
+export function getKlineLayout(height = 360, indicatorKey) {
   const available = Math.max(30, height - 108)
-  const priceHeight = available * .62
+  const priceHeight = available * (indicatorKey === 'wave' ? .48 : .62)
   const volumeHeight = available * .16
   const volumeLabel = 8 + priceHeight + 4
   const volumeTop = volumeLabel + 22
@@ -39,6 +39,6 @@ export function getKlineLayout(height = 360) {
     volumeHeight,
     indicatorLabel,
     indicatorTop: indicatorLabel + 22,
-    indicatorHeight: available * .22,
+    indicatorHeight: available * (indicatorKey === 'wave' ? .36 : .22),
   }
 }

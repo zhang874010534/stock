@@ -2,9 +2,9 @@
 import { Activity, Menu } from 'lucide-vue-next'
 import { NButton, NSelect } from 'naive-ui'
 
-defineProps({ menuOpen: Boolean })
-defineEmits(['toggle-menu'])
-const indexOptions = [{ label: 'H30269', value: 'H30269' }]
+defineProps({ menuOpen: Boolean, instrument: { type: String, default: 'H30269' } })
+defineEmits(['toggle-menu', 'update:instrument'])
+const indexOptions = [{ label: 'H30269 · 指数', value: 'H30269' }, { label: '512890 · ETF', value: '512890' }]
 </script>
 
 <template>
@@ -19,9 +19,9 @@ const indexOptions = [{ label: 'H30269', value: 'H30269' }]
       </a>
     </div>
     <div class="index-picker">
-      <span class="picker-label">指数选择</span>
-      <NSelect class="index-select" value="H30269" :options="indexOptions" aria-label="选择指数" />
-      <span class="index-limit">仅支持一个指数</span>
+      <span class="picker-label">证券选择</span>
+      <NSelect class="index-select" :value="instrument" @update:value="$emit('update:instrument', $event)" :options="indexOptions" aria-label="选择证券" />
+      <span class="index-limit">指数 / ETF</span>
     </div>
   </header>
 </template>

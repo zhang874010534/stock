@@ -5,6 +5,7 @@ import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import Home from './views/Home.vue'
 
+const instrument = ref('H30269')
 const sidebarOpen = ref(false)
 const themeOverrides = {
   common: {
@@ -30,11 +31,11 @@ const themeOverrides = {
   <NConfigProvider :theme="darkTheme" :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
     <div class="app-shell" @keydown.esc="sidebarOpen = false">
       <a class="skip-link" href="#main-content">跳转到主要内容</a>
-      <AppHeader :menu-open="sidebarOpen" @toggle-menu="sidebarOpen = !sidebarOpen" />
+      <AppHeader v-model:instrument="instrument" :menu-open="sidebarOpen" @toggle-menu="sidebarOpen = !sidebarOpen" />
       <button v-if="sidebarOpen" class="sidebar-backdrop" aria-label="关闭导航" @click="sidebarOpen = false" />
       <AppSidebar :open="sidebarOpen" @close="sidebarOpen = false" />
       <main id="main-content" class="app-main" tabindex="-1">
-        <Home />
+        <Home :instrument="instrument" />
       </main>
     </div>
   </NConfigProvider>

@@ -1,9 +1,10 @@
 import { validateMarketData } from '../utils/kline.js'
 
-const H30269_DATA_URL = '/data/h30269.json'
+const DATA_URLS = { H30269: '/data/h30269.json', '512890': '/data/512890.json' }
 
-export async function getH30269({ fetcher = fetch, cacheKey = Date.now() } = {}) {
-  const response = await fetcher(`${H30269_DATA_URL}?t=${encodeURIComponent(cacheKey)}`, {
+export async function getMarketData(code, { fetcher = fetch, cacheKey = Date.now() } = {}) {
+  if (!DATA_URLS[code]) throw new Error('不支持的证券代码')
+  const response = await fetcher(`${DATA_URLS[code]}?t=${encodeURIComponent(cacheKey)}`, {
     cache: 'no-store',
     headers: {
       Accept: 'application/json',
@@ -16,5 +17,7 @@ export async function getH30269({ fetcher = fetch, cacheKey = Date.now() } = {})
   } catch {
     throw new Error('静态行情文件 JSON 格式异常')
   }
-  return validateMarketData(data)
+  return validateMarketData(data, code)
 }
+
+export function getH30269(options) { return getMarketData('H30269', options) }

@@ -53,12 +53,12 @@ function normalizeBackfill(backfill, history) {
   return normalized
 }
 
-export function createDataset(history, backfill, updatedAt) {
+export function createDataset(history, backfill, updatedAt, instrument = H30269) {
   validateHistory(history)
   const normalizedBackfill = normalizeBackfill(backfill, history)
   return {
-    code: H30269.code,
-    name: H30269.name,
+    code: instrument.code,
+    name: instrument.name,
     source: 'eastmoney',
     interval: '1d',
     updatedAt,
@@ -68,9 +68,9 @@ export function createDataset(history, backfill, updatedAt) {
   }
 }
 
-export function validateDataset(data) {
-  if (!data || data.code !== H30269.code || data.name !== H30269.name || data.source !== 'eastmoney' || data.interval !== '1d') {
-    throw new Error('Invalid H30269 dataset metadata')
+export function validateDataset(data, instrument = H30269) {
+  if (!data || data.code !== instrument.code || data.name !== instrument.name || data.source !== 'eastmoney' || data.interval !== '1d') {
+    throw new Error(`Invalid ${instrument.code} dataset metadata`)
   }
   if (typeof data.updatedAt !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(data.updatedAt) || !Number.isFinite(Date.parse(data.updatedAt))) {
     throw new Error('Invalid updatedAt')
@@ -81,7 +81,7 @@ export function validateDataset(data) {
   return true
 }
 
-export async function readDataset(filePath) {
+export async function readDataset(filePath, instrument = H30269) {
   let text
   try {
     text = await readFile(filePath, 'utf8')
@@ -95,7 +95,7 @@ export async function readDataset(filePath) {
   } catch (cause) {
     throw new Error(`Cannot parse existing ${basename(filePath)}`, { cause })
   }
-  validateDataset(data)
+  validateDataset(data, instrument)
   return { ...data, backfill: normalizeBackfill(data.backfill, data.history) }
 }
 
@@ -185,7 +185,8 @@ export async function fetchRangeWithRetry(instrument, bounds, {
 }
 
 export async function updateH30269({
-  filePath = resolve(dirname(fileURLToPath(import.meta.url)), '../public/data/h30269.json'),
+  instrument = H30269,
+  filePath = resolve(dirname(fileURLToPath(import.meta.url)), `../public/data/${instrument.code.toLowerCase()}.json`),
   fetcher = fetch,
   now = new Date(),
   timeoutMs = 15_000,
@@ -195,7 +196,7 @@ export async function updateH30269({
   logger = console,
   writer = atomicWriteJson,
 } = {}) {
-  const existing = await readDataset(filePath)
+  const existing = await readDataset(filePath, instrument)
   let candidate = existing ? clone(existing) : null
   const errors = []
   let successfulRequests = 0
@@ -204,7 +205,7 @@ export async function updateH30269({
 
   const recent = recentBounds(now)
   try {
-    const history = await fetchRangeWithRetry(H30269, recent, {
+    const history = await fetchRangeWithRetry(instrument, recent, {
       fetcher,
       now,
       timeoutMs,
@@ -227,7 +228,7 @@ export async function updateH30269({
         completed: false,
         nextEndDate: shiftDate(merged[0].date, -1),
         consecutiveEmptyRanges: 0,
-      }, now.toISOString())
+      }, now.toISOString(), instrument)
     }
     logger.log(`近期行情：${recent.start} 至 ${recent.end}，${history.length} 条`)
   } catch (error) {
@@ -240,7 +241,7 @@ export async function updateH30269({
     if (requestCount > 0 && requestDelayMs > 0) await delay(requestDelayMs)
     const bounds = backfillBounds(candidate.backfill, candidate.history)
     try {
-      const history = await fetchRangeWithRetry(H30269, bounds, {
+      const history = await fetchRangeWithRetry(instrument, bounds, {
         fetcher,
         now,
         timeoutMs,
@@ -284,14 +285,14 @@ export async function updateH30269({
   candidate.latest = clone(candidate.history.at(-1))
   const changed = !isDeepStrictEqual(stateOf(existing), stateOf(candidate))
   if (!changed) {
-    logger.log('H30269 数据无变化，跳过更新')
+    logger.log(`${instrument.code} 数据无变化，跳过更新`)
     return { changed: false, requestCount, successfulRequests, errors, data: existing }
   }
 
-  const output = createDataset(candidate.history, candidate.backfill, now.toISOString())
-  validateDataset(output)
+  const output = createDataset(candidate.history, candidate.backfill, now.toISOString(), instrument)
+  validateDataset(output, instrument)
   await writer(filePath, output)
-  logger.log(`H30269 数据已更新：共 ${output.history.length} 条，最新 ${output.latest.date}`)
+  logger.log(`${instrument.code} 数据已更新：共 ${output.history.length} 条，最新 ${output.latest.date}`)
   return { changed: true, requestCount, successfulRequests, errors, data: output }
 }
 

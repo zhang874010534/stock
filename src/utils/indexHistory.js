@@ -13,8 +13,9 @@ const numberFormatter = new Intl.NumberFormat('zh-CN', {
   maximumFractionDigits: 2,
 })
 
-export function formatIndexValue(value) {
-  return Number.isFinite(value) ? numberFormatter.format(value) : '—'
+export function formatIndexValue(value, decimals = 2) {
+  if (!Number.isFinite(value)) return '—'
+  return decimals === 2 ? numberFormatter.format(value) : value.toLocaleString('zh-CN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
 }
 
 // 图表数据约定：[{ date: 'YYYY-MM-DD', close: 9852.36 }]。

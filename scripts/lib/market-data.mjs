@@ -6,6 +6,8 @@ export const H30269 = {
   secid: '2.H30269',
 }
 
+export const ETF512890 = { code: '512890', name: '华泰柏瑞红利低波ETF', secid: '1.512890' }
+
 export class MarketDataError extends Error {
   constructor(message, { kind = 'upstream', upstreamStatus, retryAfterSeconds, cause } = {}) {
     super(message, { cause })
@@ -41,7 +43,7 @@ export function isValidKline(point) {
   }
   if (point.high < point.open || point.high < point.close) return false
   if (point.low > point.open || point.low > point.close || point.high < point.low) return false
-  for (const key of ['volume', 'amount']) {
+  for (const key of ['volume', 'amount', 'turnover']) {
     if (key in point && (!Number.isFinite(point[key]) || point[key] < 0)) return false
   }
   return true
@@ -59,7 +61,7 @@ function optionalNumber(value) {
 
 export function parseEastmoneyKline(line) {
   if (typeof line !== 'string') throw new MarketDataError('东方财富返回的日线数据异常', { kind: 'invalid_data' })
-  const [date, openText, closeText, highText, lowText, volumeText, amountText] = line.split(',')
+  const [date, openText, closeText, highText, lowText, volumeText, amountText, , , , turnoverText] = line.split(',')
   const point = {
     date,
     open: requiredNumber(openText),
@@ -71,6 +73,8 @@ export function parseEastmoneyKline(line) {
   const amount = optionalNumber(amountText)
   if (volume !== undefined) point.volume = volume
   if (amount !== undefined) point.amount = amount
+  const turnover = optionalNumber(turnoverText)
+  if (turnover !== undefined) point.turnover = turnover
   if (!isValidKline(point)) throw new MarketDataError('东方财富返回的 OHLC 日线数据异常', { kind: 'invalid_data' })
   return point
 }

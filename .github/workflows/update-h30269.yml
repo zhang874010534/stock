@@ -1,4 +1,4 @@
-name: Update H30269
+name: Update H30269 and 512890
 
 on:
   schedule:
@@ -30,20 +30,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Update H30269 data
+      - name: Update market data
+        id: update
+        continue-on-error: true
         run: npm run data:update
 
       - name: Check for data changes
         id: data-changes
         shell: bash
         run: |
-          if git diff --quiet -- public/data/h30269.json && \
-             [[ -z "$(git ls-files --others --exclude-standard -- public/data/h30269.json)" ]]; then
+          if git diff --quiet -- public/data/h30269.json public/data/512890.json && \
+             [[ -z "$(git ls-files --others --exclude-standard -- public/data/h30269.json public/data/512890.json)" ]]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No H30269 data changes"
+            echo "No market data changes"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "H30269 data changes detected"
+            echo "Market data changes detected"
           fi
 
       - name: Commit and push data
@@ -53,6 +55,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- public/data/h30269.json
+          if [[ -f public/data/512890.json ]]; then git add -- public/data/512890.json; fi
           git diff --cached --quiet && exit 0
-          git commit -m "chore(data): update H30269 market data"
+          git commit -m "chore(data): update market data"
           git push
+
+      - name: Report incomplete update
+        if: steps.update.outcome == 'failure'
+        run: exit 1

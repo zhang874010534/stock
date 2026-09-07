@@ -14,6 +14,7 @@ defineProps({
   subIndicator: { type: String, required: true },
   indicatorSettings: { type: Object, required: true },
   disabled: Boolean,
+  waveAvailable: Boolean,
 })
 const emit = defineEmits(['period-change', 'range-change', 'ma-change', 'boll-change', 'indicator-change', 'settings-change'])
 const maMenu = ref(null)
@@ -49,7 +50,7 @@ function handleFocusOut(event) {
       <button type="button" class="boll-button" :class="{ selected: bollEnabled }" :aria-pressed="bollEnabled" :disabled="disabled" title="在主图显示/隐藏 BOLL" @click="emit('boll-change', !bollEnabled)">BOLL</button>
       <label class="indicator-selector">副图
         <select :value="subIndicator" :disabled="disabled" aria-label="副图指标" @change="emit('indicator-change', $event.target.value)">
-          <option v-for="item in SUB_INDICATOR_OPTIONS" :key="item.key" :value="item.key">{{ item.label }}</option>
+          <option v-for="item in SUB_INDICATOR_OPTIONS" :key="item.key" :value="item.key" :disabled="item.key === 'wave' && !waveAvailable">{{ item.label }}{{ item.key === 'wave' && !waveAvailable ? '（指标不可用）' : '' }}</option>
         </select>
       </label>
       <KLineIndicatorSettings :sub-indicator="subIndicator" :settings="indicatorSettings" :disabled="disabled" @apply="(key, value) => emit('settings-change', key, value)" />

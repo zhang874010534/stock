@@ -6,6 +6,7 @@ import { aggregateKlines, formatVolume, getKlineQuote, KLINE_PERIODS } from '../
 import { calculateMA } from '../utils/indicators.js'
 import { BOLL_PARAMETERS, getKlineLayout, KDJ_PARAMETERS, MACD_PARAMETERS, MA_OPTIONS, RSI_PARAMETERS } from '../charts/kline/config.js'
 import { buildMainIndicator } from '../charts/kline/mainIndicators.js'
+import { WAVE_PARAMETERS } from '../charts/kline/waveIndicator.js'
 import { buildSubIndicator } from '../charts/kline/subIndicators.js'
 import KLineToolbar from './kline/KLineToolbar.vue'
 import KLineQuote from './kline/KLineQuote.vue'
@@ -13,6 +14,7 @@ import { useKlineChart } from './kline/useKlineChart.js'
 import { useKlineFullscreen } from './kline/useKlineFullscreen.js'
 
 const props = defineProps({
+  instrument: { type: String, default: 'H30269' },
   history: { type: Array, default: () => [] },
   backfillCompleted: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
@@ -26,6 +28,7 @@ const maOptions = ref(MA_OPTIONS.map((item) => ({ ...item })))
 const bollEnabled = ref(false)
 const subIndicatorKey = ref('kdj')
 const indicatorSettings = ref({
+  wave: { ...WAVE_PARAMETERS },
   boll: { ...BOLL_PARAMETERS },
   kdj: { ...KDJ_PARAMETERS },
   macd: { ...MACD_PARAMETERS },
@@ -51,7 +54,7 @@ const displayError = computed(() => props.error || chartError.value)
 const showChart = computed(() => !isBusy.value && !displayError.value && history.value.length > 0)
 const quote = computed(() => showChart.value ? getKlineQuote(history.value, activeIndex.value) : null)
 const summary = computed(() => getWindowSummary(history.value, visibleWindow.value))
-const layout = computed(() => getKlineLayout(height.value))
+const layout = computed(() => getKlineLayout(height.value, subIndicatorKey.value))
 const periodLabel = computed(() => KLINE_PERIODS.find((item) => item.key === period.value)?.label)
 
 function setMA(period, enabled) {
@@ -68,10 +71,10 @@ function setIndicatorSettings(key, settings) {
 <template>
   <div class="index-chart-slot" :style="expanded ? { minHeight: `${inlineHeight}px` } : undefined">
     <Teleport to="body" :disabled="!expanded">
-      <section ref="panelElement" class="index-chart" :class="{ 'is-expanded': expanded }" :role="expanded ? 'dialog' : undefined" :aria-modal="expanded ? true : undefined" aria-label="H30269 指数 K 线" tabindex="-1">
+      <section ref="panelElement" class="index-chart" :class="{ 'is-expanded': expanded }" :role="expanded ? 'dialog' : undefined" :aria-modal="expanded ? true : undefined" :aria-label="`${instrument} K 线`" tabindex="-1">
         <div class="chart-heading">
-          <h2>指数 K 线 <button type="button" class="info-button" aria-label="指数 K 线说明" title="日线在本地按自然周、月、季度聚合；MA、BOLL、KDJ、MACD、RSI 均按当前周期的完整已加载历史计算。滚轮缩放，拖动查看历史。"><Info :size="14" /></button></h2>
-          <div class="heading-actions"><span class="instrument">H30269 · {{ periodLabel }}</span><button type="button" class="expand-button" :aria-label="expanded ? '退出全屏' : '放大全屏'" :title="expanded ? '退出全屏（ESC）' : '放大全屏'" @click="toggle"><Minimize2 v-if="expanded" :size="15" /><Maximize2 v-else :size="15" /><span>{{ expanded ? '退出 · ESC' : '放大' }}</span></button></div>
+          <h2>{{ instrument === '512890' ? 'ETF K 线' : '指数 K 线' }} <button type="button" class="info-button" aria-label="指数 K 线说明" title="日线在本地按自然周、月、季度聚合；MA、BOLL、KDJ、MACD、RSI 均按当前周期的完整已加载历史计算。滚轮缩放，拖动查看历史。"><Info :size="14" /></button></h2>
+          <div class="heading-actions"><span class="instrument">{{ instrument }} · {{ periodLabel }}</span><button type="button" class="expand-button" :aria-label="expanded ? '退出全屏' : '放大全屏'" :title="expanded ? '退出全屏（ESC）' : '放大全屏'" @click="toggle"><Minimize2 v-if="expanded" :size="15" /><Maximize2 v-else :size="15" /><span>{{ expanded ? '退出 · ESC' : '放大' }}</span></button></div>
         </div>
 
         <KLineToolbar
@@ -80,6 +83,7 @@ function setIndicatorSettings(key, settings) {
           :ma-options="maOptions"
           :boll-enabled="bollEnabled"
           :sub-indicator="subIndicatorKey"
+          :wave-available="instrument === '512890'"
           :indicator-settings="indicatorSettings"
           :disabled="isBusy"
           @period-change="period = $event"
@@ -89,13 +93,14 @@ function setIndicatorSettings(key, settings) {
           @indicator-change="subIndicatorKey = $event"
           @settings-change="setIndicatorSettings"
         />
-        <KLineQuote :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
+        <KLineQuote :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
+        <div v-if="subIndicatorKey === 'wave'" class="wave-note">含未来函数，历史信号可能重绘；使用未复权行情。{{ subIndicator.values.missingTurnover ? '部分K线缺少换手率，短买点不计算。' : '' }}当前已加载 {{ history.length }} 根K线，历史回补会影响计算结果。</div>
         <div class="chart-body" :aria-busy="isBusy" @mouseleave="resetHover">
           <div ref="chartElement" class="chart-canvas" :style="{ visibility: showChart ? 'visible' : 'hidden' }" />
           <template v-if="showChart">
             <div class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
-            <div class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex]) }}</b></div>
+            <div class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex], subIndicatorKey === 'wave' ? 3 : 2) }}</b></div>
           </template>
           <div v-else class="chart-state" role="status">
             <span>{{ displayError || (isBusy ? '正在读取行情…' : '暂无行情数据') }}</span>
@@ -103,6 +108,12 @@ function setIndicatorSettings(key, settings) {
           </div>
         </div>
 
+        <div v-if="subIndicatorKey === 'wave' && showChart" class="wave-readout" aria-label="波段信号详情">
+          <span>{{ history[activeIndex]?.date }} · {{ subIndicator.values.bullish[activeIndex] ? '偏多' : '偏空／未就绪' }}</span>
+          <span>量能饱和度：{{ formatIndexValue(subIndicator.values.saturation[activeIndex]) }}%</span>
+          <span v-for="event in subIndicator.values.events[activeIndex]" :key="event.name" :style="{ color: event.color }">{{ event.name }}</span>
+          <span v-if="!subIndicator.values.events[activeIndex]?.length">当前K线无信号</span>
+        </div>
         <div v-if="summary && showChart" class="range-summary">
           <span>{{ summary.startDate }} — {{ summary.endDate }} · {{ visibleWindow.endIndex - visibleWindow.startIndex + 1 }} 根</span>
           <span :class="summary.changePercent >= 0 ? 'up' : 'down'">区间 {{ summary.changePercent > 0 ? '+' : '' }}{{ summary.changePercent.toFixed(2) }}%</span>
@@ -114,6 +125,8 @@ function setIndicatorSettings(key, settings) {
 </template>
 
 <style scoped>
+.wave-note { color: #b8a77b; font-size: 11px; line-height: 1.6; padding: 5px 0; }
+.wave-readout { display: flex; flex-wrap: wrap; gap: 5px 14px; color: #bfc3d1; font-size: 11px; padding: 8px 0; min-height: 30px; }
 .index-chart-slot { display: flex; min-width: 0; min-height: 580px; }
 .index-chart { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 14px 15px 11px; border: 1px solid #30333e; border-radius: 10px; background: #101116; color: #bcc1cf; }
 .index-chart.is-expanded { position: fixed; inset: 0; z-index: 1000; width: 100vw; height: 100dvh; min-height: 0; padding: 14px 22px 12px; border: 0; border-radius: 0; }

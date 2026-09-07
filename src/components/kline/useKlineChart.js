@@ -85,7 +85,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
       height.value = element.value.clientHeight
       if (chart) {
         chart.resize()
-        if (history.value.length) chart.setOption({ grid: runtime.createKlineGrids(height.value) })
+        if (history.value.length) chart.setOption({ grid: runtime.createKlineGrids(height.value, subIndicator.value.key) })
       } else if (!loading.value && !error.value) renderChart()
     })
   }
@@ -112,6 +112,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
   watch([movingAverages, mainIndicators, subIndicator], () => {
     if (!chart || !history.value.length) return
     chart.setOption({
+      grid: runtime.createKlineGrids(height.value, subIndicator.value.key),
       yAxis: [
         {},
         {},

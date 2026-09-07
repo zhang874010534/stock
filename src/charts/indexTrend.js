@@ -1,7 +1,8 @@
 import { init, use } from 'echarts/core'
-import { BarChart, CandlestickChart, LineChart } from 'echarts/charts'
+import { BarChart, CandlestickChart, LineChart, ScatterChart, CustomChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent } from 'echarts/components'
 import { SVGRenderer } from 'echarts/renderers'
+import { LabelLayout } from 'echarts/features'
 import { calculateMA } from '../utils/indicators.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
 import { formatVolume } from '../utils/kline.js'
@@ -9,14 +10,14 @@ import { getKlineLayout, KLINE_COLORS, MA_OPTIONS } from './kline/config.js'
 import { createKlineSeries } from './kline/series.js'
 import { buildSubIndicator } from './kline/subIndicators.js'
 
-use([BarChart, CandlestickChart, LineChart, GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent, SVGRenderer])
+use([BarChart, CandlestickChart, LineChart, ScatterChart, CustomChart, GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent, SVGRenderer, LabelLayout])
 
 export function initIndexTrend(container, options = {}) {
   return init(container, null, { renderer: 'svg', ...options })
 }
 
-export function createKlineGrids(height) {
-  const layout = getKlineLayout(height)
+export function createKlineGrids(height, indicatorKey) {
+  const layout = getKlineLayout(height, indicatorKey)
   return [
     { top: layout.priceTop, height: layout.priceHeight },
     { top: layout.volumeTop, height: layout.volumeHeight },
@@ -39,9 +40,9 @@ export function createIndexTrendOption(history, window, {
     textStyle: { fontFamily: 'Segoe UI, Microsoft YaHei, sans-serif' },
     aria: {
       enabled: true,
-      label: { description: 'H30269 指数 K 线、主图指标、成交量与副图指标。可切换周期、设置指标参数、滚轮缩放或拖动查看历史行情。' },
+      label: { description: '行情 K 线、主图指标、成交量与副图指标。可切换周期、设置指标参数、滚轮缩放或拖动查看历史行情。' },
     },
-    grid: createKlineGrids(height),
+    grid: createKlineGrids(height, subIndicator.key),
     axisPointer: {
       link: [{ xAxisIndex: 'all' }],
       label: { backgroundColor: '#373a45', color: '#f0f1f5', fontSize: 11 },
@@ -83,7 +84,7 @@ export function createIndexTrendOption(history, window, {
         color: KLINE_COLORS.text,
         fontSize: 10,
         showMaxLabel: gridIndex === 0,
-        formatter: gridIndex === 1 ? (value) => formatVolume(value).replace('.00', '') : (value) => Number(value).toLocaleString('en-US', { maximumFractionDigits: gridIndex === 2 ? 2 : 0 }),
+        formatter: gridIndex === 1 ? (value) => formatVolume(value).replace('.00', '') : (value) => Number(value).toLocaleString('en-US', { maximumFractionDigits: 3 }),
       },
       axisPointer: { label: { formatter: ({ value }) => gridIndex === 1 ? formatVolume(value) : formatIndexValue(value) } },
       splitLine: { lineStyle: { color: KLINE_COLORS.grid, width: 1 } },

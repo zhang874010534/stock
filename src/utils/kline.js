@@ -20,7 +20,7 @@ export function isValidKline(point) {
   }
   if (point.high < point.open || point.high < point.close) return false
   if (point.low > point.open || point.low > point.close || point.high < point.low) return false
-  for (const key of ['volume', 'amount']) {
+  for (const key of ['volume', 'amount', 'turnover']) {
     if (key in point && (!Number.isFinite(point[key]) || point[key] < 0)) return false
   }
   return true
@@ -37,16 +37,16 @@ export function validateKlineData(history) {
   return history
 }
 
-export function validateMarketData(data) {
-  if (!data || data.code !== 'H30269' || data.interval !== '1d') throw new Error('H30269 行情文件格式异常')
+export function validateMarketData(data, code = 'H30269') {
+  if (!data || !['H30269', '512890'].includes(code) || data.code !== code || data.interval !== '1d') throw new Error(`${code} 行情文件格式异常`)
   validateKlineData(data.history)
   const latest = data.history.at(-1)
-  const latestMatches = ['date', 'open', 'close', 'high', 'low', 'volume', 'amount'].every((key) => data.latest?.[key] === latest[key])
+  const latestMatches = ['date', 'open', 'close', 'high', 'low', 'volume', 'amount', 'turnover'].every((key) => data.latest?.[key] === latest[key])
   if (!latestMatches || !isValidKline(data.latest)) {
-    throw new Error('H30269 最新行情与历史数据不一致')
+    throw new Error(`${code} 最新行情与历史数据不一致`)
   }
-  if (typeof data.updatedAt !== 'string' || !Number.isFinite(Date.parse(data.updatedAt))) throw new Error('H30269 更新时间异常')
-  if (!data.backfill || typeof data.backfill.completed !== 'boolean') throw new Error('H30269 历史回补状态异常')
+  if (typeof data.updatedAt !== 'string' || !Number.isFinite(Date.parse(data.updatedAt))) throw new Error(`${code} 更新时间异常`)
+  if (!data.backfill || typeof data.backfill.completed !== 'boolean') throw new Error(`${code} 历史回补状态异常`)
   return data
 }
 
@@ -84,7 +84,7 @@ function aggregateBy(history, groupKey) {
       high: Math.max(...points.map((point) => point.high)),
       low: Math.min(...points.map((point) => point.low)),
     }
-    for (const key of ['volume', 'amount']) {
+    for (const key of ['volume', 'amount', 'turnover']) {
       if (points.every((point) => Number.isFinite(point[key]) && point[key] >= 0)) {
         aggregate[key] = points.reduce((total, point) => total + point[key], 0)
       }

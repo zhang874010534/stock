@@ -1,13 +1,16 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, watch, ref } from 'vue'
 import { NButton } from 'naive-ui'
 import { ArrowUpRight, Database, Clock3, ShieldCheck, ChartColumn, Globe2, ScanLine, PieChart, Grid2X2, ArrowRight } from 'lucide-vue-next'
 import MetricCard from '../components/MetricCard.vue'
 import IndexChart from '../components/IndexChart.vue'
 import ChartPlaceholder from '../components/ChartPlaceholder.vue'
-import { getH30269 } from '../api/h30269.js'
+import { getMarketData } from '../api/h30269.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
 
+const props = defineProps({ instrument: { type: String, default: 'H30269' } })
+const instrumentName = computed(() => props.instrument === '512890' ? '华泰柏瑞红利低波ETF' : '中证红利低波动指数')
+let requestId = 0
 const data = ref(null)
 const loading = ref(false)
 const error = ref('')
@@ -28,22 +31,29 @@ const updatedAt = computed(() => {
 })
 
 async function loadMarketData() {
-  if (loading.value) return
+  const currentRequest = ++requestId
+  const code = props.instrument
+  data.value = null
   loading.value = true
   error.value = ''
   try {
-    data.value = await getH30269()
+    const result = await getMarketData(code)
+    if (currentRequest === requestId) data.value = result
   } catch (cause) {
+    if (currentRequest !== requestId) return
     error.value = typeof cause?.message === 'string' ? cause.message : '行情加载失败，请稍后重试'
   } finally {
-    loading.value = false
+    if (currentRequest === requestId) loading.value = false
   }
 }
-onMounted(loadMarketData)
+watch(() => props.instrument, () => {
+  document.title = `红利低波数据看板 · ${props.instrument}`
+  loadMarketData()
+}, { immediate: true })
 
 // 仅日线接入真实数据；估值、股息率需要各自的数据来源和计算口径。
 const metrics = computed(() => [
-  { title: '指数点位', value: formatIndexValue(latest.value?.close), description: '日线最新点位', period: `交易日期：${latest.value?.date ?? '—'}`, accent: 'blue' },
+  { title: props.instrument === '512890' ? 'ETF 价格' : '指数点位', value: formatIndexValue(latest.value?.close, props.instrument === '512890' ? 3 : 2), description: props.instrument === '512890' ? '日线最新价格（元）' : '日线最新点位', period: `交易日期：${latest.value?.date ?? '—'}`, accent: 'blue' },
   { title: '股息率', description: '近12个月股息率', period: '近12个月', accent: 'cyan' },
   { title: 'PE (TTM)', description: '滚动市盈率', period: '近12个月', accent: 'cyan' },
   { title: 'PB', description: '市净率', period: '近12个月', accent: 'purple' },
@@ -63,11 +73,11 @@ const futureModules = [
     <section class="index-banner panel" aria-labelledby="index-title">
       <div class="banner-copy">
         <div class="banner-eyebrow"><span class="status-dot" />红利低波 · 指数观察</div>
-        <h1 id="index-title"><span class="mono">H30269</span> 中证红利低波动指数</h1>
+        <h1 id="index-title"><span class="mono">{{ instrument }}</span> {{ instrumentName }}</h1>
         <p>以长期视角，观察红利与低波动的价值。</p>
       </div>
       <div class="banner-meta"><span class="preview-badge">定时同步 · 日线</span><span>{{ statusLabel }}</span></div>
-      <span class="banner-watermark" aria-hidden="true">H30269</span>
+      <span class="banner-watermark" aria-hidden="true">{{ instrument }}</span>
     </section>
 
     <section class="metrics-grid" aria-label="指数关键指标">
@@ -77,6 +87,8 @@ const futureModules = [
 
     <section class="charts-grid" aria-label="指数分析图表">
       <IndexChart
+        :key="instrument"
+        :instrument="instrument"
         :history="dailyHistory"
         :backfill-completed="backfillCompleted"
         :loading="loading"
