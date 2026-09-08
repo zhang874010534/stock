@@ -99,6 +99,8 @@ GitHub Actions 在每个工作日北京时间 16:30（UTC 08:30）运行 `npm ru
 `public/data/h30269.json` 和 `public/data/512890.json`。两只证券分别刷新最近 30 个自然日、回补一个 90 天窗口，并保存独立游标。数据有变化时只提交行情 JSON，commit 信息为
 `chore(data): update market data`；没有变化时不产生 commit。
 
+执行时先分别更新并保存两个标的的近期行情，再回补历史，阶段之间间隔 3 秒。近期行情失败会保留旧数据、跳过该标的本轮回补，并将任务标记失败；其他标的继续处理。仅历史回补请求失败时给出 Actions 警告，保留回补游标，下次继续，不影响已保存的近期行情。文件读写或校验异常仍标记失败。网络失败日志附带可用的底层错误码（例如 `ECONNRESET`、`ENOTFOUND`），用于排查连接或 DNS 问题。失败任务仍会尝试提交已成功更新的数据。
+
 需要手动执行时，进入 GitHub **Actions → Update H30269 and 512890 → Run workflow**。GitHub Actions
 只负责数据更新与提交；Cloudflare 仍由原有 GitHub 集成在检测到新 commit 后负责 Build 和 Deploy。
 

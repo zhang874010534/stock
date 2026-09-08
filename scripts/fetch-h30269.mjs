@@ -135,9 +135,19 @@ function blocksFurtherRequests(error) {
   return isRetryableRequestError(error)
 }
 
-function describeError(error) {
+export function describeError(error) {
   const status = error.upstreamStatus ? ` HTTP ${error.upstreamStatus}` : ''
-  return `${error.message}${status}`
+  const codes = new Set()
+  const visited = new Set()
+  function collect(value) {
+    if (!value || typeof value !== 'object' || visited.has(value)) return
+    visited.add(value)
+    if (typeof value.code === 'string' && /^[A-Z][A-Z0-9_]+$/.test(value.code)) codes.add(value.code)
+    collect(value.cause)
+    if (Array.isArray(value.errors)) value.errors.forEach(collect)
+  }
+  collect(error)
+  return `${error.message}${status}${codes.size ? ` [${[...codes].join(', ')}]` : ''}`
 }
 
 function retryWaitMs(error, fallbackMs) {
@@ -185,6 +195,7 @@ export async function fetchRangeWithRetry(instrument, bounds, {
 }
 
 export async function updateH30269({
+  phase = 'both',
   instrument = H30269,
   filePath = resolve(dirname(fileURLToPath(import.meta.url)), `../public/data/${instrument.code.toLowerCase()}.json`),
   fetcher = fetch,
@@ -196,6 +207,7 @@ export async function updateH30269({
   logger = console,
   writer = atomicWriteJson,
 } = {}) {
+  if (!['both', 'recent', 'backfill'].includes(phase)) throw new Error('Invalid update phase')
   const existing = await readDataset(filePath, instrument)
   let candidate = existing ? clone(existing) : null
   const errors = []
@@ -203,41 +215,43 @@ export async function updateH30269({
   let requestCount = 0
   let stopRequests = false
 
-  const recent = recentBounds(now)
-  try {
-    const history = await fetchRangeWithRetry(instrument, recent, {
-      fetcher,
-      now,
-      timeoutMs,
-      delay,
-      retryDelaysMs,
-      logger,
-      label: '近期行情',
-      onAttempt: () => { requestCount++ },
-    })
-    if (!history.length) throw new MarketDataError('东方财富未返回近期有效行情', { kind: 'empty_recent' })
-    successfulRequests++
-    if (candidate) {
-      const previousEarliest = candidate.history[0].date
-      candidate.history = mergeHistory(candidate.history, history)
-      refreshEarliestState(candidate, previousEarliest)
-    } else {
-      const merged = mergeHistory(history)
-      candidate = createDataset(merged, {
-        earliestDate: merged[0].date,
-        completed: false,
-        nextEndDate: shiftDate(merged[0].date, -1),
-        consecutiveEmptyRanges: 0,
-      }, now.toISOString(), instrument)
+  if (phase !== 'backfill') {
+    const recent = recentBounds(now)
+    try {
+      const history = await fetchRangeWithRetry(instrument, recent, {
+        fetcher,
+        now,
+        timeoutMs,
+        delay,
+        retryDelaysMs,
+        logger,
+        label: '近期行情',
+        onAttempt: () => { requestCount++ },
+      })
+      if (!history.length) throw new MarketDataError('东方财富未返回近期有效行情', { kind: 'empty_recent' })
+      successfulRequests++
+      if (candidate) {
+        const previousEarliest = candidate.history[0].date
+        candidate.history = mergeHistory(candidate.history, history)
+        refreshEarliestState(candidate, previousEarliest)
+      } else {
+        const merged = mergeHistory(history)
+        candidate = createDataset(merged, {
+          earliestDate: merged[0].date,
+          completed: false,
+          nextEndDate: shiftDate(merged[0].date, -1),
+          consecutiveEmptyRanges: 0,
+        }, now.toISOString(), instrument)
+      }
+      logger.log(`近期行情：${recent.start} 至 ${recent.end}，${history.length} 条`)
+    } catch (error) {
+      errors.push({ task: 'recent', error })
+      stopRequests = blocksFurtherRequests(error)
+      logger.warn(`近期行情更新失败：${describeError(error)}`)
     }
-    logger.log(`近期行情：${recent.start} 至 ${recent.end}，${history.length} 条`)
-  } catch (error) {
-    errors.push({ task: 'recent', error })
-    stopRequests = blocksFurtherRequests(error)
-    logger.warn(`近期行情更新失败：${describeError(error)}`)
   }
 
-  if (candidate && !candidate.backfill.completed && !stopRequests) {
+  if (phase !== 'recent' && candidate && !candidate.backfill.completed && !stopRequests) {
     if (requestCount > 0 && requestDelayMs > 0) await delay(requestDelayMs)
     const bounds = backfillBounds(candidate.backfill, candidate.history)
     try {
@@ -301,7 +315,7 @@ async function main() {
   if (verbose) console.log(`数据文件：${resolve(dirname(fileURLToPath(import.meta.url)), '../public/data/h30269.json')}`)
   const result = await updateH30269()
   if (verbose) console.log(`请求 ${result.requestCount} 次，成功 ${result.successfulRequests} 次，数据${result.changed ? '已写入' : '未重写'}`)
-  if (result.errors.length) process.exitCode = 1
+  if (result.errors.some(({ task }) => task === 'recent')) process.exitCode = 1
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {

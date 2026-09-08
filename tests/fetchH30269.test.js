@@ -36,6 +36,29 @@ const response = (history, init) => Response.json({
 }, init)
 const silentLogger = { log() {}, warn() {} }
 
+test('分阶段更新先落盘近期行情，回补失败不改变已保存数据和游标', async () => {
+  const old = validDataset([point('2026-09-03', 99)])
+  await withDatasetFile(old, async (filePath) => {
+    let calls = 0
+    const recent = await updateH30269({ filePath, now: NOW, phase: 'recent', logger: silentLogger,
+      fetcher: async () => { calls++; return response([point('2026-09-04', 100)]) },
+    })
+    assert.equal(calls, 1)
+    assert.equal(recent.data.latest.date, '2026-09-04')
+    const saved = await readFile(filePath, 'utf8')
+    const backfill = await updateH30269({ filePath, now: NOW, phase: 'backfill', logger: silentLogger, retryDelaysMs: [],
+      fetcher: async (url) => {
+        calls++
+        assert.equal(url.searchParams.get('end'), '20260902')
+        return new Response('unavailable', { status: 503 })
+      },
+    })
+    assert.equal(calls, 2)
+    assert.equal(backfill.errors[0].task, 'backfill')
+    assert.equal(await readFile(filePath, 'utf8'), saved)
+  })
+})
+
 function validDataset(history, backfill = {}) {
   const earliest = new Date(`${history[0].date}T00:00:00Z`)
   earliest.setUTCDate(earliest.getUTCDate() - 1)
