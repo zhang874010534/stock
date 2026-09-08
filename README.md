@@ -106,6 +106,21 @@ GitHub Actions 在每个工作日北京时间 16:30（UTC 08:30）运行 `npm ru
 
 ## API 与扩展
 
+### 股息率与十年期国债收益率
+
+股息率卡片读取中证指数 H30269 的 `D/P1`（总股本口径，百分数），下方展示中债国债到期收益率曲线的 10 年期限值。512890 页面明确标为“标的指数股息率”，不代表 ETF 自身的现金分红收益率。两项分别显示数据日期和官方来源，不计算日期不一致的利差。
+
+独立工作流 `Update dividend and treasury yields` 在工作日北京时间 18:15 更新（中债官网注明日终发布时间为 17:30），也支持手动运行。依赖仅为 Python 和读取中证官方 XLS 文件的 `xlrd`，没有引入 AKShare，也不改变东方财富 K 线流程。各指标独立保存：一项失败不影响另一项；失败或上游日期倒退时保留旧文件，不把旧数据标成当天数据。股票和指标工作流共享提交锁，避免互相同时推送。
+
+本地更新：
+
+```powershell
+python -m pip install -r scripts/requirements-indicators.txt
+python scripts/fetch-indicators.py
+```
+
+输出为 `public/data/dividend-h30269.json` 与 `public/data/china-bond-10y.json`。GitHub Actions 提交成功后随网站部署生效。
+
 ```text
 GET /api/history?symbol=H30269&range=1y
 GET /api/h30269?range=1y

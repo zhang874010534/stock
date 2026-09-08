@@ -3,6 +3,7 @@ import { computed, watch, ref } from 'vue'
 import { NButton } from 'naive-ui'
 import { ArrowUpRight, Database, Clock3, ShieldCheck, ChartColumn, Globe2, ScanLine, PieChart, Grid2X2, ArrowRight } from 'lucide-vue-next'
 import MetricCard from '../components/MetricCard.vue'
+import YieldMetricCard from '../components/YieldMetricCard.vue'
 import IndexChart from '../components/IndexChart.vue'
 import ChartPlaceholder from '../components/ChartPlaceholder.vue'
 import { getMarketData } from '../api/h30269.js'
@@ -51,7 +52,7 @@ watch(() => props.instrument, () => {
   loadMarketData()
 }, { immediate: true })
 
-// 仅日线接入真实数据；估值、股息率需要各自的数据来源和计算口径。
+// 股息率与国债收益率使用独立的官方静态数据；其他估值指标仍待接入。
 const metrics = computed(() => [
   { title: props.instrument === '512890' ? 'ETF 价格' : '指数点位', value: formatIndexValue(latest.value?.close, props.instrument === '512890' ? 3 : 2), description: props.instrument === '512890' ? '日线最新价格（元）' : '日线最新点位', period: `交易日期：${latest.value?.date ?? '—'}`, accent: 'blue' },
   { title: '股息率', description: '近12个月股息率', period: '近12个月', accent: 'cyan' },
@@ -81,7 +82,10 @@ const futureModules = [
     </section>
 
     <section class="metrics-grid" aria-label="指数关键指标">
-      <MetricCard v-for="metric in metrics" :key="metric.title" v-bind="metric" />
+      <template v-for="metric in metrics" :key="metric.title">
+        <YieldMetricCard v-if="metric.title === '股息率'" :instrument="instrument" />
+        <MetricCard v-else v-bind="metric" />
+      </template>
       <MetricCard title="信号状态" description="等待数据与计算规则" period="基于多因子综合信号" signal />
     </section>
 
