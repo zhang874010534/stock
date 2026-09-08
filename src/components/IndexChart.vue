@@ -40,7 +40,7 @@ const maData = computed(() => Object.fromEntries(MA_OPTIONS.map(({ period }) => 
 const movingAverages = computed(() => maOptions.value.map((item) => ({ ...item, data: maData.value[item.period] })))
 const mainIndicators = computed(() => bollEnabled.value ? [buildMainIndicator(history.value, 'boll', indicatorSettings.value.boll)] : [])
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
-const { loading: chartLoading, error: chartError, range, activeIndex, visibleWindow, height, selectRange, resetHover, resize, load } = useKlineChart({
+const { loading: chartLoading, error: chartError, range, activeIndex, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load } = useKlineChart({
   element: chartElement,
   history,
   period,
@@ -72,6 +72,7 @@ function setIndicatorSettings(key, settings) {
   <div class="index-chart-slot" :style="expanded ? { minHeight: `${inlineHeight}px` } : undefined">
     <Teleport to="body" :disabled="!expanded">
       <section ref="panelElement" class="index-chart" :class="{ 'is-expanded': expanded, 'has-wave': subIndicatorKey === 'wave' }" :role="expanded ? 'dialog' : undefined" :aria-modal="expanded ? true : undefined" :aria-label="`${instrument} K 线`" tabindex="-1">
+        <div class="chart-controls">
         <div class="chart-heading">
           <h2>{{ instrument === '512890' ? 'ETF K 线' : '指数 K 线' }} <button type="button" class="info-button" aria-label="指数 K 线说明" title="日线在本地按自然周、月、季度聚合；MA、BOLL、KDJ、MACD、RSI 均按当前周期的完整已加载历史计算。滚轮缩放，拖动查看历史。"><Info :size="14" /></button></h2>
           <div class="heading-actions"><span class="instrument">{{ instrument }} · {{ periodLabel }}</span><button type="button" class="expand-button" :aria-label="expanded ? '退出全屏' : '放大全屏'" :title="expanded ? '退出全屏（ESC）' : '放大全屏'" @click="toggle"><Minimize2 v-if="expanded" :size="15" /><Maximize2 v-else :size="15" /><span>{{ expanded ? '退出 · ESC' : '放大' }}</span></button></div>
@@ -93,7 +94,8 @@ function setIndicatorSettings(key, settings) {
           @indicator-change="subIndicatorKey = $event"
           @settings-change="setIndicatorSettings"
         />
-        <KLineQuote :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
+        </div>
+        <KLineQuote :floating="expanded && showChart" :side="quoteSide" :overlay-offset="subIndicatorKey === 'wave' ? 32 : 8" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
         <div v-if="subIndicatorKey === 'wave'" class="wave-note">含未来函数，历史信号可能重绘；使用未复权行情。{{ subIndicator.values.missingTurnover ? '部分K线缺少换手率，短买点不计算。' : '' }}当前已加载 {{ history.length }} 根K线，历史回补会影响计算结果。</div>
         <div class="chart-body" :aria-busy="isBusy" @mouseleave="resetHover">
@@ -129,20 +131,28 @@ function setIndicatorSettings(key, settings) {
 .wave-readout { display: flex; flex-wrap: wrap; gap: 5px 14px; color: #bfc3d1; font-size: 11px; padding: 8px 0; min-height: 30px; }
 .index-chart-slot { display: flex; min-width: 0; min-height: 580px; }
 .index-chart { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 14px 15px 11px; border: 1px solid #30333e; border-radius: 10px; background: #101116; color: #bcc1cf; }
-.index-chart.is-expanded { position: fixed; inset: 0; z-index: 1000; width: 100%; height: 100dvh; min-height: 0; padding: 14px 22px 12px; border: 0; border-radius: 0; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; }
+.index-chart.is-expanded { position: fixed; inset: 0; z-index: 1000; width: 100%; height: 100dvh; min-height: 0; padding: 6px 10px; border: 0; border-radius: 0; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; }
 .index-chart > :not(.chart-body) { flex-shrink: 0; }
-.is-expanded .chart-heading { position: sticky; top: -14px; z-index: 5; padding-block: 10px; background: #101116; border-bottom: 1px solid #272a33; }
+.is-expanded .chart-controls { display: flex; align-items: flex-start; gap: 8px; position: sticky; top: -6px; z-index: 5; background: #101116; border-bottom: 1px solid #272a33; }
+.is-expanded .chart-heading { order: 2; flex-shrink: 0; padding-top: 4px; gap: 8px; }
+.is-expanded .chart-heading h2 { font-size: 12px; white-space: nowrap; }
+.is-expanded .heading-actions .instrument { display: none; }
 .chart-heading, .heading-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .chart-heading h2 { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: #e4e6ec; }
 .instrument { color: #959baa; font-size: 10px; white-space: nowrap; }
 .info-button { display: inline-flex; padding: 0; border: 0; background: none; color: #797f8c; }
 .expand-button, .chart-state button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border: 1px solid #383d49; border-radius: 4px; background: #20232c; color: #c8cdd9; font-size: 10px; }
 .expand-button:hover, .chart-state button:hover { background: #303643; color: #fff; }
-.chart-body { position: relative; flex: 1 0 820px; min-height: 820px; }
-.has-wave .chart-body { flex-basis: 900px; min-height: 900px; }
+.chart-body { position: relative; flex: 1 0 680px; min-height: 680px; }
+.has-wave .chart-body { flex-basis: 740px; min-height: 740px; }
 .chart-canvas { position: absolute; inset: 0; }
-.is-expanded .chart-body { min-height: max(820px, 75dvh); }
-.is-expanded.has-wave .chart-body { min-height: max(900px, 75dvh); }
+.is-expanded .chart-body { flex: 1 0 0px; min-height: 480px; }
+.is-expanded.has-wave .chart-body { flex-basis: 0px; min-height: 520px; }
+.is-expanded :deep(.kline-toolbar) { flex: 1; min-width: 0; padding-block: 4px; gap: 4px 12px; border-bottom: 0; }
+.is-expanded :deep(.toolbar-main) { gap: 5px; }
+.is-expanded .wave-note { padding-block: 2px; }
+.is-expanded .wave-readout { min-height: 22px; padding-block: 3px; }
+.is-expanded .range-summary, .is-expanded .chart-footnote { padding-top: 3px; }
 .sub-readout { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: 12px; height: 20px; border-top: 1px solid #272a33; background: #17191f; color: #b0b6c6; font-size: 11px; font-variant-numeric: tabular-nums; pointer-events: none; }
 .sub-readout b { font-weight: 400; white-space: nowrap; }
 .chart-state { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; font-size: 12px; color: #979dab; }

@@ -61,14 +61,14 @@ export function createIndexTrendOption(history, window, {
       axisLine: { lineStyle: { color: KLINE_COLORS.grid } },
       axisTick: { show: false },
       axisLabel: {
-        show: gridIndex === 2,
+        show: gridIndex === 1,
         color: KLINE_COLORS.text,
         fontSize: 10,
         hideOverlap: true,
         margin: 8,
         formatter: (value) => value.slice(2),
       },
-      axisPointer: { show: true, snap: true, label: { show: gridIndex === 2 } },
+      axisPointer: { show: true, snap: true, label: { show: gridIndex === 1 } },
       splitLine: { show: false },
     })),
     yAxis: [0, 1, 2].map((gridIndex) => ({

@@ -8,6 +8,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
   const error = ref('')
   const range = ref('recent')
   const hoveredIndex = ref(null)
+  const quoteSide = ref('left')
   const activeIndex = computed(() => hoveredIndex.value ?? history.value.length - 1)
   const visibleWindow = ref({ startIndex: 0, endIndex: 0 })
   const height = ref(360)
@@ -19,6 +20,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
 
   function resetHover() {
     hoveredIndex.value = null
+    quoteSide.value = 'left'
   }
 
   function handlePointer(event) {
@@ -28,6 +30,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
   }
 
   function handleMouseMove(event) {
+    quoteSide.value = event.offsetX > element.value.clientWidth / 2 ? 'left' : 'right'
     if (!chart.containPixel({ gridIndex: [0, 1, 2] }, [event.offsetX, event.offsetY])) resetHover()
   }
 
@@ -140,5 +143,5 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     chart?.dispose()
   })
 
-  return { loading, error, range, activeIndex, visibleWindow, height, selectRange, resetHover, resize, load }
+  return { loading, error, range, activeIndex, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load }
 }

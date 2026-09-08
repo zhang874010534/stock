@@ -28,9 +28,10 @@ export function getKlineLayout(height = 360, indicatorKey) {
   const volumeHeight = Math.min(96, available * .16)
   const indicatorHeight = Math.min(indicatorKey === 'wave' ? 240 : 180, available * (indicatorKey === 'wave' ? .30 : .22))
   const priceHeight = available - volumeHeight - indicatorHeight
-  const volumeLabel = 8 + priceHeight + 4
+  const indicatorLabel = 8 + priceHeight + 4
+  const indicatorTop = indicatorLabel + 22
+  const volumeLabel = indicatorTop + indicatorHeight + 4
   const volumeTop = volumeLabel + 22
-  const indicatorLabel = volumeTop + volumeHeight + 4
   return {
     left: 62,
     right: 16,
@@ -40,7 +41,7 @@ export function getKlineLayout(height = 360, indicatorKey) {
     volumeTop,
     volumeHeight,
     indicatorLabel,
-    indicatorTop: indicatorLabel + 22,
+    indicatorTop,
     indicatorHeight,
   }
 }
