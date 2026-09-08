@@ -90,6 +90,11 @@ test('波段副图可实际渲染，切回KDJ清除自定义标记并保留缩�
     chart.setOption(createIndexTrendOption(history, { startIndex: 100, endIndex: history.length - 1 }, { height: 650, subIndicator: wave }))
     assert.match(chart.renderToSVGString(), /<svg/)
     assert.ok(chart.getOption().series.some(s => s.id === 'wave-signals'))
+    // The July buy signal overlaps other formula labels; it must still render as B.
+    const svg = chart.renderToSVGString()
+    assert.match(svg, /<text[^>]*>B<\/text>/)
+    assert.match(svg, /<text[^>]*>S<\/text>/)
+    assert.match(svg, /波段卖/)
     const zoom = chart.getOption().dataZoom[0]
     chart.setOption({ series: createKlineSeries(history, [], [], buildSubIndicator(history)) }, { replaceMerge: ['series'] })
     assert.ok(chart.getOption().series.every(s => !s.id.startsWith('wave-')))

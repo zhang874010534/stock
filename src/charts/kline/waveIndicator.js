@@ -26,12 +26,23 @@ export const waveDefinition = {
       if (!range) return []
       return [{ value: [p.date, ...range], itemStyle: { color: event.color } }]
     }))
-    const marks = values.events.flatMap((events, i) => events.map(event => ({
-      value: [history[i].date, event.price], name: event.name,
-      symbolRotate: event.side === 'sell' ? 180 : 0,
-      itemStyle: { color: event.color },
-      label: { color: event.color, position: event.side === 'sell' ? 'top' : 'bottom' },
-    })))
+    const marks = values.events.flatMap((events, i) => events.map(event => {
+      const letter = event.name === '转向买' ? 'B' : event.name === '转向卖' ? 'S' : null
+      const color = letter === 'B' ? '#ff454f' : letter === 'S' ? '#00be65' : event.color
+      return {
+        value: [history[i].date, event.price], name: event.name,
+        ...(letter ? { symbol: 'circle', symbolSize: 1 } : {}),
+        symbolRotate: event.side === 'sell' ? 180 : 0,
+        itemStyle: { color: letter ? 'transparent' : color },
+        label: {
+          color, position: letter ? 'inside' : event.side === 'sell' ? 'top' : 'bottom',
+          ...(letter ? {
+            formatter: letter, fontSize: 14, fontWeight: 'bold',
+            offset: [-16, 0], backgroundColor: '#101116', padding: [2, 3],
+          } : {}),
+        },
+      }
+    }))
     return [
       { id: 'wave-candles', name: '趋势K线', type: 'candlestick', ...axis, barMaxWidth: 14,
         data: history.map((p, i) => {
@@ -49,9 +60,13 @@ export const waveDefinition = {
           if (bottom <= top) return
           return { type: 'rect', shape: { x: a[0] - width / 2, y: top, width, height: bottom - top }, style: { fill: api.visual('color'), opacity: .65 } }
         } },
-      { id: 'wave-signals', name: '波段标记', type: 'scatter', ...axis, data: marks,
+      { id: 'wave-signals', name: '波段标记', type: 'scatter', ...axis, data: marks.filter(mark => !mark.label.formatter),
         symbol: 'triangle', symbolSize: 7, clip: true,
         label: { show: true, formatter: '{b}', fontSize: 9 }, labelLayout: { hideOverlap: true }, emphasis: { scale: false } },
+      // B/S must remain visible even when several formula signals share the same bar.
+      { id: 'wave-turning-signals', name: '转向买卖', type: 'scatter', ...axis,
+        data: marks.filter(mark => mark.label.formatter), z: 10, clip: true,
+        label: { show: true }, labelLayout: { hideOverlap: false }, emphasis: { scale: false } },
       { id: 'wave-vertical', name: '共振竖线', type: 'custom', ...axis,
         data: history.flatMap((p, i) => values.vertical[i] ? [[p.date, p.low * .90, p.high * 1.06]] : []),
         encode: { x: 0, y: [1, 2] }, silent: true,
