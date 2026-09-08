@@ -24,8 +24,10 @@ export const BOLL_PARAMETERS = { period: 20, multiplier: 2 }
 // 图形区域与副图标题共用布局，缩放容器时无需分别计算位置。
 export function getKlineLayout(height = 360, indicatorKey) {
   const available = Math.max(30, height - 108)
-  const priceHeight = available * (indicatorKey === 'wave' ? .48 : .62)
-  const volumeHeight = available * .16
+  // 副图保留可读空间并限制高度，让增加的画布空间优先用于价格主图。
+  const volumeHeight = Math.min(96, available * .16)
+  const indicatorHeight = Math.min(indicatorKey === 'wave' ? 240 : 180, available * (indicatorKey === 'wave' ? .30 : .22))
+  const priceHeight = available - volumeHeight - indicatorHeight
   const volumeLabel = 8 + priceHeight + 4
   const volumeTop = volumeLabel + 22
   const indicatorLabel = volumeTop + volumeHeight + 4
@@ -39,6 +41,6 @@ export function getKlineLayout(height = 360, indicatorKey) {
     volumeHeight,
     indicatorLabel,
     indicatorTop: indicatorLabel + 22,
-    indicatorHeight: available * (indicatorKey === 'wave' ? .36 : .22),
+    indicatorHeight,
   }
 }
