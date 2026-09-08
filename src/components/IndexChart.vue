@@ -10,6 +10,7 @@ import { WAVE_PARAMETERS } from '../charts/kline/waveIndicator.js'
 import { buildSubIndicator } from '../charts/kline/subIndicators.js'
 import KLineToolbar from './kline/KLineToolbar.vue'
 import KLineQuote from './kline/KLineQuote.vue'
+import YieldMetricCard from './YieldMetricCard.vue'
 import { useKlineChart } from './kline/useKlineChart.js'
 import { useKlineFullscreen } from './kline/useKlineFullscreen.js'
 
@@ -72,8 +73,9 @@ function setIndicatorSettings(key, settings) {
   <div class="index-chart-slot" :style="expanded ? { minHeight: `${inlineHeight}px` } : undefined">
     <Teleport to="body" :disabled="!expanded">
       <section ref="panelElement" class="index-chart" :class="{ 'is-expanded': expanded, 'has-wave': subIndicatorKey === 'wave' }" :role="expanded ? 'dialog' : undefined" :aria-modal="expanded ? true : undefined" :aria-label="`${instrument} K 线`" tabindex="-1">
+        <div class="chart-main">
         <div class="chart-controls">
-        <div class="chart-heading">
+        <div v-if="!expanded" class="chart-heading">
           <h2>{{ instrument === '512890' ? 'ETF K 线' : '指数 K 线' }} <button type="button" class="info-button" aria-label="指数 K 线说明" title="日线在本地按自然周、月、季度聚合；MA、BOLL、KDJ、MACD、RSI 均按当前周期的完整已加载历史计算。滚轮缩放，拖动查看历史。"><Info :size="14" /></button></h2>
           <div class="heading-actions"><span class="instrument">{{ instrument }} · {{ periodLabel }}</span><button type="button" class="expand-button" :aria-label="expanded ? '退出全屏' : '放大全屏'" :title="expanded ? '退出全屏（ESC）' : '放大全屏'" @click="toggle"><Minimize2 v-if="expanded" :size="15" /><Maximize2 v-else :size="15" /><span>{{ expanded ? '退出 · ESC' : '放大' }}</span></button></div>
         </div>
@@ -95,9 +97,8 @@ function setIndicatorSettings(key, settings) {
           @settings-change="setIndicatorSettings"
         />
         </div>
-        <KLineQuote :floating="expanded && showChart" :side="quoteSide" :overlay-offset="subIndicatorKey === 'wave' ? 32 : 8" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
+        <KLineQuote :hide-details="expanded" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
-        <div v-if="subIndicatorKey === 'wave'" class="wave-note">含未来函数，历史信号可能重绘；使用未复权行情。{{ subIndicator.values.missingTurnover ? '部分K线缺少换手率，短买点不计算。' : '' }}当前已加载 {{ history.length }} 根K线，历史回补会影响计算结果。</div>
         <div class="chart-body" :aria-busy="isBusy" @mouseleave="resetHover">
           <div ref="chartElement" class="chart-canvas" :style="{ visibility: showChart ? 'visible' : 'hidden' }" />
           <template v-if="showChart">
@@ -110,17 +111,30 @@ function setIndicatorSettings(key, settings) {
           </div>
         </div>
 
-        <div v-if="subIndicatorKey === 'wave' && showChart" class="wave-readout" aria-label="波段信号详情">
-          <span>{{ history[activeIndex]?.date }} · {{ subIndicator.values.bullish[activeIndex] ? '偏多' : '偏空／未就绪' }}</span>
-          <span>量能饱和度：{{ formatIndexValue(subIndicator.values.saturation[activeIndex]) }}%</span>
-          <span v-for="event in subIndicator.values.events[activeIndex]" :key="event.name" :style="{ color: event.color }">{{ event.name }}</span>
-          <span v-if="!subIndicator.values.events[activeIndex]?.length">当前K线无信号</span>
         </div>
-        <div v-if="summary && showChart" class="range-summary">
-          <span>{{ summary.startDate }} — {{ summary.endDate }} · {{ visibleWindow.endIndex - visibleWindow.startIndex + 1 }} 根</span>
-          <span :class="summary.changePercent >= 0 ? 'up' : 'down'">区间 {{ summary.changePercent > 0 ? '+' : '' }}{{ summary.changePercent.toFixed(2) }}%</span>
-        </div>
-        <div class="chart-footnote"><span>{{ backfillCompleted ? '历史数据已完成同步' : '展示已同步历史，数据持续补充中' }}</span><span>{{ range === 'custom' ? '自定义区间 · ' : '' }}滚轮缩放 · 拖动平移</span></div>
+        <aside v-if="expanded" class="chart-sidebar" aria-label="证券行情与指标信息">
+          <div class="sidebar-heading"><h2>{{ instrument }} · {{ instrument === '512890' ? 'ETF' : '指数' }}</h2><button class="expand-button" aria-label="退出全屏" title="退出全屏（ESC）" @click="toggle"><Minimize2 :size="14" />退出</button></div>
+          <p class="sidebar-name">{{ instrument === '512890' ? '华泰柏瑞红利低波ETF' : '中证红利低波动指数' }}</p>
+          <p class="sidebar-price" :class="{ up: quote?.change > 0, down: quote?.change < 0 }">{{ formatIndexValue(quote?.close, instrument === '512890' ? 3 : 2) }}</p>
+          <p class="sidebar-caption">{{ periodLabel }} · {{ activeIndex === history.length - 1 ? '最新已同步行情' : '十字光标所选行情' }}</p>
+          <KLineQuote hide-ma :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
+          <section v-if="subIndicatorKey === 'wave'" class="sidebar-section" aria-label="波段信号详情">
+            <h3>波段信号</h3>
+            <div v-if="showChart" class="wave-readout">
+              <span>{{ history[activeIndex]?.date }} · {{ subIndicator.values.bullish[activeIndex] ? '偏多' : '偏空／未就绪' }}</span>
+              <span>量能饱和度：{{ formatIndexValue(subIndicator.values.saturation[activeIndex]) }}%</span>
+              <span v-for="event in subIndicator.values.events[activeIndex]" :key="event.name" :style="{ color: event.color }">{{ event.name }}</span>
+              <span v-if="!subIndicator.values.events[activeIndex]?.length">当前K线无信号</span>
+            </div>
+            <p class="wave-note">含未来函数，历史信号可能重绘；使用未复权行情。{{ subIndicator.values.missingTurnover ? '部分K线缺少换手率，短买点不计算。' : '' }}当前已加载 {{ history.length }} 根K线，历史回补会影响计算结果。</p>
+          </section>
+          <div v-if="summary && showChart" class="range-summary sidebar-section">
+            <span>{{ summary.startDate }} — {{ summary.endDate }} · {{ visibleWindow.endIndex - visibleWindow.startIndex + 1 }} 根</span>
+            <span :class="summary.changePercent >= 0 ? 'up' : 'down'">区间 {{ summary.changePercent > 0 ? '+' : '' }}{{ summary.changePercent.toFixed(2) }}%</span>
+          </div>
+          <YieldMetricCard :instrument="instrument" />
+          <p class="sidebar-note">行情随十字光标联动；股息率和国债收益率为各自最新发布值。未提供的字段显示 —。</p>
+        </aside>
       </section>
     </Teleport>
   </div>
@@ -132,7 +146,22 @@ function setIndicatorSettings(key, settings) {
 .index-chart-slot { display: flex; min-width: 0; min-height: 580px; }
 .index-chart { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 14px 15px 11px; border: 1px solid #30333e; border-radius: 10px; background: #101116; color: #bcc1cf; }
 .index-chart.is-expanded { position: fixed; inset: 0; z-index: 1000; width: 100%; height: 100dvh; min-height: 0; padding: 6px 10px; border: 0; border-radius: 0; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; }
-.index-chart > :not(.chart-body) { flex-shrink: 0; }
+.chart-main { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; }
+.chart-main > :not(.chart-body) { flex-shrink: 0; }
+.index-chart.is-expanded { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 10px; }
+.chart-sidebar { min-height: 0; overflow-y: auto; border-left: 1px solid #30333e; padding: 4px 10px; }
+.sidebar-heading { position: sticky; top: -4px; z-index: 6; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-block: 4px; background: #101116; }
+.sidebar-heading h2 { color: #dfe5f1; font-size: 14px; }
+.sidebar-name, .sidebar-caption, .sidebar-note { color: #959baa; font-size: 11px; line-height: 1.6; margin-top: 5px; }
+.sidebar-price { font-size: 30px; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.sidebar-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid #30333e; }
+.sidebar-section h3 { font-size: 12px; color: #dfe5f1; font-weight: 500; }
+.sidebar-section .wave-readout { flex-direction: column; align-items: flex-start; }
+.chart-sidebar :deep(.quote-values) { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.chart-sidebar :deep(.quote-values > span) { display: flex; justify-content: space-between; }
+.chart-sidebar :deep(.quote-date) { justify-content: space-between; }
+.chart-sidebar :deep(.yield-card) { margin-top: 12px; padding: 12px 0 0; border: 0; border-top: 1px solid #30333e; border-radius: 0; background: transparent; box-shadow: none; }
+.is-expanded .chart-main > :deep(.kline-quote) { padding: 2px 0; }
 .is-expanded .chart-controls { display: flex; align-items: flex-start; gap: 8px; position: sticky; top: -6px; z-index: 5; background: #101116; border-bottom: 1px solid #272a33; }
 .is-expanded .chart-heading { order: 2; flex-shrink: 0; padding-top: 4px; gap: 8px; }
 .is-expanded .chart-heading h2 { font-size: 12px; white-space: nowrap; }
@@ -152,18 +181,22 @@ function setIndicatorSettings(key, settings) {
 .is-expanded :deep(.toolbar-main) { gap: 5px; }
 .is-expanded .wave-note { padding-block: 2px; }
 .is-expanded .wave-readout { min-height: 22px; padding-block: 3px; }
-.is-expanded .range-summary, .is-expanded .chart-footnote { padding-top: 3px; }
 .sub-readout { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: 12px; height: 20px; border-top: 1px solid #272a33; background: #17191f; color: #b0b6c6; font-size: 11px; font-variant-numeric: tabular-nums; pointer-events: none; }
 .sub-readout b { font-weight: 400; white-space: nowrap; }
 .chart-state { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; font-size: 12px; color: #979dab; }
 .range-summary { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 3px 8px; padding-top: 8px; color: #a0a6b6; font-size: 10px; font-variant-numeric: tabular-nums; }
 .up { color: #ff454f; }
 .down { color: #00bec7; }
-.chart-footnote { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 3px 8px; padding-top: 6px; color: #7f8594; font-size: 9px; }
 .is-expanded :deep(.kline-quote), .is-expanded .sub-readout { font-size: 13px; }
 @media (max-width: 500px) {
   .instrument { display: none; }
   .index-chart.is-expanded { padding-inline: 10px; }
   .sub-readout { gap: 8px; font-size: 10px; }
+}
+@media (max-width: 900px) {
+  .index-chart.is-expanded { display: flex; }
+  .is-expanded .chart-main { flex: 1 0 auto; }
+  .chart-sidebar { overflow: visible; border-left: 0; border-top: 1px solid #30333e; }
+  .chart-sidebar :deep(.quote-values) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 16px; }
 }
 </style>
