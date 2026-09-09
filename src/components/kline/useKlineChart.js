@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getRangeWindow, getZoomWindow } from '../../utils/indexHistory.js'
 import { getDefaultKlineWindow } from '../../utils/kline.js'
 import { createKlineSeries } from '../../charts/kline/series.js'
+import { getKeyboardKlineTarget } from '../../utils/klineKeyboard.js'
 
 export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator, chartType }) {
   const loading = ref(true)
@@ -51,6 +52,22 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     range.value = key
     visibleWindow.value = window
     resetHover()
+  }
+
+  function handleKeydown(event) {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key) || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey
+      || event.defaultPrevented || loading.value || error.value || !chart || !history.value.length) return
+    event.preventDefault()
+    event.stopPropagation()
+    const target = getKeyboardKlineTarget(history.value.length, activeIndex.value, visibleWindow.value, event.key === 'ArrowLeft' ? -1 : 1)
+    if (target.window.startIndex !== visibleWindow.value.startIndex || target.window.endIndex !== visibleWindow.value.endIndex) {
+      zoomToWindow(target.window.startIndex, target.window.endIndex)
+    }
+    const x = chart.convertToPixel({ xAxisIndex: 0 }, target.index)
+    const y = chart.convertToPixel({ yAxisIndex: 0 }, history.value[target.index].close)
+    chart.dispatchAction({ type: 'updateAxisPointer', x, y })
+    hoveredIndex.value = target.index
+    quoteSide.value = x > element.value.clientWidth / 2 ? 'left' : 'right'
   }
 
   function indexAtPixel(x) {
@@ -158,5 +175,5 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     chart?.dispose()
   })
 
-  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow }
+  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown }
 }

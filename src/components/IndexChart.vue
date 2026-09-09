@@ -48,7 +48,7 @@ const mainIndicators = computed(() => [
   ...(bbiEnabled.value ? [buildMainIndicator(history.value, 'bbi', indicatorSettings.value.bbi, { period: period.value })] : []),
 ])
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
-const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow } = useKlineChart({
+const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown } = useKlineChart({
   element: chartElement,
   history,
   period,
@@ -112,7 +112,7 @@ function setIndicatorSettings(key, settings) {
         <KLineQuote hide-details :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
         <KLineRangeSelection class="chart-body" :aria-busy="isBusy" :history="history" :layout="layout" :visible-window="visibleWindow" :index-at-pixel="indexAtPixel" :enabled="showChart" :instrument="instrument" :period-label="periodLabel" @zoom="zoomToWindow" @mouseleave="resetHover">
-          <div ref="chartElement" class="chart-canvas" :style="{ visibility: showChart ? 'visible' : 'hidden' }" />
+            <div ref="chartElement" class="chart-canvas" tabindex="0" aria-label="K线图，按左右方向键查看上一根或下一根K线" aria-keyshortcuts="ArrowLeft ArrowRight" :style="{ visibility: showChart ? 'visible' : 'hidden' }" @pointerdown="chartElement?.focus({ preventScroll: true })" @keydown="handleKeydown" />
           <template v-if="showChart">
             <KLineQuote v-if="isHovering" floating hide-ma :side="quoteSide" :overlay-offset="layout.priceTop + 6" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :active-index="activeIndex" :is-latest="activeIndex === history.length - 1" />
             <div class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
@@ -187,6 +187,7 @@ function setIndicatorSettings(key, settings) {
 .chart-body { position: relative; flex: 1 0 680px; min-height: 680px; }
 .has-wave .chart-body { flex-basis: 740px; min-height: 740px; }
 .chart-canvas { position: absolute; inset: 0; }
+.chart-canvas:focus-visible { outline: 1px solid #6382aa; outline-offset: -1px; }
 .is-expanded .chart-body { flex: 1 0 0px; min-height: 480px; }
 .is-expanded.has-wave .chart-body { flex-basis: 0px; min-height: 520px; }
 .is-expanded :deep(.kline-toolbar) { flex: 1; min-width: 0; padding-block: 4px; gap: 4px 12px; border-bottom: 0; }
