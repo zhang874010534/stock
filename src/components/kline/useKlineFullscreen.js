@@ -34,6 +34,8 @@ export function useKlineFullscreen(panel, resize) {
 
   function handleKeydown(event) {
     if (!expanded.value) return
+    // Native modal dialogs handle their own focus trap and Escape dismissal.
+    if (event.target.closest?.('dialog[open]')) return
     if (event.key === 'Escape') {
       event.preventDefault()
       event.stopPropagation()

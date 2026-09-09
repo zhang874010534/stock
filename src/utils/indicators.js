@@ -54,6 +54,13 @@ export function calculateKDJ(history, { rsvPeriod = 9, kSmoothing = 3, dSmoothin
   return result
 }
 
+// BBI is the equally weighted average of four closing-price simple moving averages.
+export function calculateBBI(history, { period1 = 3, period2 = 6, period3 = 12, period4 = 24 } = {}) {
+  const averages = [period1, period2, period3, period4].map(period => calculateMA(history, period))
+  return { BBI: history.map((_, index) => averages.every(values => values[index] !== null)
+    ? averages.reduce((sum, values) => sum + values[index], 0) / 4 : null) }
+}
+
 // 国内行情软件常见口径：DIF=EMA(fast)-EMA(slow)，DEA=EMA(DIF, signal)，
 // MACD 柱为 2 * (DIF - DEA)。EMA 从第一根收盘价开始递推。
 export function calculateMACD(history, { fastPeriod = 12, slowPeriod = 26, signalPeriod = 9 } = {}) {

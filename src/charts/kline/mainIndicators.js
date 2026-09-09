@@ -1,8 +1,16 @@
-import { calculateBOLL } from '../../utils/indicators.js'
-import { BOLL_PARAMETERS } from './config.js'
+import { calculateBBI, calculateBOLL } from '../../utils/indicators.js'
+import { BBI_PARAMETERS, BOLL_PARAMETERS } from './config.js'
 import { createLineSeries } from './series.js'
 
 export const MAIN_INDICATORS = {
+  bbi: {
+    label: 'BBI',
+    parameters: BBI_PARAMETERS,
+    parameterFields: [1, 2, 3, 4].map(index => ({ key: `period${index}`, label: `周期 N${index}`, min: 1, max: 250, step: 1 })),
+    title: ({ period1, period2, period3, period4 }) => `BBI(${period1},${period2},${period3},${period4})`,
+    calculate: calculateBBI,
+    lines: [{ valueKey: 'BBI', name: 'BBI', color: '#ffd43b' }],
+  },
   boll: {
     label: 'BOLL',
     parameters: BOLL_PARAMETERS,

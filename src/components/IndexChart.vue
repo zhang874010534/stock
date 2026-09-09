@@ -4,7 +4,7 @@ import { Info, Maximize2, Minimize2 } from 'lucide-vue-next'
 import { formatIndexValue, getWindowSummary } from '../utils/indexHistory.js'
 import { aggregateKlines, formatVolume, getKlineQuote, KLINE_PERIODS } from '../utils/kline.js'
 import { calculateMA } from '../utils/indicators.js'
-import { BOLL_PARAMETERS, getKlineLayout, KDJ_PARAMETERS, MACD_PARAMETERS, MA_OPTIONS, RSI_PARAMETERS } from '../charts/kline/config.js'
+import { BBI_PARAMETERS, BOLL_PARAMETERS, getKlineLayout, KDJ_PARAMETERS, MACD_PARAMETERS, MA_OPTIONS, RSI_PARAMETERS } from '../charts/kline/config.js'
 import { buildMainIndicator } from '../charts/kline/mainIndicators.js'
 import { WAVE_PARAMETERS } from '../charts/kline/waveIndicator.js'
 import { buildSubIndicator } from '../charts/kline/subIndicators.js'
@@ -29,19 +29,24 @@ const period = ref('day')
 const chartType = ref('candlestick')
 const maOptions = ref(MA_OPTIONS.map((item) => ({ ...item })))
 const bollEnabled = ref(false)
+const bbiEnabled = ref(false)
 const subIndicatorKey = ref('kdj')
 const indicatorSettings = ref({
   wave: { ...WAVE_PARAMETERS },
   boll: { ...BOLL_PARAMETERS },
+  bbi: { ...BBI_PARAMETERS },
   kdj: { ...KDJ_PARAMETERS },
   macd: { ...MACD_PARAMETERS },
   rsi: { ...RSI_PARAMETERS },
 })
 
 const history = computed(() => aggregateKlines(props.history, period.value))
-const maData = computed(() => Object.fromEntries(MA_OPTIONS.map(({ period }) => [period, calculateMA(history.value, period)])))
+const maData = computed(() => Object.fromEntries(maOptions.value.map(({ period }) => [period, calculateMA(history.value, period)])))
 const movingAverages = computed(() => maOptions.value.map((item) => ({ ...item, data: maData.value[item.period] })))
-const mainIndicators = computed(() => bollEnabled.value ? [buildMainIndicator(history.value, 'boll', indicatorSettings.value.boll)] : [])
+const mainIndicators = computed(() => [
+  ...(bollEnabled.value ? [buildMainIndicator(history.value, 'boll', indicatorSettings.value.boll)] : []),
+  ...(bbiEnabled.value ? [buildMainIndicator(history.value, 'bbi', indicatorSettings.value.bbi)] : []),
+])
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
 const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow } = useKlineChart({
   element: chartElement,
@@ -62,9 +67,10 @@ const summary = computed(() => getWindowSummary(history.value, visibleWindow.val
 const layout = computed(() => getKlineLayout(height.value, subIndicatorKey.value))
 const periodLabel = computed(() => KLINE_PERIODS.find((item) => item.key === period.value)?.label)
 
-function setMA(period, enabled) {
-  const item = maOptions.value.find((item) => item.period === period)
-  if (item) item.enabled = enabled
+function setMainSettings(settings) {
+  maOptions.value = settings.maOptions
+  bollEnabled.value = settings.bollEnabled
+  bbiEnabled.value = settings.bbiEnabled
 }
 
 function setIndicatorSettings(key, settings) {
@@ -90,6 +96,7 @@ function setIndicatorSettings(key, settings) {
           :range="range"
           :ma-options="maOptions"
           :boll-enabled="bollEnabled"
+          :bbi-enabled="bbiEnabled"
           :sub-indicator="subIndicatorKey"
           :wave-available="instrument === '512890'"
           :indicator-settings="indicatorSettings"
@@ -97,8 +104,7 @@ function setIndicatorSettings(key, settings) {
           @period-change="period = $event"
           @chart-type-change="chartType = $event"
           @range-change="selectRange"
-          @ma-change="setMA"
-          @boll-change="bollEnabled = $event"
+          @main-settings-change="setMainSettings"
           @indicator-change="subIndicatorKey = $event"
           @settings-change="setIndicatorSettings"
         />

@@ -20,6 +20,7 @@ export const KDJ_PARAMETERS = { rsvPeriod: 9, kSmoothing: 3, dSmoothing: 3 }
 export const MACD_PARAMETERS = { fastPeriod: 12, slowPeriod: 26, signalPeriod: 9 }
 export const RSI_PARAMETERS = { shortPeriod: 6, mediumPeriod: 12, longPeriod: 24 }
 export const BOLL_PARAMETERS = { period: 20, multiplier: 2 }
+export const BBI_PARAMETERS = { period1: 3, period2: 6, period3: 12, period4: 24 }
 
 // 图形区域与副图标题共用布局，缩放容器时无需分别计算位置。
 export function getKlineLayout(height = 360, indicatorKey) {

@@ -1,7 +1,7 @@
 import { toCandlestickData } from '../../utils/kline.js'
 import { KLINE_COLORS } from './config.js'
 
-export function createLineSeries({ id, name, color, data }, axisIndex = 0) {
+export function createLineSeries({ id, name, color, data, width = 1.2 }, axisIndex = 0) {
   return {
     id,
     name,
@@ -11,7 +11,7 @@ export function createLineSeries({ id, name, color, data }, axisIndex = 0) {
     data,
     showSymbol: false,
     connectNulls: false,
-    lineStyle: { width: 1.2, color },
+    lineStyle: { width, color },
     itemStyle: { color },
     emphasis: { disabled: true },
   }
