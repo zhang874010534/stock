@@ -35,7 +35,7 @@ export function getKlineLayout(height = 360, indicatorKey) {
   const volumeTop = volumeLabel + 22
   return {
     left: 62,
-    right: 16,
+    right: 48,
     priceTop: 8,
     priceHeight,
     volumeLabel,

@@ -51,7 +51,7 @@ function point(event) {
     y: Math.max(l.priceTop, Math.min(l.priceTop + l.priceHeight, event.clientY - rect.top)) }
 }
 function start(event) {
-  if (event.button !== 2 || !props.enabled || event.target.closest('.range-menu, .range-dialog')) return
+  if (event.button !== 2 || !props.enabled || event.target.closest('.range-menu, .range-dialog, .drawing-overlay')) return
   const rect = root.value.getBoundingClientRect(), l = props.layout
   const x = event.clientX - rect.left, y = event.clientY - rect.top
   if (x < l.left || x > rect.width - l.right || y < l.priceTop || y > l.priceTop + l.priceHeight) return

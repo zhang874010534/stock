@@ -14,6 +14,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
   const isHovering = computed(() => hoveredIndex.value !== null)
   const visibleWindow = ref({ startIndex: 0, endIndex: 0 })
   const height = ref(360)
+  const chartRevision = ref(0)
   let runtime
   let chart
   let observer
@@ -76,6 +77,22 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     return Number.isFinite(index) ? Math.max(visibleWindow.value.startIndex, Math.min(visibleWindow.value.endIndex, Math.round(index))) : null
   }
 
+  function pointAtPixel(x, y) {
+    const index = indexAtPixel(x)
+    const price = chart?.convertFromPixel({ yAxisIndex: 0 }, y)
+    return index !== null && history.value[index] && Number.isFinite(price)
+      ? { date: history.value[index].date, price } : null
+  }
+
+  function pointToPixel(point) {
+    if (!chart) return null
+    const index = history.value.findIndex(bar => bar.date === point.date)
+    if (index < 0) return null
+    const x = chart.convertToPixel({ xAxisIndex: 0 }, index)
+    const y = chart.convertToPixel({ yAxisIndex: 0 }, point.price)
+    return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null
+  }
+
   function zoomToWindow(startIndex, endIndex) {
     chart?.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: startIndex, endValue: endIndex })
     visibleWindow.value = { startIndex, endIndex }
@@ -93,6 +110,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     try {
       if (!chart) {
         chart = runtime.initIndexTrend(element.value)
+        chart.on('finished', () => { chartRevision.value++ })
         chart.on('datazoom', handleZoom)
         chart.on('updateAxisPointer', handlePointer)
         chart.getZr().on('globalout', resetHover)
@@ -175,5 +193,5 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     chart?.dispose()
   })
 
-  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown }
+  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel }
 }
