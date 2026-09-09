@@ -14,6 +14,7 @@ defineProps({
   subIndicator: { type: String, required: true },
   indicatorSettings: { type: Object, required: true },
   disabled: Boolean,
+  compact: Boolean,
   waveAvailable: Boolean,
 })
 const emit = defineEmits(['period-change', 'chart-type-change', 'range-change', 'main-settings-change', 'indicator-change', 'settings-change'])
@@ -29,12 +30,12 @@ const emit = defineEmits(['period-change', 'chart-type-change', 'range-change', 
         <button type="button" :class="{ selected: chartType === 'candlestick' }" :aria-pressed="chartType === 'candlestick'" :disabled="disabled" @click="emit('chart-type-change', 'candlestick')">K线</button>
         <button type="button" :class="{ selected: chartType === 'line' }" :aria-pressed="chartType === 'line'" :disabled="disabled" title="按当前周期的收盘价绘制折线" @click="emit('chart-type-change', 'line')">折线</button>
       </div>
-      <label class="indicator-selector">副图
+      <label v-if="!compact" class="indicator-selector">副图
         <select :value="subIndicator" :disabled="disabled" aria-label="副图指标" @change="emit('indicator-change', $event.target.value)">
           <option v-for="item in SUB_INDICATOR_OPTIONS" :key="item.key" :value="item.key" :disabled="item.key === 'wave' && !waveAvailable">{{ item.label }}{{ item.key === 'wave' && !waveAvailable ? '（指标不可用）' : '' }}</option>
         </select>
       </label>
-      <KLineIndicatorSettings :sub-indicator="subIndicator" :settings="indicatorSettings" :ma-options="maOptions" :boll-enabled="bollEnabled" :bbi-enabled="bbiEnabled" :period-label="KLINE_PERIODS.find(item => item.key === period)?.label" :disabled="disabled" @apply="(key, value) => emit('settings-change', key, value)" @main-apply="emit('main-settings-change', $event)" />
+      <KLineIndicatorSettings v-if="!compact" :sub-indicator="subIndicator" :settings="indicatorSettings" :ma-options="maOptions" :boll-enabled="bollEnabled" :bbi-enabled="bbiEnabled" :period-label="KLINE_PERIODS.find(item => item.key === period)?.label" :disabled="disabled" @apply="(key, value) => emit('settings-change', key, value)" @main-apply="emit('main-settings-change', $event)" />
     </div>
     <div class="range-buttons" role="group" aria-label="指数 K 线时间范围">
       <button type="button" :class="{ selected: range === 'recent' }" :aria-pressed="range === 'recent'" :disabled="disabled" @click="emit('range-change', 'recent')">最近</button>

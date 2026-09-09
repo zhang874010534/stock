@@ -1,10 +1,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getRangeWindow, getZoomWindow } from '../../utils/indexHistory.js'
 import { getDefaultKlineWindow } from '../../utils/kline.js'
-import { createKlineSeries } from '../../charts/kline/series.js'
 import { getKeyboardKlineTarget } from '../../utils/klineKeyboard.js'
 
-export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator, chartType }) {
+export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator, chartType, compact }) {
   const loading = ref(true)
   const error = ref('')
   const range = ref('recent')
@@ -34,7 +33,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
 
   function handleMouseMove(event) {
     quoteSide.value = event.offsetX > element.value.clientWidth / 2 ? 'left' : 'right'
-    if (!chart.containPixel({ gridIndex: [0, 1, 2] }, [event.offsetX, event.offsetY])) resetHover()
+    if (!chart.containPixel({ gridIndex: compact.value ? [0] : [0, 1, 2] }, [event.offsetX, event.offsetY])) resetHover()
   }
 
   function handleZoom() {
@@ -120,6 +119,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
       visibleWindow.value = presetWindow(range.value === 'custom' ? 'recent' : range.value)
       chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, {
         height: height.value,
+        compact: compact.value,
         chartType: chartType.value,
         movingAverages: movingAverages.value,
         mainIndicators: mainIndicators.value,
@@ -138,7 +138,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
       height.value = element.value.clientHeight
       if (chart) {
         chart.resize()
-        if (history.value.length) chart.setOption({ grid: runtime.createKlineGrids(height.value, subIndicator.value.key) })
+        if (history.value.length) chart.setOption({ grid: runtime.createKlineGrids(height.value, subIndicator.value.key, compact.value) })
       } else if (!loading.value && !error.value) renderChart()
     })
   }
@@ -161,23 +161,19 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     renderChart()
   }, { flush: 'post' })
 
-  // 只替换指标 series，保留用户缩放、拖动与当前行情位置。
-  watch([movingAverages, mainIndicators, subIndicator, chartType], () => {
+  // 切换预览/放大视图时重建坐标轴，保留用户当前查看的行情区间。
+  watch([movingAverages, mainIndicators, subIndicator, chartType, compact], () => {
     if (!chart || !history.value.length) return
-    chart.setOption({
-      grid: runtime.createKlineGrids(height.value, subIndicator.value.key),
-      yAxis: [
-        {},
-        {},
-        {
-          min: subIndicator.value.axis?.min ?? null,
-          max: subIndicator.value.axis?.max ?? null,
-          splitNumber: subIndicator.value.axis?.splitNumber ?? 2,
-          scale: !(Number.isFinite(subIndicator.value.axis?.min) && Number.isFinite(subIndicator.value.axis?.max)),
-        },
-      ],
-      series: createKlineSeries(history.value, movingAverages.value, mainIndicators.value, subIndicator.value, chartType.value),
-    }, { replaceMerge: ['series'] })
+    height.value = element.value.clientHeight
+    chart.resize()
+    chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, {
+      height: height.value,
+      compact: compact.value,
+      chartType: chartType.value,
+      movingAverages: movingAverages.value,
+      mainIndicators: mainIndicators.value,
+      subIndicator: subIndicator.value,
+    }), { notMerge: true })
   }, { flush: 'post' })
 
   onMounted(() => {

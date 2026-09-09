@@ -46,10 +46,13 @@ const maData = computed(() => Object.fromEntries(maOptions.value.map(({ period }
 const movingAverages = computed(() => maOptions.value.map((item) => ({ ...item, data: maData.value[item.period] })))
 const mainIndicators = computed(() => [
   ...(bollEnabled.value ? [buildMainIndicator(history.value, 'boll', indicatorSettings.value.boll)] : []),
-  ...(bbiEnabled.value ? [buildMainIndicator(history.value, 'bbi', indicatorSettings.value.bbi, { period: period.value })] : []),
+  ...(expanded.value && bbiEnabled.value ? [buildMainIndicator(history.value, 'bbi', indicatorSettings.value.bbi, { period: period.value })] : []),
 ])
+const { expanded, inlineHeight, toggle } = useKlineFullscreen(panelElement, () => resize())
+const compact = computed(() => !expanded.value)
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
 const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel } = useKlineChart({
+  compact,
   element: chartElement,
   history,
   period,
@@ -58,14 +61,13 @@ const { loading: chartLoading, error: chartError, range, activeIndex, isHovering
   mainIndicators,
   subIndicator,
 })
-const { expanded, inlineHeight, toggle } = useKlineFullscreen(panelElement, resize)
 const isBusy = computed(() => chartLoading.value || props.loading)
 const displayError = computed(() => props.error || chartError.value)
 const showChart = computed(() => !isBusy.value && !displayError.value && history.value.length > 0)
 const quote = computed(() => showChart.value ? getKlineQuote(history.value, activeIndex.value) : null)
 const latestQuote = computed(() => showChart.value ? getKlineQuote(history.value, history.value.length - 1) : null)
 const summary = computed(() => getWindowSummary(history.value, visibleWindow.value))
-const layout = computed(() => getKlineLayout(height.value, subIndicatorKey.value))
+const layout = computed(() => getKlineLayout(height.value, subIndicatorKey.value, compact.value))
 const periodLabel = computed(() => KLINE_PERIODS.find((item) => item.key === period.value)?.label)
 
 function setMainSettings(settings) {
@@ -83,7 +85,7 @@ function setIndicatorSettings(key, settings) {
 <template>
   <div class="index-chart-slot" :style="expanded ? { minHeight: `${inlineHeight}px` } : undefined">
     <Teleport to="body" :disabled="!expanded">
-      <section ref="panelElement" class="index-chart" :class="{ 'is-expanded': expanded, 'has-wave': subIndicatorKey === 'wave' }" :role="expanded ? 'dialog' : undefined" :aria-modal="expanded ? true : undefined" :aria-label="`${instrument} K 线`" tabindex="-1">
+      <section ref="panelElement" class="index-chart" :class="{ 'is-expanded': expanded, 'has-wave': expanded && subIndicatorKey === 'wave' }" :role="expanded ? 'dialog' : undefined" :aria-modal="expanded ? true : undefined" :aria-label="`${instrument} K 线`" tabindex="-1">
         <div class="chart-main">
         <div class="chart-controls">
         <div v-if="!expanded" class="chart-heading">
@@ -92,6 +94,7 @@ function setIndicatorSettings(key, settings) {
         </div>
 
         <KLineToolbar
+          :compact="compact"
           :period="period"
           :chart-type="chartType"
           :range="range"
@@ -115,10 +118,10 @@ function setIndicatorSettings(key, settings) {
         <KLineRangeSelection class="chart-body" :aria-busy="isBusy" :history="history" :layout="layout" :visible-window="visibleWindow" :index-at-pixel="indexAtPixel" :enabled="showChart" :instrument="instrument" :period-label="periodLabel" @zoom="zoomToWindow" @mouseleave="resetHover">
             <div ref="chartElement" class="chart-canvas" tabindex="0" aria-label="K线图，按左右方向键查看上一根或下一根K线" aria-keyshortcuts="ArrowLeft ArrowRight" :style="{ visibility: showChart ? 'visible' : 'hidden' }" @pointerdown="chartElement?.focus({ preventScroll: true })" @keydown="handleKeydown" />
           <template v-if="showChart">
-            <KLineDrawingTools :instrument="instrument" :period="period" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" />
+            <KLineDrawingTools v-if="expanded" :instrument="instrument" :period="period" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" />
             <KLineQuote v-if="isHovering" floating hide-ma :side="quoteSide" :overlay-offset="layout.priceTop + 6" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :active-index="activeIndex" :is-latest="activeIndex === history.length - 1" />
-            <div class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
-            <div class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex], subIndicatorKey === 'wave' ? 3 : 2) }}</b></div>
+            <div v-if="expanded" class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
+            <div v-if="expanded" class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex], subIndicatorKey === 'wave' ? 3 : 2) }}</b></div>
           </template>
           <div v-else class="chart-state" role="status">
             <span>{{ displayError || (isBusy ? '正在读取行情…' : '暂无行情数据') }}</span>
@@ -186,7 +189,7 @@ function setIndicatorSettings(key, settings) {
 .info-button { display: inline-flex; padding: 0; border: 0; background: none; color: #797f8c; }
 .expand-button, .chart-state button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border: 1px solid #383d49; border-radius: 4px; background: #20232c; color: #c8cdd9; font-size: 10px; }
 .expand-button:hover, .chart-state button:hover { background: #303643; color: #fff; }
-.chart-body { position: relative; flex: 1 0 680px; min-height: 680px; }
+.chart-body { position: relative; flex: 1 0 360px; min-height: 360px; }
 .has-wave .chart-body { flex-basis: 740px; min-height: 740px; }
 .chart-canvas { position: absolute; inset: 0; }
 .chart-canvas:focus-visible { outline: 1px solid #6382aa; outline-offset: -1px; }

@@ -16,8 +16,9 @@ export function initIndexTrend(container, options = {}) {
   return init(container, null, { renderer: 'svg', ...options })
 }
 
-export function createKlineGrids(height, indicatorKey) {
-  const layout = getKlineLayout(height, indicatorKey)
+export function createKlineGrids(height, indicatorKey, compact = false) {
+  const layout = getKlineLayout(height, indicatorKey, compact)
+  if (compact) return [{ top: layout.priceTop, height: layout.priceHeight, left: layout.left, right: layout.right }]
   return [
     { top: layout.priceTop, height: layout.priceHeight },
     { top: layout.volumeTop, height: layout.volumeHeight },
@@ -27,13 +28,15 @@ export function createKlineGrids(height, indicatorKey) {
 
 export function createIndexTrendOption(history, window, {
   height = 360,
+  compact = false,
   chartType = 'candlestick',
   movingAverages = MA_OPTIONS.map((item) => ({ ...item, data: calculateMA(history, item.period) })),
   mainIndicators = [],
   subIndicator = buildSubIndicator(history),
 } = {}) {
   const dates = history.map((point) => point.date)
-  const layout = getKlineLayout(height)
+  const layout = getKlineLayout(height, subIndicator.key, compact)
+  const axisIndices = compact ? [0] : [0, 1, 2]
   const subAxis = subIndicator.axis ?? {}
   return {
     animation: false,
@@ -43,7 +46,7 @@ export function createIndexTrendOption(history, window, {
       enabled: true,
       label: { description: '行情 K 线、主图指标、成交量与副图指标。可切换周期、设置指标参数、滚轮缩放或拖动查看历史行情。' },
     },
-    grid: createKlineGrids(height, subIndicator.key),
+    grid: createKlineGrids(height, subIndicator.key, compact),
     axisPointer: {
       link: [{ xAxisIndex: 'all' }],
       label: { backgroundColor: '#373a45', color: '#f0f1f5', fontSize: 11 },
@@ -54,7 +57,7 @@ export function createIndexTrendOption(history, window, {
       showContent: false,
       axisPointer: { type: 'cross', crossStyle: { color: KLINE_COLORS.pointer, type: 'dashed' } },
     },
-    xAxis: [0, 1, 2].map((gridIndex) => ({
+    xAxis: axisIndices.map((gridIndex) => ({
       type: 'category',
       gridIndex,
       boundaryGap: true,
@@ -62,7 +65,7 @@ export function createIndexTrendOption(history, window, {
       axisLine: { lineStyle: { color: KLINE_COLORS.grid } },
       axisTick: { show: false },
       axisLabel: {
-        show: gridIndex === 1,
+        show: gridIndex === (compact ? 0 : 1),
         color: KLINE_COLORS.text,
         fontSize: 10,
         hideOverlap: true,
@@ -72,7 +75,7 @@ export function createIndexTrendOption(history, window, {
       axisPointer: {
         show: true, snap: true,
         label: {
-          show: gridIndex === 1,
+          show: gridIndex === (compact ? 0 : 1),
           formatter: ({ value }) => {
             const date = new Date(`${value}T00:00:00Z`)
             if (!Number.isFinite(date.getTime())) return String(value)
@@ -83,7 +86,7 @@ export function createIndexTrendOption(history, window, {
       },
       splitLine: { show: false },
     })),
-    yAxis: [0, 1, 2].map((gridIndex) => ({
+    yAxis: axisIndices.map((gridIndex) => ({
       type: 'value',
       gridIndex,
       scale: gridIndex !== 1 && !(gridIndex === 2 && Number.isFinite(subAxis.min) && Number.isFinite(subAxis.max)),
@@ -104,7 +107,7 @@ export function createIndexTrendOption(history, window, {
     dataZoom: [
       {
         type: 'slider',
-        xAxisIndex: [0, 1, 2],
+        xAxisIndex: axisIndices,
         startValue: window.startIndex,
         endValue: window.endIndex,
         filterMode: 'filter',
@@ -126,7 +129,7 @@ export function createIndexTrendOption(history, window, {
       },
       {
         type: 'inside',
-        xAxisIndex: [0, 1, 2],
+        xAxisIndex: axisIndices,
         startValue: window.startIndex,
         endValue: window.endIndex,
         filterMode: 'filter',
@@ -136,6 +139,6 @@ export function createIndexTrendOption(history, window, {
         preventDefaultMouseMove: true,
       },
     ],
-    series: createKlineSeries(history, movingAverages, mainIndicators, subIndicator, chartType),
+    series: createKlineSeries(history, movingAverages, mainIndicators, subIndicator, chartType).filter(series => !compact || series.xAxisIndex === 0),
   }
 }
