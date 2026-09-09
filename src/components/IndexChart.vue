@@ -29,7 +29,7 @@ const period = ref('day')
 const chartType = ref('candlestick')
 const maOptions = ref(MA_OPTIONS.map((item) => ({ ...item })))
 const bollEnabled = ref(false)
-const bbiEnabled = ref(false)
+const bbiEnabled = ref(true)
 const subIndicatorKey = ref('kdj')
 const indicatorSettings = ref({
   wave: { ...WAVE_PARAMETERS },
@@ -45,7 +45,7 @@ const maData = computed(() => Object.fromEntries(maOptions.value.map(({ period }
 const movingAverages = computed(() => maOptions.value.map((item) => ({ ...item, data: maData.value[item.period] })))
 const mainIndicators = computed(() => [
   ...(bollEnabled.value ? [buildMainIndicator(history.value, 'boll', indicatorSettings.value.boll)] : []),
-  ...(bbiEnabled.value ? [buildMainIndicator(history.value, 'bbi', indicatorSettings.value.bbi)] : []),
+  ...(bbiEnabled.value ? [buildMainIndicator(history.value, 'bbi', indicatorSettings.value.bbi, { period: period.value })] : []),
 ])
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
 const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow } = useKlineChart({

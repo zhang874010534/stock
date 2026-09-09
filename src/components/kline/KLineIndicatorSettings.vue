@@ -11,7 +11,7 @@ const dialog = ref(null), trigger = ref(null), active = ref('ma'), draft = ref(n
 const sections = computed(() => [
   { key: 'ma', label: '均线 MA', description: '收盘价的简单移动平均线。分别设置每条均线的周期、显示状态、线宽和颜色；不足完整周期时不绘制。' },
   { key: 'boll', label: 'BOLL', definition: getMainIndicatorDefinition('boll'), description: '布林线：中轨为收盘价均线，上下轨为中轨加减指定倍数的总体标准差。' },
-  { key: 'bbi', label: '牛熊线 BBI', definition: getMainIndicatorDefinition('bbi'), description: '四个周期的收盘价均线取等权平均，默认周期为 3、6、12、24。' },
+  { key: 'bbi', label: '牛熊线 BBI', definition: getMainIndicatorDefinition('bbi'), description: '四个周期的收盘价均线取等权平均，默认周期为 3、6、12、24。日线连续两天收盘低于 BBI 时，在第 2 天上方标注橙色 ▼ BBI下2，持续低于不重复标记。' },
   { key: props.subIndicator, label: `${getSubIndicatorDefinition(props.subIndicator).label} · 副图`, definition: getSubIndicatorDefinition(props.subIndicator), description: '设置当前副图指标的计算参数。' },
 ])
 const current = computed(() => sections.value.find(section => section.key === active.value) ?? sections.value[0])
@@ -78,6 +78,7 @@ function apply() {
             </tr></tbody>
           </table>
           <div v-else class="settings-fields"><label v-for="field in current.definition.parameterFields" :key="field.key"><span>{{ field.label }}</span><input v-model.number="draft.settings[current.key][field.key]" type="number" :min="field.min" :max="field.max" :step="field.step" /></label></div>
+          <label v-if="active === 'bbi'" class="signal-toggle"><input v-model="draft.settings.bbi.showBelowTwo" type="checkbox" />显示 ▼ BBI下2 标记（仅日线）</label>
           <p v-if="error" class="settings-error" role="alert">{{ error }}</p>
           <p class="settings-help">点击应用后生效；设置沿用于日、周、月、季线。</p>
         </div>
@@ -108,6 +109,7 @@ td { padding: 5px 4px; } td label { display: flex; align-items: center; gap: 7px
 input[type=number] { box-sizing: border-box; width: 100%; max-width: 92px; padding: 5px; border: 1px solid #384156; border-radius: 3px; background: #10141c; color: #d5deeb; }
 input[type=color] { width: 45px; height: 27px; padding: 2px; border: 1px solid #384156; background: #10141c; }
 .settings-fields { display: grid; gap: 12px; }.settings-fields label { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.signal-toggle { display: flex; align-items: center; gap: 8px; margin-top: 16px; color: #ff9f43; }
 .settings-error { color: #ff747b; font-size: 12px; }.settings-help { margin-top: 16px; font-size: 11px; color: #8593a8; line-height: 1.6; }
 footer, footer > div { display: flex; align-items: center; gap: 8px; } footer { justify-content: space-between; padding: 12px 14px; border-top: 1px solid #343d4f; }
 footer button { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }.apply-button { background: #165a7b; border-color: #2384ad; color: #dcf2ff; }
