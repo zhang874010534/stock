@@ -1,0 +1,390 @@
+{
+  "assumptions": {
+    "initial": 100000,
+    "zigPercent": 10,
+    "feePerSide": 0.0001,
+    "minCommission": 5,
+    "slippagePerSide": 0.0005,
+    "lot": 100,
+    "execution": "next session open",
+    "priceAdjustment": "unadjusted; OHLC identical to forward-adjusted over sample",
+    "start": "2022-01-04",
+    "end": "2026-09-09",
+    "bars": 1136,
+    "sha256": "37fe2843df5767a8907c8505fd0d80e493990c7890a1ad68596870622be77e85",
+    "rule": "new unique marker-date/name; buy red resonance line or B; sell wave-sell or S; sell wins any same-day conflict; removal ignored",
+    "formulaSHA256": "e7c9192fe03c80525fd775e1e42f9a7b09fd8d85a1c438edbc978a7ce1eeca92"
+  },
+  "strategy": {
+    "start": "2022-01-04",
+    "end": "2026-09-09",
+    "bars": 1136,
+    "initial": 100000,
+    "finalEquity": 122707.75950910019,
+    "totalReturn": 0.22707759509100178,
+    "cagr": 0.04470545052789565,
+    "maxDD": -0.09917966474973705,
+    "ddPeak": "2024-08-19",
+    "ddTrough": "2024-09-11",
+    "trades": 15,
+    "wins": 10,
+    "losses": 5,
+    "flat": 0,
+    "winRate": 0.6666666666666666,
+    "winRateWilson95": [
+      0.41713125151212976,
+      0.8482389930530876
+    ],
+    "avgTrade": 0.014219642484696308,
+    "avgWin": 0.03512614561561055,
+    "avgLoss": -0.0275933637771322,
+    "payoffRatio": 1.2729925173066825,
+    "profitFactor": 2.647305613477973,
+    "bestTrade": 0.05270075846274799,
+    "worstTrade": -0.040895206408317786,
+    "avgHoldingBars": 21.8,
+    "exposure": 0.2878521126760563,
+    "totalFees": 312.3723909000001,
+    "totalSlippage": 1561.8681000000001,
+    "openPosition": null,
+    "pendingLastSignal": {
+      "date": "2026-09-09",
+      "buys": [],
+      "sells": []
+    },
+    "annual": {
+      "2022": -0.0130002313363492,
+      "2023": 0.025345937154951592,
+      "2024": 0.08103067002467057,
+      "2025": 0.06499757709916887,
+      "2026": 0.05316865628737588
+    }
+  },
+  "noCost": {
+    "start": "2022-01-04",
+    "end": "2026-09-09",
+    "bars": 1136,
+    "initial": 100000,
+    "finalEquity": 124931.40000000005,
+    "totalReturn": 0.24931400000000048,
+    "cagr": 0.04872301336860829,
+    "maxDD": -0.09916929475338332,
+    "ddPeak": "2024-08-19",
+    "ddTrough": "2024-09-11",
+    "trades": 15,
+    "wins": 10,
+    "losses": 5,
+    "flat": 0,
+    "winRate": 0.6666666666666666,
+    "winRateWilson95": [
+      0.41713125151212976,
+      0.8482389930530876
+    ],
+    "avgTrade": 0.015437436671300105,
+    "avgWin": 0.03636904266643485,
+    "avgLoss": -0.02642577531896939,
+    "payoffRatio": 1.3762715465278257,
+    "profitFactor": 2.88029533987466,
+    "bestTrade": 0.05396475770925116,
+    "worstTrade": -0.03974358974358971,
+    "avgHoldingBars": 21.8,
+    "exposure": 0.2878521126760563,
+    "totalFees": 0,
+    "totalSlippage": 0,
+    "openPosition": null,
+    "pendingLastSignal": {
+      "date": "2026-09-09",
+      "buys": [],
+      "sells": []
+    },
+    "annual": {
+      "2022": -0.004097000000000017,
+      "2023": 0.027810941427026892,
+      "2024": 0.08294450957405242,
+      "2025": 0.06759572828916882,
+      "2026": 0.0556702877731885
+    }
+  },
+  "buyHold": {
+    "start": "2022-01-04",
+    "end": "2026-09-09",
+    "bars": 1136,
+    "initial": 100000,
+    "finalEquity": 152231.236103425,
+    "totalReturn": 0.5223123610342502,
+    "cagr": 0.09396889965115962,
+    "maxDD": -0.14158518516238916,
+    "ddPeak": "2025-11-12",
+    "ddTrough": "2026-06-30",
+    "trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "flat": 0,
+    "winRate": null,
+    "winRateWilson95": null,
+    "avgTrade": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "payoffRatio": null,
+    "profitFactor": null,
+    "bestTrade": null,
+    "worstTrade": null,
+    "avgHoldingBars": null,
+    "exposure": 1,
+    "totalFees": 9.998146575000002,
+    "totalSlippage": 49.96575,
+    "openPosition": {
+      "signalDate": "2022-01-04",
+      "buyDate": "2022-01-04",
+      "buyIndex": 0,
+      "buyOpen": 0.795,
+      "buyFill": 0.7953975,
+      "shares": 125700,
+      "cost": 99991.463896575,
+      "buyFee": 9.998146575000002,
+      "lastDate": "2026-09-09",
+      "lastClose": 1.211,
+      "pnl": 52231.236103425006,
+      "return": 0.5223569499637466
+    },
+    "pendingLastSignal": null,
+    "annual": {
+      "2022": 0.028311361034249805,
+      "2023": 0.1173496710943962,
+      "2024": 0.22974223035082875,
+      "2025": 0.04626055027899478,
+      "2026": 0.029760186249331966
+    }
+  },
+  "signalsByType": {
+    "共振买点": 33,
+    "转向买": 10,
+    "波段卖": 70,
+    "转向卖": 35
+  },
+  "conflicts": [],
+  "audit": [
+    {
+      "start": "2026-01-01",
+      "end": "2026-01-31",
+      "firstAppearances": [
+        {
+          "key": "2026-01-09:共振买点",
+          "name": "共振买点",
+          "side": "buy",
+          "markerDate": "2026-01-09",
+          "markerIndex": 973,
+          "observedDate": "2026-01-09",
+          "observedIndex": 973,
+          "delayBars": 0,
+          "firstObservedDate": "2026-01-09",
+          "reappeared": false
+        },
+        {
+          "key": "2026-01-19:共振买点",
+          "name": "共振买点",
+          "side": "buy",
+          "markerDate": "2026-01-19",
+          "markerIndex": 979,
+          "observedDate": "2026-01-19",
+          "observedIndex": 979,
+          "delayBars": 0,
+          "firstObservedDate": "2026-01-19",
+          "reappeared": false
+        }
+      ],
+      "markersInRange": [
+        {
+          "key": "2026-01-09:共振买点",
+          "name": "共振买点",
+          "side": "buy",
+          "markerDate": "2026-01-09",
+          "markerIndex": 973,
+          "observedDate": "2026-01-09",
+          "observedIndex": 973,
+          "delayBars": 0,
+          "firstObservedDate": "2026-01-09",
+          "reappeared": false
+        },
+        {
+          "key": "2026-01-19:共振买点",
+          "name": "共振买点",
+          "side": "buy",
+          "markerDate": "2026-01-19",
+          "markerIndex": 979,
+          "observedDate": "2026-01-19",
+          "observedIndex": 979,
+          "delayBars": 0,
+          "firstObservedDate": "2026-01-19",
+          "reappeared": false
+        }
+      ]
+    },
+    {
+      "start": "2026-05-25",
+      "end": "2026-06-05",
+      "firstAppearances": [],
+      "markersInRange": []
+    },
+    {
+      "start": "2026-06-25",
+      "end": "2026-07-03",
+      "firstAppearances": [
+        {
+          "key": "2026-06-29:转向买",
+          "name": "转向买",
+          "side": "buy",
+          "markerDate": "2026-06-29",
+          "markerIndex": 1083,
+          "observedDate": "2026-06-29",
+          "observedIndex": 1083,
+          "delayBars": 0,
+          "firstObservedDate": "2026-06-29",
+          "reappeared": false
+        },
+        {
+          "key": "2026-06-29:共振买点",
+          "name": "共振买点",
+          "side": "buy",
+          "markerDate": "2026-06-29",
+          "markerIndex": 1083,
+          "observedDate": "2026-06-29",
+          "observedIndex": 1083,
+          "delayBars": 0,
+          "firstObservedDate": "2026-06-29",
+          "reappeared": false
+        },
+        {
+          "key": "2026-07-01:转向买",
+          "name": "转向买",
+          "side": "buy",
+          "markerDate": "2026-07-01",
+          "markerIndex": 1085,
+          "observedDate": "2026-07-01",
+          "observedIndex": 1085,
+          "delayBars": 0,
+          "firstObservedDate": "2026-07-01",
+          "reappeared": false
+        },
+        {
+          "key": "2026-07-01:共振买点",
+          "name": "共振买点",
+          "side": "buy",
+          "markerDate": "2026-07-01",
+          "markerIndex": 1085,
+          "observedDate": "2026-07-01",
+          "observedIndex": 1085,
+          "delayBars": 0,
+          "firstObservedDate": "2026-07-01",
+          "reappeared": false
+        }
+      ],
+      "markersInRange": [
+        {
+          "key": "2026-06-29:转向买",
+          "name": "转向买",
+          "side": "buy",
+          "markerDate": "2026-06-29",
+          "markerIndex": 1083,
+          "observedDate": "2026-06-29",
+          "observedIndex": 1083,
+          "delayBars": 0,
+          "firstObservedDate": "2026-06-29",
+          "reappeared": false
+        },
+        {
+          "key": "2026-06-29:共振买点",
+          "name": "共振买点",
+          "side": "buy",
+          "markerDate": "2026-06-29",
+          "markerIndex": 1083,
+          "observedDate": "2026-06-29",
+          "observedIndex": 1083,
+          "delayBars": 0,
+          "firstObservedDate": "2026-06-29",
+          "reappeared": false
+        },
+        {
+          "key": "2026-07-01:转向买",
+          "name": "转向买",
+          "side": "buy",
+          "markerDate": "2026-07-01",
+          "markerIndex": 1085,
+          "observedDate": "2026-07-01",
+          "observedIndex": 1085,
+          "delayBars": 0,
+          "firstObservedDate": "2026-07-01",
+          "reappeared": false
+        },
+        {
+          "key": "2026-07-01:共振买点",
+          "name": "共振买点",
+          "side": "buy",
+          "markerDate": "2026-07-01",
+          "markerIndex": 1085,
+          "observedDate": "2026-07-01",
+          "observedIndex": 1085,
+          "delayBars": 0,
+          "firstObservedDate": "2026-07-01",
+          "reappeared": false
+        }
+      ]
+    },
+    {
+      "start": "2026-07-27",
+      "end": "2026-08-07",
+      "firstAppearances": [
+        {
+          "key": "2026-07-31:转向卖",
+          "name": "转向卖",
+          "side": "sell",
+          "markerDate": "2026-07-31",
+          "markerIndex": 1107,
+          "observedDate": "2026-07-31",
+          "observedIndex": 1107,
+          "delayBars": 0,
+          "firstObservedDate": "2026-07-31",
+          "reappeared": false
+        },
+        {
+          "key": "2026-07-31:波段卖",
+          "name": "波段卖",
+          "side": "sell",
+          "markerDate": "2026-07-31",
+          "markerIndex": 1107,
+          "observedDate": "2026-07-31",
+          "observedIndex": 1107,
+          "delayBars": 0,
+          "firstObservedDate": "2026-07-31",
+          "reappeared": false
+        }
+      ],
+      "markersInRange": [
+        {
+          "key": "2026-07-31:转向卖",
+          "name": "转向卖",
+          "side": "sell",
+          "markerDate": "2026-07-31",
+          "markerIndex": 1107,
+          "observedDate": "2026-07-31",
+          "observedIndex": 1107,
+          "delayBars": 0,
+          "firstObservedDate": "2026-07-31",
+          "reappeared": false
+        },
+        {
+          "key": "2026-07-31:波段卖",
+          "name": "波段卖",
+          "side": "sell",
+          "markerDate": "2026-07-31",
+          "markerIndex": 1107,
+          "observedDate": "2026-07-31",
+          "observedIndex": 1107,
+          "delayBars": 0,
+          "firstObservedDate": "2026-07-31",
+          "reappeared": false
+        }
+      ]
+    }
+  ]
+}

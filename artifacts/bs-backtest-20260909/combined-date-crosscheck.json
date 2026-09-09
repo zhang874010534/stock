@@ -1,0 +1,298 @@
+[
+  {
+    "source": "public/data/512890.json",
+    "historyStart": "2025-02-18",
+    "date": "2026-01-09",
+    "eventsOnLastBar": [
+      "共振买点"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "public/data/512890.json",
+    "historyStart": "2025-02-18",
+    "date": "2026-01-19",
+    "eventsOnLastBar": [
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "public/data/512890.json",
+    "historyStart": "2025-02-18",
+    "date": "2026-05-29",
+    "eventsOnLastBar": [],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "public/data/512890.json",
+    "historyStart": "2025-02-18",
+    "date": "2026-07-01",
+    "eventsOnLastBar": [
+      "转向买",
+      "波段买",
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "public/data/512890.json",
+    "historyStart": "2025-02-18",
+    "date": "2026-07-16",
+    "eventsOnLastBar": [
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "public/data/512890.json",
+    "historyStart": "2025-02-18",
+    "date": "2026-07-24",
+    "eventsOnLastBar": [
+      "转向卖",
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "public/data/512890.json",
+    "historyStart": "2025-02-18",
+    "date": "2026-07-31",
+    "eventsOnLastBar": [
+      "转向卖",
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "public/data/512890.json",
+    "historyStart": "2025-02-18",
+    "date": "2026-08-04",
+    "eventsOnLastBar": [],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "public/data/h30269.json",
+    "historyStart": "2024-11-18",
+    "date": "2026-01-09",
+    "eventsOnLastBar": [
+      "共振买点"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "public/data/h30269.json",
+    "historyStart": "2024-11-18",
+    "date": "2026-01-19",
+    "eventsOnLastBar": [
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "public/data/h30269.json",
+    "historyStart": "2024-11-18",
+    "date": "2026-05-29",
+    "eventsOnLastBar": [
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "public/data/h30269.json",
+    "historyStart": "2024-11-18",
+    "date": "2026-07-01",
+    "eventsOnLastBar": [
+      "转向买",
+      "波段买",
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "public/data/h30269.json",
+    "historyStart": "2024-11-18",
+    "date": "2026-07-16",
+    "eventsOnLastBar": [
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "public/data/h30269.json",
+    "historyStart": "2024-11-18",
+    "date": "2026-07-24",
+    "eventsOnLastBar": [],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "public/data/h30269.json",
+    "historyStart": "2024-11-18",
+    "date": "2026-07-31",
+    "eventsOnLastBar": [
+      "转向卖",
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "public/data/h30269.json",
+    "historyStart": "2024-11-18",
+    "date": "2026-08-04",
+    "eventsOnLastBar": [],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/512890-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-01-09",
+    "eventsOnLastBar": [
+      "共振买点"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/512890-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-01-19",
+    "eventsOnLastBar": [
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/512890-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-05-29",
+    "eventsOnLastBar": [],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/512890-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-07-01",
+    "eventsOnLastBar": [
+      "转向买",
+      "波段买",
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/512890-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-07-16",
+    "eventsOnLastBar": [
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/512890-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-07-24",
+    "eventsOnLastBar": [
+      "转向卖",
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/512890-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-07-31",
+    "eventsOnLastBar": [
+      "转向卖",
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/512890-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-08-04",
+    "eventsOnLastBar": [],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/h30269-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-01-09",
+    "eventsOnLastBar": [
+      "共振买点"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/h30269-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-01-19",
+    "eventsOnLastBar": [
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/h30269-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-05-29",
+    "eventsOnLastBar": [
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/h30269-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-07-01",
+    "eventsOnLastBar": [
+      "转向买",
+      "波段买",
+      "共振买点",
+      "★绝佳"
+    ],
+    "verticalOnLastBar": true
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/h30269-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-07-16",
+    "eventsOnLastBar": [
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/h30269-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-07-24",
+    "eventsOnLastBar": [],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/h30269-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-07-31",
+    "eventsOnLastBar": [
+      "转向卖",
+      "波段卖"
+    ],
+    "verticalOnLastBar": false
+  },
+  {
+    "source": "artifacts/bs-backtest-20260909/h30269-extended.json",
+    "historyStart": "2022-01-04",
+    "date": "2026-08-04",
+    "eventsOnLastBar": [],
+    "verticalOnLastBar": false
+  }
+]
