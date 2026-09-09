@@ -1,3 +1,4 @@
+import { getKlineTimelineLength } from '../src/utils/klineViewport.js'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { h30269DemoHistory } from '../src/data/h30269.mock.js'
@@ -88,12 +89,12 @@ test('ECharts 能渲染 K 线、均线、成交量与 KDJ，三图共用缩放�
       const expected = getRangeWindow(history, key)
       chart.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: expected.startIndex, endValue: expected.endIndex })
       const zoom = chart.getOption().dataZoom[0]
-      assert.deepEqual(getZoomWindow(history.length, zoom.start, zoom.end), expected)
+      assert.deepEqual(getZoomWindow(getKlineTimelineLength(history.length), zoom.start, zoom.end), expected)
     }
     assert.equal(zoomEvents, INDEX_RANGES.length)
     chart.dispatchAction({ type: 'dataZoom', start: 25, end: 50 })
     const zoom = chart.getOption().dataZoom[0]
-    assert.deepEqual(getZoomWindow(history.length, zoom.start, zoom.end), getZoomWindow(history.length, 25, 50))
+    assert.deepEqual(getZoomWindow(getKlineTimelineLength(history.length), zoom.start, zoom.end), getZoomWindow(getKlineTimelineLength(history.length), 25, 50))
     chart.resize({ width: 320, height: 213 })
     assert.doesNotMatch(chart.renderToSVGString(), /NaN/)
   } finally {
@@ -135,7 +136,7 @@ test('同一实例开关均线不会丢失缩放，副图触发的缩放同步�
     const series = after.series.filter(Boolean)
     assert.equal(series.filter((item) => item.id.startsWith('ma-')).length, 5)
     assert.equal(new Set(series.map((item) => item.id)).size, series.length)
-    assert.ok(after.xAxis.every((axis) => axis.data.length === history.length))
+    assert.ok(after.xAxis.every((axis) => axis.data.length === getKlineTimelineLength(history.length)))
     assert.doesNotMatch(chart.renderToSVGString(), /NaN/)
   } finally {
     chart.dispose()

@@ -9,6 +9,7 @@ import { formatVolume } from '../utils/kline.js'
 import { getKlineLayout, KLINE_COLORS, MA_OPTIONS } from './kline/config.js'
 import { createKlineSeries } from './kline/series.js'
 import { buildSubIndicator } from './kline/subIndicators.js'
+import { getKlineTimelineLength } from '../utils/klineViewport.js'
 
 use([BarChart, CandlestickChart, LineChart, ScatterChart, CustomChart, GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent, MarkPointComponent, SVGRenderer, LabelLayout])
 
@@ -36,6 +37,8 @@ export function createIndexTrendOption(history, window, {
   subIndicator = buildSubIndicator(history),
 } = {}) {
   const dates = history.map((point) => point.date)
+  const timelineLength = getKlineTimelineLength(history.length)
+  for (let i = history.length; i < timelineLength; i++) dates.push(`empty:${i}`)
   const layout = getKlineLayout(height, subIndicator.key, compact)
   const axisIndices = compact ? [0] : [0, 1, 2]
   const subAxis = subIndicator.axis ?? {}
@@ -63,6 +66,8 @@ export function createIndexTrendOption(history, window, {
       gridIndex,
       boundaryGap: true,
       data: dates,
+      min: 0,
+      max: Math.max(0, timelineLength - 1),
       axisLine: { lineStyle: { color: KLINE_COLORS.grid } },
       axisTick: { show: false },
       axisLabel: {
@@ -71,13 +76,14 @@ export function createIndexTrendOption(history, window, {
         fontSize: 10,
         hideOverlap: true,
         margin: 8,
-        formatter: (value) => value.slice(2),
+        formatter: (value) => value.startsWith('empty:') ? '' : value.slice(2),
       },
       axisPointer: {
         show: true, snap: true,
         label: {
           show: gridIndex === (compact ? 0 : 1),
           formatter: ({ value }) => {
+            if (String(value).startsWith('empty:')) return ''
             const date = new Date(`${value}T00:00:00Z`)
             if (!Number.isFinite(date.getTime())) return String(value)
             const weekday = new Intl.DateTimeFormat('zh-CN', { weekday: 'long', timeZone: 'UTC' }).format(date)

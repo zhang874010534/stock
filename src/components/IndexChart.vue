@@ -67,7 +67,8 @@ const displayError = computed(() => props.error || chartError.value)
 const showChart = computed(() => !isBusy.value && !displayError.value && history.value.length > 0)
 const quote = computed(() => showChart.value ? getKlineQuote(history.value, activeIndex.value) : null)
 const latestQuote = computed(() => showChart.value ? getKlineQuote(history.value, history.value.length - 1) : null)
-const summary = computed(() => getWindowSummary(history.value, visibleWindow.value))
+const dataWindow = computed(() => ({ startIndex: visibleWindow.value.startIndex, endIndex: Math.min(history.value.length - 1, visibleWindow.value.endIndex) }))
+const summary = computed(() => getWindowSummary(history.value, dataWindow.value))
 const layout = computed(() => getKlineLayout(height.value, subIndicatorKey.value, compact.value))
 const periodLabel = computed(() => KLINE_PERIODS.find((item) => item.key === period.value)?.label)
 
@@ -147,7 +148,7 @@ function setIndicatorSettings(key, settings) {
             <p class="wave-note">含未来函数，历史信号可能重绘；使用未复权行情。{{ subIndicator.values.missingTurnover ? '部分K线缺少换手率，短买点不计算。' : '' }}当前已加载 {{ history.length }} 根K线，历史回补会影响计算结果。</p>
           </section>
           <div v-if="summary && showChart" class="range-summary sidebar-section">
-            <span>{{ summary.startDate }} — {{ summary.endDate }} · {{ visibleWindow.endIndex - visibleWindow.startIndex + 1 }} 根</span>
+            <span>{{ summary.startDate }} — {{ summary.endDate }} · {{ dataWindow.endIndex - dataWindow.startIndex + 1 }} 根</span>
             <span :class="summary.changePercent >= 0 ? 'up' : 'down'">区间 {{ summary.changePercent > 0 ? '+' : '' }}{{ summary.changePercent.toFixed(2) }}%</span>
           </div>
           <YieldMetricCard :instrument="instrument" />

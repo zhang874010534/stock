@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getRangeWindow, getZoomWindow } from '../../utils/indexHistory.js'
 import { getDefaultKlineWindow } from '../../utils/kline.js'
 import { getKeyboardKlineTarget } from '../../utils/klineKeyboard.js'
+import { clampKlineViewport, getKlineTimelineLength } from '../../utils/klineViewport.js'
 
 export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator, chartType, compact, pricePrecision }) {
   const loading = ref(true)
@@ -38,7 +39,11 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
 
   function handleZoom() {
     const zoom = chart.getOption().dataZoom[0]
-    visibleWindow.value = getZoomWindow(history.value.length, zoom.start, zoom.end)
+    const requested = getZoomWindow(getKlineTimelineLength(history.value.length), zoom.start, zoom.end)
+    visibleWindow.value = clampKlineViewport(history.value.length, requested)
+    if (requested.startIndex !== visibleWindow.value.startIndex) {
+      chart.dispatchAction({ type: 'dataZoom', startValue: visibleWindow.value.startIndex, endValue: visibleWindow.value.endIndex })
+    }
     range.value = 'custom'
   }
 
@@ -73,7 +78,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
   function indexAtPixel(x) {
     if (!chart || !history.value.length) return null
     const index = chart.convertFromPixel({ xAxisIndex: 0 }, x)
-    return Number.isFinite(index) ? Math.max(visibleWindow.value.startIndex, Math.min(visibleWindow.value.endIndex, Math.round(index))) : null
+    return Number.isFinite(index) ? Math.max(visibleWindow.value.startIndex, Math.min(history.value.length - 1, visibleWindow.value.endIndex, Math.round(index))) : null
   }
 
   function pointAtPixel(x, y) {
