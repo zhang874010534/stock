@@ -26,6 +26,7 @@ const emit = defineEmits(['retry'])
 const chartElement = ref(null)
 const panelElement = ref(null)
 const period = ref('day')
+const chartType = ref('candlestick')
 const maOptions = ref(MA_OPTIONS.map((item) => ({ ...item })))
 const bollEnabled = ref(false)
 const subIndicatorKey = ref('kdj')
@@ -46,6 +47,7 @@ const { loading: chartLoading, error: chartError, range, activeIndex, isHovering
   element: chartElement,
   history,
   period,
+  chartType,
   movingAverages,
   mainIndicators,
   subIndicator,
@@ -84,6 +86,7 @@ function setIndicatorSettings(key, settings) {
 
         <KLineToolbar
           :period="period"
+          :chart-type="chartType"
           :range="range"
           :ma-options="maOptions"
           :boll-enabled="bollEnabled"
@@ -92,6 +95,7 @@ function setIndicatorSettings(key, settings) {
           :indicator-settings="indicatorSettings"
           :disabled="isBusy"
           @period-change="period = $event"
+          @chart-type-change="chartType = $event"
           @range-change="selectRange"
           @ma-change="setMA"
           @boll-change="bollEnabled = $event"

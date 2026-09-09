@@ -17,14 +17,18 @@ export function createLineSeries({ id, name, color, data }, axisIndex = 0) {
   }
 }
 
-export function createKlineSeries(history, movingAverages, mainIndicators = [], subIndicator) {
+export function createKlineSeries(history, movingAverages, mainIndicators = [], subIndicator, chartType = 'candlestick') {
   // 兼容旧调用签名 createKlineSeries(history, movingAverages, subIndicator)。
   if (!Array.isArray(mainIndicators)) {
     subIndicator = mainIndicators
     mainIndicators = []
   }
   return [
-    {
+    chartType === 'line' ? {
+      ...createLineSeries({ id: 'index-close', name: '收盘价', color: '#e7c65b', data: history.map(point => point.close) }),
+      lineStyle: { width: 1.8, color: '#e7c65b' },
+      smooth: false,
+    } : {
       id: 'index-kline',
       name: '指数 K 线',
       type: 'candlestick',

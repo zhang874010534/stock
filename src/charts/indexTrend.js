@@ -27,6 +27,7 @@ export function createKlineGrids(height, indicatorKey) {
 
 export function createIndexTrendOption(history, window, {
   height = 360,
+  chartType = 'candlestick',
   movingAverages = MA_OPTIONS.map((item) => ({ ...item, data: calculateMA(history, item.period) })),
   mainIndicators = [],
   subIndicator = buildSubIndicator(history),
@@ -135,6 +136,6 @@ export function createIndexTrendOption(history, window, {
         preventDefaultMouseMove: true,
       },
     ],
-    series: createKlineSeries(history, movingAverages, mainIndicators, subIndicator),
+    series: createKlineSeries(history, movingAverages, mainIndicators, subIndicator, chartType),
   }
 }

@@ -3,7 +3,7 @@ import { getRangeWindow, getZoomWindow } from '../../utils/indexHistory.js'
 import { getDefaultKlineWindow } from '../../utils/kline.js'
 import { createKlineSeries } from '../../charts/kline/series.js'
 
-export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator }) {
+export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator, chartType }) {
   const loading = ref(true)
   const error = ref('')
   const range = ref('recent')
@@ -85,6 +85,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
       visibleWindow.value = presetWindow(range.value === 'custom' ? 'recent' : range.value)
       chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, {
         height: height.value,
+        chartType: chartType.value,
         movingAverages: movingAverages.value,
         mainIndicators: mainIndicators.value,
         subIndicator: subIndicator.value,
@@ -126,7 +127,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
   }, { flush: 'post' })
 
   // 只替换指标 series，保留用户缩放、拖动与当前行情位置。
-  watch([movingAverages, mainIndicators, subIndicator], () => {
+  watch([movingAverages, mainIndicators, subIndicator, chartType], () => {
     if (!chart || !history.value.length) return
     chart.setOption({
       grid: runtime.createKlineGrids(height.value, subIndicator.value.key),
@@ -140,7 +141,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
           scale: !(Number.isFinite(subIndicator.value.axis?.min) && Number.isFinite(subIndicator.value.axis?.max)),
         },
       ],
-      series: createKlineSeries(history.value, movingAverages.value, mainIndicators.value, subIndicator.value),
+      series: createKlineSeries(history.value, movingAverages.value, mainIndicators.value, subIndicator.value, chartType.value),
     }, { replaceMerge: ['series'] })
   }, { flush: 'post' })
 

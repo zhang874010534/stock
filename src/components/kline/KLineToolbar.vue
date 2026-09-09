@@ -8,6 +8,7 @@ import KLineIndicatorSettings from './KLineIndicatorSettings.vue'
 
 defineProps({
   period: { type: String, required: true },
+  chartType: { type: String, default: 'candlestick' },
   range: { type: String, required: true },
   maOptions: { type: Array, required: true },
   bollEnabled: Boolean,
@@ -16,7 +17,7 @@ defineProps({
   disabled: Boolean,
   waveAvailable: Boolean,
 })
-const emit = defineEmits(['period-change', 'range-change', 'ma-change', 'boll-change', 'indicator-change', 'settings-change'])
+const emit = defineEmits(['period-change', 'chart-type-change', 'range-change', 'ma-change', 'boll-change', 'indicator-change', 'settings-change'])
 const maMenu = ref(null)
 const maTrigger = ref(null)
 
@@ -36,6 +37,10 @@ function handleFocusOut(event) {
     <div class="toolbar-main">
       <div class="period-buttons" role="group" aria-label="K 线周期">
         <button v-for="item in KLINE_PERIODS" :key="item.key" type="button" :class="{ selected: period === item.key }" :aria-pressed="period === item.key" :disabled="disabled" @click="emit('period-change', item.key)">{{ item.label }}</button>
+      </div>
+      <div class="period-buttons" role="group" aria-label="主图类型">
+        <button type="button" :class="{ selected: chartType === 'candlestick' }" :aria-pressed="chartType === 'candlestick'" :disabled="disabled" @click="emit('chart-type-change', 'candlestick')">K线</button>
+        <button type="button" :class="{ selected: chartType === 'line' }" :aria-pressed="chartType === 'line'" :disabled="disabled" title="按当前周期的收盘价绘制折线" @click="emit('chart-type-change', 'line')">折线</button>
       </div>
       <details ref="maMenu" class="ma-selector" @focusout="handleFocusOut" @keydown.esc.stop.prevent="closeMenu">
         <summary ref="maTrigger" aria-label="MA 均线设置">MA <ChevronDown :size="12" /></summary>
