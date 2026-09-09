@@ -53,6 +53,7 @@ const compact = computed(() => !expanded.value)
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
 const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel } = useKlineChart({
   compact,
+  pricePrecision: computed(() => props.instrument === '512890' ? 3 : 2),
   element: chartElement,
   history,
   period,

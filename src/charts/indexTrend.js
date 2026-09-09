@@ -1,6 +1,6 @@
 import { init, use } from 'echarts/core'
 import { BarChart, CandlestickChart, LineChart, ScatterChart, CustomChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent } from 'echarts/components'
+import { GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent, MarkPointComponent } from 'echarts/components'
 import { SVGRenderer } from 'echarts/renderers'
 import { LabelLayout } from 'echarts/features'
 import { calculateMA } from '../utils/indicators.js'
@@ -10,7 +10,7 @@ import { getKlineLayout, KLINE_COLORS, MA_OPTIONS } from './kline/config.js'
 import { createKlineSeries } from './kline/series.js'
 import { buildSubIndicator } from './kline/subIndicators.js'
 
-use([BarChart, CandlestickChart, LineChart, ScatterChart, CustomChart, GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent, SVGRenderer, LabelLayout])
+use([BarChart, CandlestickChart, LineChart, ScatterChart, CustomChart, GridComponent, TooltipComponent, DataZoomComponent, AriaComponent, AxisPointerComponent, MarkPointComponent, SVGRenderer, LabelLayout])
 
 export function initIndexTrend(container, options = {}) {
   return init(container, null, { renderer: 'svg', ...options })
@@ -29,6 +29,7 @@ export function createKlineGrids(height, indicatorKey, compact = false) {
 export function createIndexTrendOption(history, window, {
   height = 360,
   compact = false,
+  pricePrecision = 2,
   chartType = 'candlestick',
   movingAverages = MA_OPTIONS.map((item) => ({ ...item, data: calculateMA(history, item.period) })),
   mainIndicators = [],
@@ -90,8 +91,8 @@ export function createIndexTrendOption(history, window, {
       type: 'value',
       gridIndex,
       scale: gridIndex !== 1 && !(gridIndex === 2 && Number.isFinite(subAxis.min) && Number.isFinite(subAxis.max)),
-      min: gridIndex === 2 ? subAxis.min : undefined,
-      max: gridIndex === 2 ? subAxis.max : undefined,
+      min: gridIndex === 0 ? ({ min, max }) => min - Math.max(max - min, Math.abs(min) * .01, .01) * .12 : gridIndex === 2 ? subAxis.min : undefined,
+      max: gridIndex === 0 ? ({ min, max }) => max + Math.max(max - min, Math.abs(max) * .01, .01) * .12 : gridIndex === 2 ? subAxis.max : undefined,
       splitNumber: gridIndex === 0 ? 4 : gridIndex === 2 ? (subAxis.splitNumber ?? 2) : 2,
       axisLine: { show: false },
       axisTick: { show: false },
@@ -139,6 +140,6 @@ export function createIndexTrendOption(history, window, {
         preventDefaultMouseMove: true,
       },
     ],
-    series: createKlineSeries(history, movingAverages, mainIndicators, subIndicator, chartType).filter(series => !compact || series.xAxisIndex === 0),
+    series: createKlineSeries(history, movingAverages, mainIndicators, subIndicator, chartType, pricePrecision).filter(series => !compact || series.xAxisIndex === 0),
   }
 }

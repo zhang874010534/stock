@@ -3,7 +3,7 @@ import { getRangeWindow, getZoomWindow } from '../../utils/indexHistory.js'
 import { getDefaultKlineWindow } from '../../utils/kline.js'
 import { getKeyboardKlineTarget } from '../../utils/klineKeyboard.js'
 
-export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator, chartType, compact }) {
+export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator, chartType, compact, pricePrecision }) {
   const loading = ref(true)
   const error = ref('')
   const range = ref('recent')
@@ -120,6 +120,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
       chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, {
         height: height.value,
         compact: compact.value,
+        pricePrecision: pricePrecision.value,
         chartType: chartType.value,
         movingAverages: movingAverages.value,
         mainIndicators: mainIndicators.value,
@@ -169,6 +170,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, {
       height: height.value,
       compact: compact.value,
+      pricePrecision: pricePrecision.value,
       chartType: chartType.value,
       movingAverages: movingAverages.value,
       mainIndicators: mainIndicators.value,
