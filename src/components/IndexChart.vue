@@ -10,6 +10,7 @@ import { WAVE_PARAMETERS } from '../charts/kline/waveIndicator.js'
 import { buildSubIndicator } from '../charts/kline/subIndicators.js'
 import KLineToolbar from './kline/KLineToolbar.vue'
 import KLineQuote from './kline/KLineQuote.vue'
+import KLineRangeSelection from './kline/KLineRangeSelection.vue'
 import YieldMetricCard from './YieldMetricCard.vue'
 import { useKlineChart } from './kline/useKlineChart.js'
 import { useKlineFullscreen } from './kline/useKlineFullscreen.js'
@@ -41,7 +42,7 @@ const maData = computed(() => Object.fromEntries(MA_OPTIONS.map(({ period }) => 
 const movingAverages = computed(() => maOptions.value.map((item) => ({ ...item, data: maData.value[item.period] })))
 const mainIndicators = computed(() => bollEnabled.value ? [buildMainIndicator(history.value, 'boll', indicatorSettings.value.boll)] : [])
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
-const { loading: chartLoading, error: chartError, range, activeIndex, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load } = useKlineChart({
+const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow } = useKlineChart({
   element: chartElement,
   history,
   period,
@@ -54,6 +55,7 @@ const isBusy = computed(() => chartLoading.value || props.loading)
 const displayError = computed(() => props.error || chartError.value)
 const showChart = computed(() => !isBusy.value && !displayError.value && history.value.length > 0)
 const quote = computed(() => showChart.value ? getKlineQuote(history.value, activeIndex.value) : null)
+const latestQuote = computed(() => showChart.value ? getKlineQuote(history.value, history.value.length - 1) : null)
 const summary = computed(() => getWindowSummary(history.value, visibleWindow.value))
 const layout = computed(() => getKlineLayout(height.value, subIndicatorKey.value))
 const periodLabel = computed(() => KLINE_PERIODS.find((item) => item.key === period.value)?.label)
@@ -97,11 +99,12 @@ function setIndicatorSettings(key, settings) {
           @settings-change="setIndicatorSettings"
         />
         </div>
-        <KLineQuote :hide-details="expanded" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
+        <KLineQuote hide-details :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
-        <div class="chart-body" :aria-busy="isBusy" @mouseleave="resetHover">
+        <KLineRangeSelection class="chart-body" :aria-busy="isBusy" :history="history" :layout="layout" :visible-window="visibleWindow" :index-at-pixel="indexAtPixel" :enabled="showChart" :instrument="instrument" :period-label="periodLabel" @zoom="zoomToWindow" @mouseleave="resetHover">
           <div ref="chartElement" class="chart-canvas" :style="{ visibility: showChart ? 'visible' : 'hidden' }" />
           <template v-if="showChart">
+            <KLineQuote v-if="isHovering" floating hide-ma :side="quoteSide" :overlay-offset="layout.priceTop + 6" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :active-index="activeIndex" :is-latest="activeIndex === history.length - 1" />
             <div class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
             <div class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex], subIndicatorKey === 'wave' ? 3 : 2) }}</b></div>
           </template>
@@ -109,15 +112,14 @@ function setIndicatorSettings(key, settings) {
             <span>{{ displayError || (isBusy ? '正在读取行情…' : '暂无行情数据') }}</span>
             <button v-if="displayError" type="button" @click="error ? emit('retry') : load()">重试</button>
           </div>
-        </div>
+        </KLineRangeSelection>
 
         </div>
         <aside v-if="expanded" class="chart-sidebar" aria-label="证券行情与指标信息">
           <div class="sidebar-heading"><h2>{{ instrument }} · {{ instrument === '512890' ? 'ETF' : '指数' }}</h2><button class="expand-button" aria-label="退出全屏" title="退出全屏（ESC）" @click="toggle"><Minimize2 :size="14" />退出</button></div>
           <p class="sidebar-name">{{ instrument === '512890' ? '华泰柏瑞红利低波ETF' : '中证红利低波动指数' }}</p>
-          <p class="sidebar-price" :class="{ up: quote?.change > 0, down: quote?.change < 0 }">{{ formatIndexValue(quote?.close, instrument === '512890' ? 3 : 2) }}</p>
-          <p class="sidebar-caption">{{ periodLabel }} · {{ activeIndex === history.length - 1 ? '最新已同步行情' : '十字光标所选行情' }}</p>
-          <KLineQuote hide-ma :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
+          <p class="sidebar-price" :class="{ up: latestQuote?.change > 0, down: latestQuote?.change < 0 }">{{ formatIndexValue(latestQuote?.close, instrument === '512890' ? 3 : 2) }}</p>
+          <p class="sidebar-caption">{{ latestQuote?.date ?? '—' }} · {{ periodLabel }}最新已同步行情</p>
           <section v-if="subIndicatorKey === 'wave'" class="sidebar-section" aria-label="波段信号详情">
             <h3>波段信号</h3>
             <div v-if="showChart" class="wave-readout">
@@ -133,7 +135,7 @@ function setIndicatorSettings(key, settings) {
             <span :class="summary.changePercent >= 0 ? 'up' : 'down'">区间 {{ summary.changePercent > 0 ? '+' : '' }}{{ summary.changePercent.toFixed(2) }}%</span>
           </div>
           <YieldMetricCard :instrument="instrument" />
-          <p class="sidebar-note">行情随十字光标联动；股息率和国债收益率为各自最新发布值。未提供的字段显示 —。</p>
+          <p class="sidebar-note">股息率和国债收益率为各自最新发布值。未提供的字段显示 —。</p>
         </aside>
       </section>
     </Teleport>

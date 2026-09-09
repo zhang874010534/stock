@@ -10,6 +10,7 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
   const hoveredIndex = ref(null)
   const quoteSide = ref('left')
   const activeIndex = computed(() => hoveredIndex.value ?? history.value.length - 1)
+  const isHovering = computed(() => hoveredIndex.value !== null)
   const visibleWindow = ref({ startIndex: 0, endIndex: 0 })
   const height = ref(360)
   let runtime
@@ -49,6 +50,19 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     chart?.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: window.startIndex, endValue: window.endIndex })
     range.value = key
     visibleWindow.value = window
+    resetHover()
+  }
+
+  function indexAtPixel(x) {
+    if (!chart || !history.value.length) return null
+    const index = chart.convertFromPixel({ xAxisIndex: 0 }, x)
+    return Number.isFinite(index) ? Math.max(visibleWindow.value.startIndex, Math.min(visibleWindow.value.endIndex, Math.round(index))) : null
+  }
+
+  function zoomToWindow(startIndex, endIndex) {
+    chart?.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: startIndex, endValue: endIndex })
+    visibleWindow.value = { startIndex, endIndex }
+    range.value = 'custom'
     resetHover()
   }
 
@@ -143,5 +157,5 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     chart?.dispose()
   })
 
-  return { loading, error, range, activeIndex, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load }
+  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow }
 }
