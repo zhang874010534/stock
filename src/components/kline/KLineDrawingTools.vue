@@ -1,21 +1,23 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { Eye, EyeOff, MousePointer2, Trash2, Undo2 } from 'lucide-vue-next'
+import { Eye, EyeOff, Minus, MousePointer2, Trash2, Undo2 } from 'lucide-vue-next'
 import { clipParallelLine, validParallelDrawing } from '../../utils/parallelLines.js'
+import { clipHorizontalLine, validHorizontalDrawing } from '../../utils/horizontalLines.js'
 
 const props = defineProps({
   instrument: String, period: String, layout: Object, revision: Number,
-  pointAtPixel: Function, pointToPixel: Function,
+  pointAtPixel: Function, pointToPixel: Function, priceToPixel: Function,
 })
 const root = ref(null), width = ref(0), drawing = ref(false), hidden = ref(false)
+const tool = ref('parallel')
 const points = ref([]), cursor = ref(null), drawings = ref([]), selected = ref(null), storageError = ref('')
 let observer
 const storageKey = computed(() => `stock:parallel-lines:v1:${props.instrument}:${props.period}`)
 const rect = computed(() => ({ left: props.layout.left, right: width.value - props.layout.right,
   top: props.layout.priceTop, bottom: props.layout.priceTop + props.layout.priceHeight }))
-const hint = computed(() => ['点击起点', '点击第二点确定方向', '点击第三点确定平行线间距'][points.value.length])
+const hint = computed(() => tool.value === 'horizontal' ? '点击确定水平线价格' : ['点击起点', '点击第二点确定方向', '点击第三点确定平行线间距'][points.value.length])
 function cancel() { drawing.value = false; points.value = []; cursor.value = null }
-function begin() { cancel(); hidden.value = false; selected.value = null; drawing.value = true; root.value.focus({ preventScroll: true }) }
+function begin(type) { cancel(); tool.value = type; hidden.value = false; selected.value = null; drawing.value = true; root.value.focus({ preventScroll: true }) }
 function save() {
   try { localStorage.setItem(storageKey.value, JSON.stringify(drawings.value)); storageError.value = '' }
   catch { storageError.value = '本机保存失败，刷新后画线会丢失' }
@@ -24,7 +26,7 @@ function load() {
   cancel(); selected.value = null; drawings.value = []; storageError.value = ''
   try {
     const saved = JSON.parse(localStorage.getItem(storageKey.value) ?? '[]')
-    if (Array.isArray(saved)) drawings.value = saved.filter(validParallelDrawing)
+    if (Array.isArray(saved)) drawings.value = saved.filter(item => validHorizontalDrawing(item) || ((!item?.type || item.type === 'parallel') && validParallelDrawing(item)))
   } catch { storageError.value = '无法读取本机画线' }
 }
 function position(event) {
@@ -38,6 +40,11 @@ function place(event) {
   if (!drawing.value || event.button !== 0) return
   const point = position(event)
   if (!point) return
+  if (tool.value === 'horizontal') {
+    const item = { id: crypto.randomUUID(), type: 'horizontal', price: point.price }
+    drawings.value = [...drawings.value, item]; selected.value = item.id; save(); cancel()
+    return
+  }
   if (points.value.length === 1) {
     const a = props.pointToPixel(points.value[0]), b = props.pointToPixel(point)
     if (!a || !b || Math.hypot(a.x - b.x, a.y - b.y) < 3) return
@@ -65,8 +72,13 @@ const rendered = computed(() => {
   void props.revision
   if (hidden.value || width.value <= props.layout.left + props.layout.right) return []
   const items = [...drawings.value]
+  if (drawing.value && tool.value === 'horizontal' && cursor.value) items.push({ id: 'preview', type: 'horizontal', price: cursor.value.price })
   if (points.value.length) items.push({ id: 'preview', points: [...points.value, ...(cursor.value ? [cursor.value] : [])] })
   return items.map(item => {
+    if (item.type === 'horizontal') {
+      const line = clipHorizontalLine(props.priceToPixel(item.price), rect.value)
+      return { id: item.id, anchors: [], lines: line ? [line] : [] }
+    }
     const anchors = item.points.map(props.pointToPixel)
     const [a, b, c] = anchors
     return { id: item.id, anchors: anchors.filter(Boolean), lines: [
@@ -85,7 +97,7 @@ onBeforeUnmount(() => { observer?.disconnect(); window.removeEventListener('keyd
 
 <template>
   <div ref="root" class="drawing-overlay" tabindex="-1" aria-label="画线工具">
-    <svg class="drawing-svg" width="100%" height="100%" aria-label="平行线画布">
+    <svg class="drawing-svg" width="100%" height="100%" aria-label="画线画布">
       <svg :x="layout.left" :y="layout.priceTop" :width="Math.max(0, width - layout.left - layout.right)" :height="layout.priceHeight" :viewBox="`${layout.left} ${layout.priceTop} ${Math.max(1, width - layout.left - layout.right)} ${layout.priceHeight}`" overflow="hidden">
         <g v-for="item in rendered" :key="item.id" :class="{ selected: selected === item.id }">
           <line v-for="(line, index) in item.lines" :key="`visible-${index}`" v-bind="line" class="drawn-line" :stroke-dasharray="item.id === 'preview' ? '5 4' : undefined" />
@@ -100,12 +112,13 @@ onBeforeUnmount(() => { observer?.disconnect(); window.removeEventListener('keyd
     <div class="drawing-tools" role="toolbar" aria-label="画线工具栏" @pointerdown.stop>
       <span class="tools-title">画线</span>
       <button title="退出画线" aria-label="退出画线" :class="{ active: !drawing }" @click="cancel"><MousePointer2 :size="17" /></button>
-      <button title="平行线：依次点击三个点" aria-label="绘制平行线" :aria-pressed="drawing" :class="{ active: drawing }" @click="begin"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12 14 3M6 17 17 8" /><rect x="2" y="11" width="3" height="3" fill="#151821" /><rect x="13" y="2" width="3" height="3" fill="#151821" /></svg></button>
+      <button title="平行线：依次点击三个点" aria-label="绘制平行线" :aria-pressed="drawing && tool === 'parallel'" :class="{ active: drawing && tool === 'parallel' }" @click="begin('parallel')"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12 14 3M6 17 17 8" /><rect x="2" y="11" width="3" height="3" fill="#151821" /><rect x="13" y="2" width="3" height="3" fill="#151821" /></svg></button>
+      <button title="水平线：点击确定价格" aria-label="绘制水平线" :aria-pressed="drawing && tool === 'horizontal'" :class="{ active: drawing && tool === 'horizontal' }" @click="begin('horizontal')"><Minus :size="20" /></button>
       <button title="显示／隐藏画线" aria-label="隐藏画线" :aria-pressed="hidden" @click="hidden = !hidden; cancel()"><EyeOff v-if="hidden" :size="17" /><Eye v-else :size="17" /></button>
       <button title="取消本次画线（Esc）" aria-label="取消本次画线" :disabled="!drawing" @click="cancel"><Undo2 :size="17" /></button>
-      <button title="删除选中平行线（Delete）" aria-label="删除选中平行线" :disabled="!selected" @click="remove"><Trash2 :size="17" /></button>
+      <button title="删除选中画线（Delete）" aria-label="删除选中画线" :disabled="!selected" @click="remove"><Trash2 :size="17" /></button>
     </div>
-    <p v-if="drawing" class="drawing-hint" :style="{ left: `${layout.left + 8}px`, top: `${layout.priceTop + 8}px` }" role="status">平行线 · {{ hint }} <span>右键 / Esc 取消</span></p>
+    <p v-if="drawing" class="drawing-hint" :style="{ left: `${layout.left + 8}px`, top: `${layout.priceTop + 8}px` }" role="status">{{ tool === 'horizontal' ? '水平线' : '平行线' }} · {{ hint }} <span>右键 / Esc 取消</span></p>
     <p v-if="storageError" class="storage-error" role="status">{{ storageError }}</p>
   </div>
 </template>

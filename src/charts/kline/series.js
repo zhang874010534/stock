@@ -31,11 +31,15 @@ export function createKlineSeries(history, movingAverages, mainIndicators = [], 
       show: true,
       color: KLINE_COLORS.text,
       fontSize: 11,
+      position: 'right',
+      distance: 0,
+      align: 'left',
+      verticalAlign: 'middle',
       formatter: ({ value }) => `← ${Number(value).toFixed(pricePrecision)}`,
     },
     data: [
-      { name: '最高价', type: 'max', valueDim: chartType === 'line' ? 'y' : 'highest', label: { position: 'top', distance: 5 } },
-      { name: '最低价', type: 'min', valueDim: chartType === 'line' ? 'y' : 'lowest', label: { position: 'bottom', distance: 5 } },
+      { name: '最高价', type: 'max', valueDim: chartType === 'line' ? 'y' : 'highest' },
+      { name: '最低价', type: 'min', valueDim: chartType === 'line' ? 'y' : 'lowest' },
     ],
   }
   return [

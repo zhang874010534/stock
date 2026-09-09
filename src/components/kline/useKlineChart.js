@@ -92,6 +92,12 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null
   }
 
+  function priceToPixel(price) {
+    if (!chart) return null
+    const y = chart.convertToPixel({ yAxisIndex: 0 }, price)
+    return Number.isFinite(y) ? y : null
+  }
+
   function zoomToWindow(startIndex, endIndex) {
     chart?.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: startIndex, endValue: endIndex })
     visibleWindow.value = { startIndex, endIndex }
@@ -191,5 +197,5 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     chart?.dispose()
   })
 
-  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel }
+  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel, priceToPixel }
 }

@@ -39,3 +39,27 @@ test('折线标记收盘价极值，单根K线标记最高和最低价', () => {
     assert.ok(svg.includes('← 1.00'))
   } finally { chart.dispose() }
 })
+
+test('极值箭头左端精确锚定影线端点，缩放和尺寸变化不产生文字居中偏移', () => {
+  const chart = initIndexTrend(null, { ssr: true, width: 800, height: 600 })
+  try {
+    for (const compact of [true, false]) {
+      chart.setOption(createIndexTrendOption(history, { startIndex: 0, endIndex: 2 }, { compact, movingAverages: [] }), { notMerge: true })
+      for (const start of [0, 1]) {
+        chart.dispatchAction({ type: 'dataZoom', startValue: start, endValue: 2 })
+        chart.resize({ width: start ? 1100 : 800, height: 600 })
+        const svg = chart.renderToSVGString()
+        for (const [index, price] of start ? [[1, 8], [2, 4]] : [[0, 15], [0, 1]]) {
+          const label = [...svg.matchAll(/<text\b([^>]*)>← ([^<]+)<\/text>/g)].find(match => match[2] === price.toFixed(2))
+          assert.ok(label)
+          assert.match(label[1], /text-anchor="start"/)
+          assert.match(label[1], /dominant-baseline="central"/)
+          const position = label[1].match(/transform="translate\(([-\d.]+) ([-\d.]+)\)"/)
+          const expected = chart.convertToPixel({ seriesIndex: 0 }, [index, price])
+          assert.ok(Math.abs(Number(position[1]) - expected[0]) < .01)
+          assert.ok(Math.abs(Number(position[2]) - expected[1]) < .01)
+        }
+      }
+    }
+  } finally { chart.dispose() }
+})

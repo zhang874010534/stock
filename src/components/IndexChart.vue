@@ -51,7 +51,7 @@ const mainIndicators = computed(() => [
 const { expanded, inlineHeight, toggle } = useKlineFullscreen(panelElement, () => resize())
 const compact = computed(() => !expanded.value)
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
-const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel } = useKlineChart({
+const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel, priceToPixel } = useKlineChart({
   compact,
   pricePrecision: computed(() => props.instrument === '512890' ? 3 : 2),
   element: chartElement,
@@ -119,7 +119,7 @@ function setIndicatorSettings(key, settings) {
         <KLineRangeSelection class="chart-body" :aria-busy="isBusy" :history="history" :layout="layout" :visible-window="visibleWindow" :index-at-pixel="indexAtPixel" :enabled="showChart" :instrument="instrument" :period-label="periodLabel" @zoom="zoomToWindow" @mouseleave="resetHover">
             <div ref="chartElement" class="chart-canvas" tabindex="0" aria-label="K线图，按左右方向键查看上一根或下一根K线" aria-keyshortcuts="ArrowLeft ArrowRight" :style="{ visibility: showChart ? 'visible' : 'hidden' }" @pointerdown="chartElement?.focus({ preventScroll: true })" @keydown="handleKeydown" />
           <template v-if="showChart">
-            <KLineDrawingTools v-if="expanded" :instrument="instrument" :period="period" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" />
+            <KLineDrawingTools v-if="expanded" :instrument="instrument" :period="period" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" :price-to-pixel="priceToPixel" />
             <KLineQuote v-if="isHovering" floating hide-ma :side="quoteSide" :overlay-offset="layout.priceTop + 6" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :active-index="activeIndex" :is-latest="activeIndex === history.length - 1" />
             <div v-if="expanded" class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
             <div v-if="expanded" class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex], subIndicatorKey === 'wave' ? 3 : 2) }}</b></div>
