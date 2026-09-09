@@ -68,7 +68,18 @@ export function createIndexTrendOption(history, window, {
         margin: 8,
         formatter: (value) => value.slice(2),
       },
-      axisPointer: { show: true, snap: true, label: { show: gridIndex === 1 } },
+      axisPointer: {
+        show: true, snap: true,
+        label: {
+          show: gridIndex === 1,
+          formatter: ({ value }) => {
+            const date = new Date(`${value}T00:00:00Z`)
+            if (!Number.isFinite(date.getTime())) return String(value)
+            const weekday = new Intl.DateTimeFormat('zh-CN', { weekday: 'long', timeZone: 'UTC' }).format(date)
+            return `${value} ${weekday}`
+          },
+        },
+      },
       splitLine: { show: false },
     })),
     yAxis: [0, 1, 2].map((gridIndex) => ({
