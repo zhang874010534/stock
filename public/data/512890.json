@@ -3,11 +3,11 @@
   "name": "华泰柏瑞红利低波ETF",
   "source": "eastmoney",
   "interval": "1d",
-  "updatedAt": "2026-09-17T11:49:19.871Z",
+  "updatedAt": "2026-09-17T13:38:15.838Z",
   "backfill": {
-    "earliestDate": "2023-08-30",
+    "earliestDate": "2023-06-01",
     "completed": false,
-    "nextEndDate": "2023-08-29",
+    "nextEndDate": "2023-05-31",
     "consecutiveEmptyRanges": 0
   },
   "latest": {
@@ -21,6 +21,626 @@
     "turnover": 1.63
   },
   "history": [
+    {
+      "date": "2023-06-01",
+      "open": 0.918,
+      "close": 0.927,
+      "high": 0.934,
+      "low": 0.918,
+      "volume": 594082,
+      "amount": 55092571,
+      "turnover": 0.23
+    },
+    {
+      "date": "2023-06-02",
+      "open": 0.933,
+      "close": 0.927,
+      "high": 0.933,
+      "low": 0.925,
+      "volume": 319570,
+      "amount": 29650879,
+      "turnover": 0.12
+    },
+    {
+      "date": "2023-06-05",
+      "open": 0.93,
+      "close": 0.939,
+      "high": 0.941,
+      "low": 0.927,
+      "volume": 487664,
+      "amount": 45641097,
+      "turnover": 0.19
+    },
+    {
+      "date": "2023-06-06",
+      "open": 0.939,
+      "close": 0.931,
+      "high": 0.947,
+      "low": 0.93,
+      "volume": 382539,
+      "amount": 35936272,
+      "turnover": 0.15
+    },
+    {
+      "date": "2023-06-07",
+      "open": 0.931,
+      "close": 0.941,
+      "high": 0.942,
+      "low": 0.93,
+      "volume": 311409,
+      "amount": 29208635,
+      "turnover": 0.12
+    },
+    {
+      "date": "2023-06-08",
+      "open": 0.941,
+      "close": 0.946,
+      "high": 0.948,
+      "low": 0.932,
+      "volume": 2233486,
+      "amount": 210968335,
+      "turnover": 0.85
+    },
+    {
+      "date": "2023-06-09",
+      "open": 0.947,
+      "close": 0.949,
+      "high": 0.952,
+      "low": 0.944,
+      "volume": 1108457,
+      "amount": 105325728,
+      "turnover": 0.42
+    },
+    {
+      "date": "2023-06-12",
+      "open": 0.949,
+      "close": 0.94,
+      "high": 0.952,
+      "low": 0.935,
+      "volume": 1115995,
+      "amount": 105105353,
+      "turnover": 0.43
+    },
+    {
+      "date": "2023-06-13",
+      "open": 0.938,
+      "close": 0.938,
+      "high": 0.941,
+      "low": 0.934,
+      "volume": 610875,
+      "amount": 57286092,
+      "turnover": 0.23
+    },
+    {
+      "date": "2023-06-14",
+      "open": 0.936,
+      "close": 0.931,
+      "high": 0.946,
+      "low": 0.93,
+      "volume": 2636715,
+      "amount": 246241381,
+      "turnover": 1.01
+    },
+    {
+      "date": "2023-06-15",
+      "open": 0.931,
+      "close": 0.933,
+      "high": 0.936,
+      "low": 0.93,
+      "volume": 609893,
+      "amount": 56911235,
+      "turnover": 0.23
+    },
+    {
+      "date": "2023-06-16",
+      "open": 0.935,
+      "close": 0.933,
+      "high": 0.939,
+      "low": 0.932,
+      "volume": 493320,
+      "amount": 46176072,
+      "turnover": 0.19
+    },
+    {
+      "date": "2023-06-19",
+      "open": 0.933,
+      "close": 0.918,
+      "high": 0.934,
+      "low": 0.917,
+      "volume": 1213656,
+      "amount": 111824854,
+      "turnover": 0.46
+    },
+    {
+      "date": "2023-06-20",
+      "open": 0.916,
+      "close": 0.912,
+      "high": 0.919,
+      "low": 0.909,
+      "volume": 543298,
+      "amount": 49652525,
+      "turnover": 0.21
+    },
+    {
+      "date": "2023-06-21",
+      "open": 0.911,
+      "close": 0.906,
+      "high": 0.915,
+      "low": 0.903,
+      "volume": 671249,
+      "amount": 61121242,
+      "turnover": 0.26
+    },
+    {
+      "date": "2023-06-26",
+      "open": 0.898,
+      "close": 0.887,
+      "high": 0.902,
+      "low": 0.884,
+      "volume": 471533,
+      "amount": 42034381,
+      "turnover": 0.18
+    },
+    {
+      "date": "2023-06-27",
+      "open": 0.887,
+      "close": 0.905,
+      "high": 0.908,
+      "low": 0.885,
+      "volume": 703178,
+      "amount": 63387070,
+      "turnover": 0.27
+    },
+    {
+      "date": "2023-06-28",
+      "open": 0.905,
+      "close": 0.909,
+      "high": 0.91,
+      "low": 0.9,
+      "volume": 657745,
+      "amount": 59631220,
+      "turnover": 0.25
+    },
+    {
+      "date": "2023-06-29",
+      "open": 0.91,
+      "close": 0.906,
+      "high": 0.911,
+      "low": 0.904,
+      "volume": 375427,
+      "amount": 34021244,
+      "turnover": 0.14
+    },
+    {
+      "date": "2023-06-30",
+      "open": 0.906,
+      "close": 0.911,
+      "high": 0.914,
+      "low": 0.905,
+      "volume": 231358,
+      "amount": 21065761,
+      "turnover": 0.09
+    },
+    {
+      "date": "2023-07-03",
+      "open": 0.912,
+      "close": 0.922,
+      "high": 0.925,
+      "low": 0.911,
+      "volume": 319082,
+      "amount": 29270993,
+      "turnover": 0.12
+    },
+    {
+      "date": "2023-07-04",
+      "open": 0.922,
+      "close": 0.921,
+      "high": 0.924,
+      "low": 0.915,
+      "volume": 683172,
+      "amount": 62908105,
+      "turnover": 0.26
+    },
+    {
+      "date": "2023-07-05",
+      "open": 0.921,
+      "close": 0.919,
+      "high": 0.922,
+      "low": 0.916,
+      "volume": 316453,
+      "amount": 29061843,
+      "turnover": 0.12
+    },
+    {
+      "date": "2023-07-06",
+      "open": 0.919,
+      "close": 0.916,
+      "high": 0.923,
+      "low": 0.913,
+      "volume": 340199,
+      "amount": 31245590,
+      "turnover": 0.13
+    },
+    {
+      "date": "2023-07-07",
+      "open": 0.913,
+      "close": 0.918,
+      "high": 0.922,
+      "low": 0.912,
+      "volume": 527494,
+      "amount": 48372160,
+      "turnover": 0.2
+    },
+    {
+      "date": "2023-07-10",
+      "open": 0.922,
+      "close": 0.92,
+      "high": 0.923,
+      "low": 0.917,
+      "volume": 343299,
+      "amount": 31549732,
+      "turnover": 0.13
+    },
+    {
+      "date": "2023-07-11",
+      "open": 0.92,
+      "close": 0.921,
+      "high": 0.925,
+      "low": 0.917,
+      "volume": 371123,
+      "amount": 34226198,
+      "turnover": 0.14
+    },
+    {
+      "date": "2023-07-12",
+      "open": 0.922,
+      "close": 0.922,
+      "high": 0.93,
+      "low": 0.92,
+      "volume": 770355,
+      "amount": 71370176,
+      "turnover": 0.29
+    },
+    {
+      "date": "2023-07-13",
+      "open": 0.924,
+      "close": 0.933,
+      "high": 0.934,
+      "low": 0.921,
+      "volume": 272497,
+      "amount": 25306011,
+      "turnover": 0.1
+    },
+    {
+      "date": "2023-07-14",
+      "open": 0.934,
+      "close": 0.937,
+      "high": 0.939,
+      "low": 0.932,
+      "volume": 454509,
+      "amount": 42539162,
+      "turnover": 0.17
+    },
+    {
+      "date": "2023-07-17",
+      "open": 0.935,
+      "close": 0.93,
+      "high": 0.935,
+      "low": 0.925,
+      "volume": 458063,
+      "amount": 42490229,
+      "turnover": 0.18
+    },
+    {
+      "date": "2023-07-18",
+      "open": 0.93,
+      "close": 0.928,
+      "high": 0.931,
+      "low": 0.925,
+      "volume": 225837,
+      "amount": 20939392,
+      "turnover": 0.09
+    },
+    {
+      "date": "2023-07-19",
+      "open": 0.929,
+      "close": 0.935,
+      "high": 0.936,
+      "low": 0.929,
+      "volume": 479536,
+      "amount": 44749232,
+      "turnover": 0.18
+    },
+    {
+      "date": "2023-07-20",
+      "open": 0.938,
+      "close": 0.929,
+      "high": 0.939,
+      "low": 0.928,
+      "volume": 307699,
+      "amount": 28755517,
+      "turnover": 0.12
+    },
+    {
+      "date": "2023-07-21",
+      "open": 0.927,
+      "close": 0.928,
+      "high": 0.932,
+      "low": 0.925,
+      "volume": 345009,
+      "amount": 32027508,
+      "turnover": 0.13
+    },
+    {
+      "date": "2023-07-24",
+      "open": 0.931,
+      "close": 0.93,
+      "high": 0.933,
+      "low": 0.925,
+      "volume": 451886,
+      "amount": 41982244,
+      "turnover": 0.17
+    },
+    {
+      "date": "2023-07-25",
+      "open": 0.935,
+      "close": 0.947,
+      "high": 0.949,
+      "low": 0.934,
+      "volume": 566480,
+      "amount": 53487453,
+      "turnover": 0.22
+    },
+    {
+      "date": "2023-07-26",
+      "open": 0.947,
+      "close": 0.945,
+      "high": 0.949,
+      "low": 0.941,
+      "volume": 1748027,
+      "amount": 165180032,
+      "turnover": 0.67
+    },
+    {
+      "date": "2023-07-27",
+      "open": 0.945,
+      "close": 0.947,
+      "high": 0.956,
+      "low": 0.943,
+      "volume": 766675,
+      "amount": 72777738,
+      "turnover": 0.29
+    },
+    {
+      "date": "2023-07-28",
+      "open": 0.946,
+      "close": 0.963,
+      "high": 0.964,
+      "low": 0.943,
+      "volume": 805660,
+      "amount": 77015806,
+      "turnover": 0.31
+    },
+    {
+      "date": "2023-07-31",
+      "open": 0.966,
+      "close": 0.969,
+      "high": 0.975,
+      "low": 0.964,
+      "volume": 1111660,
+      "amount": 107782491,
+      "turnover": 0.43
+    },
+    {
+      "date": "2023-08-01",
+      "open": 0.969,
+      "close": 0.969,
+      "high": 0.976,
+      "low": 0.967,
+      "volume": 512988,
+      "amount": 49820690,
+      "turnover": 0.2
+    },
+    {
+      "date": "2023-08-02",
+      "open": 0.97,
+      "close": 0.959,
+      "high": 0.97,
+      "low": 0.955,
+      "volume": 531006,
+      "amount": 51069773,
+      "turnover": 0.2
+    },
+    {
+      "date": "2023-08-03",
+      "open": 0.958,
+      "close": 0.961,
+      "high": 0.964,
+      "low": 0.952,
+      "volume": 596197,
+      "amount": 57174595,
+      "turnover": 0.23
+    },
+    {
+      "date": "2023-08-04",
+      "open": 0.968,
+      "close": 0.962,
+      "high": 0.971,
+      "low": 0.962,
+      "volume": 675189,
+      "amount": 65241730,
+      "turnover": 0.26
+    },
+    {
+      "date": "2023-08-07",
+      "open": 0.962,
+      "close": 0.953,
+      "high": 0.962,
+      "low": 0.952,
+      "volume": 469225,
+      "amount": 44789264,
+      "turnover": 0.18
+    },
+    {
+      "date": "2023-08-08",
+      "open": 0.952,
+      "close": 0.957,
+      "high": 0.959,
+      "low": 0.952,
+      "volume": 454301,
+      "amount": 43406932,
+      "turnover": 0.17
+    },
+    {
+      "date": "2023-08-09",
+      "open": 0.955,
+      "close": 0.95,
+      "high": 0.956,
+      "low": 0.947,
+      "volume": 515513,
+      "amount": 49045550,
+      "turnover": 0.2
+    },
+    {
+      "date": "2023-08-10",
+      "open": 0.951,
+      "close": 0.95,
+      "high": 0.955,
+      "low": 0.947,
+      "volume": 369059,
+      "amount": 35055164,
+      "turnover": 0.14
+    },
+    {
+      "date": "2023-08-11",
+      "open": 0.951,
+      "close": 0.94,
+      "high": 0.953,
+      "low": 0.937,
+      "volume": 946159,
+      "amount": 89262111,
+      "turnover": 0.36
+    },
+    {
+      "date": "2023-08-14",
+      "open": 0.932,
+      "close": 0.938,
+      "high": 0.94,
+      "low": 0.924,
+      "volume": 729020,
+      "amount": 67872057,
+      "turnover": 0.28
+    },
+    {
+      "date": "2023-08-15",
+      "open": 0.938,
+      "close": 0.944,
+      "high": 0.945,
+      "low": 0.934,
+      "volume": 1531771,
+      "amount": 144019399,
+      "turnover": 0.59
+    },
+    {
+      "date": "2023-08-16",
+      "open": 0.942,
+      "close": 0.939,
+      "high": 0.943,
+      "low": 0.933,
+      "volume": 588434,
+      "amount": 55123046,
+      "turnover": 0.23
+    },
+    {
+      "date": "2023-08-17",
+      "open": 0.935,
+      "close": 0.938,
+      "high": 0.939,
+      "low": 0.93,
+      "volume": 1086156,
+      "amount": 101403382,
+      "turnover": 0.42
+    },
+    {
+      "date": "2023-08-18",
+      "open": 0.937,
+      "close": 0.936,
+      "high": 0.946,
+      "low": 0.934,
+      "volume": 585370,
+      "amount": 54993112,
+      "turnover": 0.22
+    },
+    {
+      "date": "2023-08-21",
+      "open": 0.936,
+      "close": 0.929,
+      "high": 0.939,
+      "low": 0.928,
+      "volume": 492497,
+      "amount": 45941852,
+      "turnover": 0.19
+    },
+    {
+      "date": "2023-08-22",
+      "open": 0.93,
+      "close": 0.942,
+      "high": 0.942,
+      "low": 0.928,
+      "volume": 511704,
+      "amount": 47770632,
+      "turnover": 0.2
+    },
+    {
+      "date": "2023-08-23",
+      "open": 0.936,
+      "close": 0.939,
+      "high": 0.947,
+      "low": 0.935,
+      "volume": 726416,
+      "amount": 68467408,
+      "turnover": 0.28
+    },
+    {
+      "date": "2023-08-24",
+      "open": 0.941,
+      "close": 0.935,
+      "high": 0.943,
+      "low": 0.932,
+      "volume": 966008,
+      "amount": 90512057,
+      "turnover": 0.37
+    },
+    {
+      "date": "2023-08-25",
+      "open": 0.932,
+      "close": 0.934,
+      "high": 0.939,
+      "low": 0.929,
+      "volume": 911844,
+      "amount": 85223513,
+      "turnover": 0.35
+    },
+    {
+      "date": "2023-08-28",
+      "open": 0.97,
+      "close": 0.945,
+      "high": 0.976,
+      "low": 0.942,
+      "volume": 741041,
+      "amount": 70776012,
+      "turnover": 0.28
+    },
+    {
+      "date": "2023-08-29",
+      "open": 0.945,
+      "close": 0.946,
+      "high": 0.948,
+      "low": 0.939,
+      "volume": 905475,
+      "amount": 85407838,
+      "turnover": 0.35
+    },
     {
       "date": "2023-08-30",
       "open": 0.947,
