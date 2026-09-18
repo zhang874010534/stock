@@ -4,12 +4,13 @@ import { NButton } from 'naive-ui'
 import { ArrowUpRight, Database, Clock3, ShieldCheck, ChartColumn, Globe2, ScanLine, PieChart, Grid2X2, ArrowRight } from 'lucide-vue-next'
 import MetricCard from '../components/MetricCard.vue'
 import YieldMetricCard from '../components/YieldMetricCard.vue'
+import ValuationMetrics from '../components/ValuationMetrics.vue'
 import IndexChart from '../components/IndexChart.vue'
 import ChartPlaceholder from '../components/ChartPlaceholder.vue'
 import { getMarketData } from '../api/h30269.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
 
-const props = defineProps({ instrument: { type: String, default: 'H30269' } })
+const props = defineProps({ instrument: { type: String, default: '512890' } })
 const instrumentName = computed(() => props.instrument === '512890' ? '华泰柏瑞红利低波ETF' : '中证红利低波动指数')
 let requestId = 0
 const data = ref(null)
@@ -52,13 +53,11 @@ watch(() => props.instrument, () => {
   loadMarketData()
 }, { immediate: true })
 
-// 股息率与国债收益率使用独立的官方静态数据；其他估值指标仍待接入。
+// 指数估值使用东方财富快照，国债收益率独立读取中债数据。
 const metrics = computed(() => [
   { title: props.instrument === '512890' ? 'ETF 价格' : '指数点位', value: formatIndexValue(latest.value?.close, props.instrument === '512890' ? 3 : 2), description: props.instrument === '512890' ? '日线最新价格（元）' : '日线最新点位', period: `交易日期：${latest.value?.date ?? '—'}`, accent: 'blue' },
   { title: '股息率', description: '近12个月股息率', period: '近12个月', accent: 'cyan' },
-  { title: 'PE (TTM)', description: '滚动市盈率', period: '近12个月', accent: 'cyan' },
-  { title: 'PB', description: '市净率', period: '近12个月', accent: 'purple' },
-  { title: '历史分位', description: '历史区间相对位置', period: '近5年 · 口径待确认', accent: 'purple' },
+  { title: '估值' },
 ])
 const futureModules = [
   { title: '行业分析', subtitle: '行业分布与轮动', icon: ChartColumn, accent: 'cyan' },
@@ -84,6 +83,7 @@ const futureModules = [
     <section class="metrics-grid" aria-label="指数关键指标">
       <template v-for="metric in metrics" :key="metric.title">
         <YieldMetricCard v-if="metric.title === '股息率'" :instrument="instrument" />
+        <ValuationMetrics v-else-if="metric.title === '估值'" :instrument="instrument" />
         <MetricCard v-else v-bind="metric" />
       </template>
       <MetricCard title="信号状态" description="等待数据与计算规则" period="基于多因子综合信号" signal />
@@ -100,7 +100,7 @@ const futureModules = [
         @retry="loadMarketData"
       />
       <ChartPlaceholder title="股息率与历史分位" subtitle="股息率与历史分位对照" :legends="[{ label: '股息率（近12个月）', color: '#22c6d8' }, { label: '历史分位（近5年，右轴）', color: '#a574ed' }]" />
-      <ChartPlaceholder title="估值区间观察（PE-TTM）" subtitle="估值水平与区间分布" :legends="[{ label: '极低区间', color: '#6467dc' }, { label: '低估区间', color: '#26a7d0' }, { label: '合理区间', color: '#3b9d85' }, { label: '偏高区间', color: '#d09648' }, { label: '高估区间', color: '#c95e51' }]" />
+      <ChartPlaceholder title="估值区间观察（PE）" subtitle="估值水平与区间分布" :legends="[{ label: '极低区间', color: '#6467dc' }, { label: '低估区间', color: '#26a7d0' }, { label: '合理区间', color: '#3b9d85' }, { label: '偏高区间', color: '#d09648' }, { label: '高估区间', color: '#c95e51' }]" />
     </section>
 
     <section class="bottom-grid" aria-label="说明与未来功能预留区">
@@ -145,7 +145,7 @@ const futureModules = [
 .banner-meta { display: flex; flex-direction: column; align-items: flex-end; align-self: flex-start; gap: 8px; padding-top: 1px; color: #647d9e; font-size: 9px; letter-spacing: 1px; white-space: nowrap; }
 .preview-badge { padding: 4px 8px; background: #172d4c; border: 1px solid #294569; border-radius: 4px; color: #94b9ee; font-size: 10px; }
 .banner-watermark { position: absolute; right: 2%; bottom: -33px; font-family: var(--font-mono); font-size: 116px; font-weight: 700; color: #38629a0f; letter-spacing: -5px; pointer-events: none; }
-.metrics-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-grid); }
+.metrics-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-grid); }
 .charts-grid { display: grid; grid-template-columns: 1.08fr 1fr 1.08fr; gap: var(--space-grid); }
 .bottom-grid { display: grid; grid-template-columns: .95fr 1.6fr 1.2fr; gap: var(--space-grid); }
 .data-notes, .future-panel, .brand-panel { padding: 15px 18px; min-height: 214px; }

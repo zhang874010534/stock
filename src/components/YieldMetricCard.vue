@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive } from 'vue'
 import { getYield } from '../api/yields.js'
 
-const props = defineProps({ instrument: { type: String, default: 'H30269' } })
+const props = defineProps({ instrument: { type: String, default: '512890' } })
 const title = computed(() => props.instrument === '512890' ? '标的指数股息率' : '指数股息率')
 const state = reactive({ dividend: { data: null, loading: true, error: false }, treasury: { data: null, loading: true, error: false } })
 async function load(kind) {

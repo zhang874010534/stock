@@ -27,6 +27,7 @@ defineProps({
       <span>趋势图预留</span>
     </div>
     <p class="metric-period">{{ period }}</p>
+    <slot />
   </article>
 </template>
 

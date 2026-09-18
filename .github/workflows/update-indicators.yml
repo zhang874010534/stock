@@ -1,4 +1,4 @@
-name: Update dividend and treasury yields
+name: Update valuations and yields
 
 on:
   schedule:
@@ -24,23 +24,21 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-          cache: pip
-          cache-dependency-path: scripts/requirements-indicators.txt
       - run: python -m pip install -r scripts/requirements-indicators.txt
-      - name: Fetch official yields
+      - name: Fetch valuations, CSI dividend and ChinaBond yield
         id: update
         continue-on-error: true
         run: python scripts/fetch-indicators.py
       - name: Commit successful updates
         shell: bash
         run: |
-          for path in public/data/dividend-h30269.json public/data/china-bond-10y.json; do
+          for path in public/data/dividend-h30269.json public/data/valuation-h30269.json public/data/china-bond-10y.json; do
             if [[ -f "$path" ]]; then git add -- "$path"; fi
           done
           git diff --cached --quiet && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(data): update dividend and treasury yields"
+          git commit -m "chore(data): update valuations and treasury yield"
           git push
       - name: Report incomplete update
         if: steps.update.outcome == 'failure'

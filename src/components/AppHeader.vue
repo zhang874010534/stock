@@ -2,7 +2,7 @@
 import { Activity, Menu } from 'lucide-vue-next'
 import { NButton, NSelect } from 'naive-ui'
 
-defineProps({ menuOpen: Boolean, instrument: { type: String, default: 'H30269' } })
+defineProps({ menuOpen: Boolean, instrument: { type: String, default: '512890' } })
 defineEmits(['toggle-menu', 'update:instrument'])
 const indexOptions = [{ label: 'H30269 · 指数', value: 'H30269' }, { label: '512890 · ETF', value: '512890' }]
 </script>

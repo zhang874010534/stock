@@ -9,6 +9,39 @@ spec.loader.exec_module(indicators)
 
 
 class IndicatorsTest(unittest.TestCase):
+    def valuation(self, **patch):
+        return {'Success': True, 'ErrCode': 0, 'Datas': {
+            'IndexCode': 'H30269', 'PDate': '2026-09-18',
+            'Petim': '8.37889046', 'PB': '0.777', **patch}}
+
+    def test_valuation_preserves_precision_and_source_date(self):
+        result = indicators.parse_valuation(self.valuation())
+        self.assertEqual(result['pe'], 8.37889046)
+        self.assertEqual(result['pb'], 0.777)
+        self.assertEqual(result['date'], '2026-09-18')
+        self.assertEqual(result['basis'], 'provider_unspecified')
+        self.assertIsNone(result['dividendYield'])
+
+    def test_invalid_upstream_and_wrong_index_rejected(self):
+        for patch in [{'IndexCode': '000300'}, {'PDate': '2026-02-30'},
+                      {'PDate': '2999-01-01'}, {'Petim': '-'}, {'PB': None},
+                      {'PB': 'nan'}, {'PB': '-1'}, {'Petim': True}]:
+            with self.subTest(patch=patch), self.assertRaises((ValueError, TypeError)):
+                indicators.parse_valuation(self.valuation(**patch))
+        with self.assertRaises(ValueError):
+            indicators.parse_valuation({'Success': False, 'ErrCode': 61136403, 'Datas': None})
+
+    def test_valuation_failure_and_regression_preserve_snapshot(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'valuation.json'
+            current = indicators.parse_valuation(self.valuation())
+            indicators.save_payload(path, current)
+            before = path.read_bytes()
+            self.assertFalse(indicators.save_payload(path, current))
+            with self.assertRaises(ValueError):
+                indicators.save_payload(path, {**current, 'date': '2026-09-17'})
+            self.assertEqual(before, path.read_bytes())
+
     def test_dividend_uses_total_capital_and_latest_date(self):
         rows = [['日期', 'Index Code', 'D/P2', 'D/P1'],
                 ['20260907', 'H30269', 4.8, 4.3], ['20260908', 'H30269', 4.75, 4.27]]

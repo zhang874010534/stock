@@ -1,4 +1,10 @@
-# H30269 红利低波数据看板 · AKShare 版
+# 红利低波数据看板 · 东方财富数据
+
+当前首页行情由东方财富 K 线文件提供，PE / PB 由东方财富旗下天天基金的 H30269 指数估值接口提供，股息率使用中证 H30269 的 D/P1（总股本口径），中债继续提供十年期国债收益率。下文 AKShare 服务为保留的旧版可选 API，不参与当前首页取数。
+
+本地预览只需 `npm ci`、`npm run dev`，读取 `public/data/` 已生成数据。
+
+## 旧版可选 AKShare 服务
 
 Vue 3 + Vite + ECharts；Cloudflare Workers 提供页面和同域 API，独立 Python 服务通过 **AKShare** 按需获取行情，成功结果短缓存 **60 秒**。
 
@@ -106,20 +112,17 @@ GitHub Actions 在每个工作日北京时间 16:30（UTC 08:30）运行 `npm ru
 
 ## API 与扩展
 
-### 股息率与十年期国债收益率
+### PE / PB 与十年期国债收益率
 
-股息率卡片读取中证指数 H30269 的 `D/P1`（总股本口径，百分数），下方展示中债国债到期收益率曲线的 10 年期限值。512890 页面明确标为“标的指数股息率”，不代表 ETF 自身的现金分红收益率。两项分别显示数据日期和官方来源，不计算日期不一致的利差。
+`python scripts/fetch-indicators.py` 独立更新以下数据（中证 XLS 解析依赖 `xlrd==2.0.2`）：
 
-独立工作流 `Update dividend and treasury yields` 在工作日北京时间 18:15 更新（中债官网注明日终发布时间为 17:30），也支持手动运行。依赖仅为 Python 和读取中证官方 XLS 文件的 `xlrd`，没有引入 AKShare，也不改变东方财富 K 线流程。各指标独立保存：一项失败不影响另一项；失败或上游日期倒退时保留旧文件，不把旧数据标成当天数据。股票和指标工作流共享提交锁，避免互相同时推送。
+- `public/data/valuation-h30269.json`：东方财富 / 天天基金 `FundSpecialZSB30ZSIndex` 接口，指数代码校验为 H30269；`Petim` 为 PE、`PB` 为市净率、`PDate` 为估值日期。保存原始精度，页面显示两位小数。未确认 TTM 和加权口径，不能标为 PE-TTM，也不与其他来源历史数据拼接。此接口不提供股息率。
+- `public/data/dividend-h30269.json`：中证 H30269 每日指标文件的 D/P1（总股本口径，百分数），512890 与 H30269 共用此指数股息率，显示原始数据日期与来源，不代表 ETF 实际现金分红收益率。
+- `public/data/china-bond-10y.json`：中债国债到期收益率曲线的 10 年期限值。
 
-本地更新：
+512890 页面明确标为“标的指数 PE / PB”，展示 H30269 指数估值。各项独立显示数据日期和来源。历史分位暂不接入，因为上游分位的计算区间未确认。
 
-```powershell
-python -m pip install -r scripts/requirements-indicators.txt
-python scripts/fetch-indicators.py
-```
-
-输出为 `public/data/dividend-h30269.json` 与 `public/data/china-bond-10y.json`。GitHub Actions 提交成功后随网站部署生效。
+独立工作流 `Update valuations and yields` 在工作日北京时间 18:15 更新，也支持手动运行。HTTP 错误及东方财富返回的业务失败会有限重试；错误、缺字段、非有限数值、错误代码或日期倒退时保留上次快照，不伪造当天数据。三项独立处理，失败任务仍提交成功更新的数据。首次运行前执行 `python -m pip install -r scripts/requirements-indicators.txt`，无需 AKShare。工作流与行情任务共享提交锁。
 
 ```text
 GET /api/history?symbol=H30269&range=1y

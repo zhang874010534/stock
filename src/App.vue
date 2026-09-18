@@ -5,7 +5,7 @@ import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import Home from './views/Home.vue'
 
-const instrument = ref('H30269')
+const instrument = ref('512890')
 const sidebarOpen = ref(false)
 const themeOverrides = {
   common: {

@@ -17,7 +17,7 @@ import { useKlineChart } from './kline/useKlineChart.js'
 import { useKlineFullscreen } from './kline/useKlineFullscreen.js'
 
 const props = defineProps({
-  instrument: { type: String, default: 'H30269' },
+  instrument: { type: String, default: '512890' },
   history: { type: Array, default: () => [] },
   backfillCompleted: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
