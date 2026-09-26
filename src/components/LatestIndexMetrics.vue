@@ -39,8 +39,9 @@ onMounted(load)
     <p v-if="instrument === '512890'" class="metrics-context">以下为标的指数数据，非 ETF 自身表现或实际分红收益率。</p>
     <p v-if="error" class="metrics-status" role="status">指标读取失败{{ data ? '，保留上次数据及日期。' : '，请重试。' }}</p>
     <p v-else-if="loading" class="metrics-context" role="status">{{ data ? '正在刷新指标…' : '正在读取最新指标…' }}</p>
+    <template v-for="(group, groupIndex) in [rows.slice(0, 3), rows.slice(3)]" :key="groupIndex">
     <dl class="metrics-list">
-      <div v-for="row in rows" :key="row.key" class="metric-row">
+      <div v-for="row in group" :key="row.key" class="metric-row">
         <dt>{{ row.label }}<span v-if="row.performance" class="metric-period">全部历史</span></dt>
         <dd class="metric-value">{{ formatLatestMetric(data?.metrics[row.key]) }}</dd>
         <dd class="metric-meta">
@@ -52,6 +53,8 @@ onMounted(load)
         </dd>
       </div>
     </dl>
+    <slot v-if="groupIndex === 0" name="valuation" />
+    </template>
     <div class="metrics-footer">
       <p>全部历史 · 价格指数（不含分红再投资）</p>
       <p v-if="data?.calculation">计算区间：{{ data.calculation.windowStart }} — {{ data.calculation.windowEnd }}</p>

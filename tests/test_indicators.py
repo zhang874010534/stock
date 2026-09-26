@@ -12,6 +12,33 @@ spec.loader.exec_module(indicators)
 
 
 class IndicatorsTest(unittest.TestCase):
+    def test_history_merges_dates_corrects_same_day_and_preserves_precision(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'history.json'
+            first = indicators.parse_valuation(self.valuation())
+            second = indicators.parse_valuation(self.valuation(PDate='2026-09-21', Petim='8.44602919'))
+            self.assertTrue(indicators.save_valuation_history(path, [second, first]))
+            data = json.loads(path.read_text(encoding='utf-8'))
+            self.assertEqual([row['date'] for row in data['history']], ['2026-09-18', '2026-09-21'])
+            self.assertEqual(data['history'][1]['pe'], 8.44602919)
+            self.assertFalse(indicators.save_valuation_history(path, [first, second]))
+            indicators.save_valuation_history(path, [{**second, 'pe': 8.45}])
+            data = json.loads(path.read_text(encoding='utf-8'))
+            self.assertEqual(len(data['history']), 2)
+            self.assertEqual(data['history'][1]['pe'], 8.45)
+
+    def test_history_rejects_mixed_sources_and_bad_points_without_changing_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'history.json'
+            snapshot = indicators.parse_valuation(self.valuation())
+            indicators.save_valuation_history(path, [snapshot])
+            before = path.read_bytes()
+            for patch in [{'source': 'other'}, {'basis': 'ttm'}, {'date': '2026-02-30'},
+                          {'pe': True}, {'pb': float('nan')}, {'pe': 0}]:
+                with self.subTest(patch=patch), self.assertRaises(ValueError):
+                    indicators.save_valuation_history(path, [{**snapshot, **patch}])
+                self.assertEqual(path.read_bytes(), before)
+
     def test_partial_failure_report_preserves_independent_success(self):
         with tempfile.TemporaryDirectory() as directory:
             report = Path(directory) / 'report.json'

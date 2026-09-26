@@ -169,12 +169,56 @@ def fetch_dividend():
     return parse_dividend_rows([sheet.row_values(i) for i in range(sheet.nrows)])
 
 
+def save_valuation_history(path, snapshots):
+    """Merge only verified snapshots of this exact provider/basis; never infer history."""
+    metadata = {'schemaVersion': 1, 'code': 'H30269', 'provider': 'Eastmoney',
+                'source': VALUATION_URL, 'basis': 'provider_unspecified', 'unit': 'multiple',
+                'collection': 'daily_snapshots'}
+    old = json.loads(path.read_text(encoding='utf-8')) if path.exists() else None
+    if old and any(old.get(key) != value for key, value in metadata.items()):
+        raise ValueError('Historical valuation metadata mismatch')
+
+    def point(record):
+        day = record.get('date', '')
+        if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', day):
+            raise ValueError('Invalid historical valuation date')
+        valid_point(day, 0)
+        if any(isinstance(record.get(key), bool) or not isinstance(record.get(key), (float, int))
+               or not math.isfinite(record[key]) or record[key] <= 0 for key in ('pe', 'pb')):
+            raise ValueError('Invalid historical valuation value')
+        return {key: record[key] for key in ('date', 'pe', 'pb')}
+
+    records = {}
+    previous = ''
+    if old:
+        if not isinstance(old.get('history'), list) or not old['history']:
+            raise ValueError('Empty historical valuation file')
+        for row in old['history']:
+            row = point(row)
+            if row['date'] <= previous:
+                raise ValueError('Unsorted/duplicate historical valuation date')
+            previous = row['date']
+            records[previous] = row
+        if old.get('date') != previous:
+            raise ValueError('Historical valuation end date mismatch')
+    for snapshot in snapshots:
+        if any(snapshot.get(key) != metadata[key] for key in ('code', 'provider', 'source', 'basis', 'unit')):
+            raise ValueError('Snapshot valuation metadata mismatch')
+        row = point(snapshot)
+        records[row['date']] = row
+    if not records:
+        raise ValueError('No historical valuation observations')
+    history = sorted(records.values(), key=lambda row: row['date'])
+    return save_payload(path, {**metadata, 'date': history[-1]['date'], 'history': history})
+
+
 def main():
     failed = False
     sources = {}
     try:
         valuation = fetch_valuation()
         changed = save_payload(OUTPUT / 'valuation-h30269.json', valuation)
+        save_valuation_history(OUTPUT / 'valuation-history-h30269.json', [valuation])
         sources['valuation'] = None
         print(f'H30269: {valuation["date"]} PE={valuation["pe"]} PB={valuation["pb"]} ({"updated" if changed else "unchanged"})')
     except Exception as error:

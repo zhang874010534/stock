@@ -39,7 +39,7 @@ jobs:
       - name: Commit successful updates
         shell: bash
         run: |
-          for path in public/data/dividend-h30269.json public/data/valuation-h30269.json public/data/china-bond-10y.json public/data/latest-metrics-h30269.json public/data/latest-metrics-source-status.json public/data/constituents-h30269.json; do
+          for path in public/data/dividend-h30269.json public/data/valuation-h30269.json public/data/valuation-history-h30269.json public/data/china-bond-10y.json public/data/latest-metrics-h30269.json public/data/latest-metrics-source-status.json public/data/constituents-h30269.json; do
             if [[ -f "$path" ]]; then git add -- "$path"; fi
           done
           git diff --cached --quiet && exit 0

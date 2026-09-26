@@ -100,7 +100,6 @@ const futureModules = [
         @retry="loadMarketData"
       />
       <ChartPlaceholder title="股息率与历史分位" subtitle="股息率与历史分位对照" :legends="[{ label: '股息率（近12个月）', color: '#22c6d8' }, { label: '历史分位（近5年，右轴）', color: '#a574ed' }]" />
-      <ChartPlaceholder title="估值区间观察（PE）" subtitle="估值水平与区间分布" :legends="[{ label: '极低区间', color: '#6467dc' }, { label: '低估区间', color: '#26a7d0' }, { label: '合理区间', color: '#3b9d85' }, { label: '偏高区间', color: '#d09648' }, { label: '高估区间', color: '#c95e51' }]" />
     </section>
 
     <section class="bottom-grid" aria-label="说明与未来功能预留区">
@@ -146,7 +145,7 @@ const futureModules = [
 .preview-badge { padding: 4px 8px; background: #172d4c; border: 1px solid #294569; border-radius: 4px; color: #94b9ee; font-size: 10px; }
 .banner-watermark { position: absolute; right: 2%; bottom: -33px; font-family: var(--font-mono); font-size: 116px; font-weight: 700; color: #38629a0f; letter-spacing: -5px; pointer-events: none; }
 .metrics-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-grid); }
-.charts-grid { display: grid; grid-template-columns: 1.08fr 1fr 1.08fr; gap: var(--space-grid); }
+.charts-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-grid); }
 .bottom-grid { display: grid; grid-template-columns: .95fr 1.6fr 1.2fr; gap: var(--space-grid); }
 .data-notes, .future-panel, .brand-panel { padding: 15px 18px; min-height: 214px; }
 .data-notes { display: flex; flex-direction: column; }
@@ -191,7 +190,7 @@ const futureModules = [
 }
 @media (max-width: 1200px) {
   .charts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .charts-grid > :last-child { grid-column: 1 / -1; }
+  .charts-grid > :last-child { grid-column: auto; }
   .banner-meta { display: none; }
   .index-banner { padding-inline: 22px; }
 }

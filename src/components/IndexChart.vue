@@ -14,6 +14,7 @@ import KLineRangeSelection from './kline/KLineRangeSelection.vue'
 import KLineDrawingTools from './kline/KLineDrawingTools.vue'
 import YieldMetricCard from './YieldMetricCard.vue'
 import LatestIndexMetrics from './LatestIndexMetrics.vue'
+import ValuationAnalysis from './ValuationAnalysis.vue'
 import IndexDetails from './IndexDetails.vue'
 import IndexConstituents from './IndexConstituents.vue'
 import { useKlineChart } from './kline/useKlineChart.js'
@@ -168,7 +169,9 @@ function setIndicatorSettings(key, settings) {
             <span>{{ summary.startDate }} — {{ summary.endDate }} · {{ dataWindow.endIndex - dataWindow.startIndex + 1 }} 根</span>
             <span :class="summary.changePercent >= 0 ? 'up' : 'down'">区间 {{ summary.changePercent > 0 ? '+' : '' }}{{ summary.changePercent.toFixed(2) }}%</span>
           </div>
-          <LatestIndexMetrics :instrument="instrument" />
+          <LatestIndexMetrics :instrument="instrument">
+            <template #valuation><ValuationAnalysis :instrument="instrument" /></template>
+          </LatestIndexMetrics>
           <YieldMetricCard :instrument="instrument" :show-dividend="false" />
           <p class="sidebar-note">国债收益率独立展示，不参与本版夏普计算。各项保留原始数据日期。</p>
           </div>
