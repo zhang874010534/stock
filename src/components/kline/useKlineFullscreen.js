@@ -41,7 +41,7 @@ export function useKlineFullscreen(panel, resize) {
       event.stopPropagation()
       toggle()
     } else if (event.key === 'Tab') {
-      const controls = [...panel.value.querySelectorAll('button:not(:disabled), summary, select:not(:disabled), input:not(:disabled), [tabindex="0"]')]
+      const controls = [...panel.value.querySelectorAll('button:not(:disabled), a[href], summary, select:not(:disabled), input:not(:disabled), [tabindex="0"]')]
         .filter((element) => element.getClientRects().length > 0)
       const first = controls[0]
       const last = controls.at(-1)

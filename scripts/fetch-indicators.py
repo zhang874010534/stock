@@ -171,12 +171,15 @@ def fetch_dividend():
 
 def main():
     failed = False
+    sources = {}
     try:
         valuation = fetch_valuation()
         changed = save_payload(OUTPUT / 'valuation-h30269.json', valuation)
+        sources['valuation'] = None
         print(f'H30269: {valuation["date"]} PE={valuation["pe"]} PB={valuation["pb"]} ({"updated" if changed else "unchanged"})')
     except Exception as error:
         failed = True
+        sources['valuation'] = '估值更新失败'
         print(f'H30269 valuation: failed, existing file preserved: {error}', file=sys.stderr)
     for filename, code, source, basis, fetcher in [
         ('dividend-h30269.json', 'H30269', DIVIDEND_URL, 'total_share_capital', fetch_dividend),
@@ -186,10 +189,15 @@ def main():
         try:
             point = fetcher()
             changed = save_point(OUTPUT / filename, point, code, source, basis)
+            sources['dividend' if code == 'H30269' else 'bond'] = None
             print(f'{code}: {point["date"]} {point["value"]}% ({"updated" if changed else "unchanged"})')
         except Exception as error:
             failed = True
+            sources['dividend' if code == 'H30269' else 'bond'] = '股息率更新失败' if code == 'H30269' else '国债收益率更新失败'
             print(f'{code}: failed, existing file preserved: {error}', file=sys.stderr)
+    report = os.environ.get('METRICS_UPDATE_REPORT')
+    if report:
+        Path(report).write_text(json.dumps({'sources': sources}, ensure_ascii=False), encoding='utf-8')
     return int(failed)
 
 

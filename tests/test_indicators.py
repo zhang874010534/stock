@@ -2,6 +2,9 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+import json
+import os
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('indicators', Path(__file__).resolve().parents[1] / 'scripts/fetch-indicators.py')
 indicators = importlib.util.module_from_spec(spec)
@@ -9,6 +12,18 @@ spec.loader.exec_module(indicators)
 
 
 class IndicatorsTest(unittest.TestCase):
+    def test_partial_failure_report_preserves_independent_success(self):
+        with tempfile.TemporaryDirectory() as directory:
+            report = Path(directory) / 'report.json'
+            with patch.dict(os.environ, {'METRICS_UPDATE_REPORT': str(report)}), \
+                 patch.object(indicators, 'fetch_valuation', side_effect=ValueError('offline')), \
+                 patch.object(indicators, 'fetch_dividend', return_value={'date': '2026-09-18', 'value': 4.3}), \
+                 patch.object(indicators, 'download', side_effect=ValueError('bond offline')), \
+                 patch.object(indicators, 'save_point', return_value=False):
+                self.assertEqual(indicators.main(), 1)
+            self.assertEqual(json.loads(report.read_text(encoding='utf-8'))['sources'], {
+                'valuation': '估值更新失败', 'dividend': None, 'bond': '国债收益率更新失败'})
+
     def valuation(self, **patch):
         return {'Success': True, 'ErrCode': 0, 'Datas': {
             'IndexCode': 'H30269', 'PDate': '2026-09-18',

@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "code": "H30269",
+  "source": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/H30269cons.xls",
+  "date": "2026-09-24",
+  "count": 50,
+  "members": [
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "000333",
+      "name": "美的集团",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "000429",
+      "name": "粤高速A",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "000651",
+      "name": "格力电器",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "000708",
+      "name": "中信特钢",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "002233",
+      "name": "塔牌集团",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "002469",
+      "name": "三维化学",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "002807",
+      "name": "江阴银行",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "002839",
+      "name": "张家港行",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "002966",
+      "name": "苏州银行",
+      "exchange": "SZSE"
+    },
+    {
+      "code": "600007",
+      "name": "中国国贸",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600015",
+      "name": "华夏银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600016",
+      "name": "民生银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600036",
+      "name": "招商银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600350",
+      "name": "山东高速",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600461",
+      "name": "洪城环境",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600502",
+      "name": "安徽建工",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600566",
+      "name": "济川药业",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600737",
+      "name": "中粮糖业",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600750",
+      "name": "华润江中",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600757",
+      "name": "长江传媒",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600803",
+      "name": "新奥股份",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600820",
+      "name": "隧道股份",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600863",
+      "name": "华能蒙电",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600873",
+      "name": "梅花生物",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600919",
+      "name": "江苏银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600938",
+      "name": "中国海油",
+      "exchange": "SSE"
+    },
+    {
+      "code": "600941",
+      "name": "中国移动",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601009",
+      "name": "南京银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601077",
+      "name": "渝农商行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601169",
+      "name": "北京银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601187",
+      "name": "厦门银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601229",
+      "name": "上海银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601288",
+      "name": "农业银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601318",
+      "name": "中国平安",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601328",
+      "name": "交通银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601369",
+      "name": "陕鼓动力",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601398",
+      "name": "工商银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601577",
+      "name": "长沙银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601658",
+      "name": "邮储银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601665",
+      "name": "齐鲁银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601668",
+      "name": "中国建筑",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601825",
+      "name": "沪农商行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601838",
+      "name": "成都银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601857",
+      "name": "中国石油",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601928",
+      "name": "凤凰传媒",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601939",
+      "name": "建设银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601963",
+      "name": "重庆银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601988",
+      "name": "中国银行",
+      "exchange": "SSE"
+    },
+    {
+      "code": "601998",
+      "name": "中信银行",
+      "exchange": "SSE"
+    }
+  ],
+  "status": "ok",
+  "reason": null,
+  "updatedAt": "2026-09-26T05:35:16.744396Z"
+}

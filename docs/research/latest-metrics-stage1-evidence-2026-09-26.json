@@ -1,0 +1,157 @@
+{
+  "researchDate": "2026-09-26",
+  "liveProbes": {
+    "eastmoney": {
+      "url": "https://fundztapi.eastmoney.com/FundSpecialApiNew/FundSpecialZSB30ZSIndex?IndexCode=H30269&Version=6.5.5&deviceid=-&pageIndex=1&pageSize=10000&plat=Iphone&product=EFund",
+      "checkedAt": "2026-09-26T01:38:52.434026+00:00",
+      "httpStatus": 200,
+      "success": true,
+      "errorCode": 0,
+      "availableFields": [
+        "IndexCode",
+        "IndexName",
+        "NEWINDEXTEXCH",
+        "FullIndexName",
+        "NewPrice",
+        "NewPriceDate",
+        "NewCHG",
+        "reaprofile",
+        "MakerName",
+        "BKID",
+        "BKName",
+        "IsGuess",
+        "IndexvaluaCN",
+        "Petim",
+        "PEP100",
+        "PB",
+        "PBP100",
+        "W",
+        "M",
+        "Q",
+        "HY",
+        "Y",
+        "TWY",
+        "TRY",
+        "FY",
+        "SY",
+        "STDDEV_W",
+        "STDDEV_M",
+        "STDDEV_Q",
+        "STDDEV_HY",
+        "STDDEV_Y",
+        "STDDEV_TWY",
+        "PDate",
+        "TopicJJBId",
+        "ISSTATIC"
+      ],
+      "sample": {
+        "IndexCode": "H30269",
+        "NewPrice": "10848.95",
+        "NewPriceDate": "2026-09-24",
+        "PDate": "2026-09-24",
+        "Petim": "8.45845086",
+        "PB": "0.7844",
+        "ISSTATIC": "0",
+        "IsGuess": true
+      }
+    },
+    "csi": {
+      "url": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/indicator/H30269indicator.xls",
+      "checkedAt": "2026-09-26T01:38:52.434835+00:00",
+      "httpStatus": 200,
+      "headers": [
+        "日期Date",
+        "指数代码Index Code",
+        "指数中文全称Chinese Name(Full)",
+        "指数中文简称Index Chinese Name",
+        "指数英文全称English Name(Full)",
+        "指数英文简称Index English Name",
+        "市盈率1（总股本）P/E1",
+        "市盈率2（计算用股本）P/E2",
+        "股息率1（总股本）D/P1",
+        "股息率2（计算用股本）D/P2"
+      ],
+      "recordCount": 20,
+      "earliest": [
+        "20260828",
+        "H30269",
+        "中证红利低波动指数",
+        "红利低波",
+        "CSI Dividend Low Volatility Index",
+        "CSI Dividend Low Volatility",
+        8.01,
+        7.78,
+        4.34,
+        4.83
+      ],
+      "latest": [
+        "20260924",
+        "H30269",
+        "中证红利低波动指数",
+        "红利低波",
+        "CSI Dividend Low Volatility Index",
+        "CSI Dividend Low Volatility",
+        8.12,
+        7.76,
+        4.27,
+        4.87
+      ]
+    }
+  },
+  "localHistory": {
+    "path": "public/data/h30269.json",
+    "sha256": "52848c0fc77c431b2edfda54a690e964a116ad55bc3fa02872966bf00fa34d99",
+    "firstDate": "2022-12-01",
+    "lastDate": "2026-09-24",
+    "count": 927,
+    "duplicateDates": 0,
+    "sorted": true,
+    "invalidCloseCount": 0,
+    "weekendCount": 0,
+    "backfill": {
+      "earliestDate": "2022-12-01",
+      "completed": false,
+      "nextEndDate": "2022-11-30",
+      "consecutiveEmptyRanges": 0
+    },
+    "oneYear": {
+      "start": "2025-09-24",
+      "end": "2026-09-24",
+      "prices": 243,
+      "returns": 242
+    },
+    "exchangeCalendarVerified": false
+  },
+  "storedSnapshots": {
+    "valuation-h30269": {
+      "code": "H30269",
+      "provider": "Eastmoney",
+      "source": "https://fundztapi.eastmoney.com/FundSpecialApiNew/FundSpecialZSB30ZSIndex?IndexCode=H30269&Version=6.5.5&deviceid=-&pageIndex=1&pageSize=10000&plat=Iphone&product=EFund",
+      "basis": "provider_unspecified",
+      "unit": "multiple",
+      "date": "2026-09-18",
+      "pe": 8.37889046,
+      "pb": 0.777,
+      "dividendYield": null,
+      "updatedAt": "2026-09-18T14:28:46.728436Z"
+    },
+    "dividend-h30269": {
+      "code": "H30269",
+      "source": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/indicator/H30269indicator.xls",
+      "basis": "total_share_capital",
+      "unit": "percent",
+      "date": "2026-09-18",
+      "value": 4.31,
+      "updatedAt": "2026-09-18T14:37:01.719280Z"
+    },
+    "china-bond-10y": {
+      "code": "CN10Y",
+      "source": "https://yield.chinabond.com.cn/cbweb-cbrc-web/cbrc/showCbrc",
+      "basis": "government_bond_yield_curve_10y",
+      "unit": "percent",
+      "date": "2026-09-18",
+      "value": 1.682,
+      "updatedAt": "2026-09-18T14:28:46.878159Z"
+    }
+  }
+}

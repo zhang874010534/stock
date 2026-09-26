@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive } from 'vue'
 import { getYield } from '../api/yields.js'
 
-const props = defineProps({ instrument: { type: String, default: '512890' } })
+const props = defineProps({ instrument: { type: String, default: '512890' }, showDividend: { type: Boolean, default: true } })
 const title = computed(() => props.instrument === '512890' ? '标的指数股息率' : '指数股息率')
 const state = reactive({ dividend: { data: null, loading: true, error: false }, treasury: { data: null, loading: true, error: false } })
 async function load(kind) {
@@ -13,12 +13,12 @@ async function load(kind) {
   finally { state[kind].loading = false }
 }
 const format = (data, digits) => data ? `${data.value.toFixed(digits)}%` : '—'
-onMounted(() => { load('dividend'); load('treasury') })
+onMounted(() => { if (props.showDividend) load('dividend'); load('treasury') })
 </script>
 
 <template>
-  <article class="yield-card panel" aria-label="指数股息率和中国十年期国债收益率">
-    <div class="yield-section" :aria-busy="state.dividend.loading">
+  <article class="yield-card panel" :aria-label="showDividend ? '指数股息率和中国十年期国债收益率' : '中国十年期国债收益率'">
+    <div v-if="showDividend" class="yield-section" :aria-busy="state.dividend.loading">
       <h2>{{ title }}</h2>
       <p class="yield-value">{{ format(state.dividend.data, 2) }}</p>
       <p class="yield-description">H30269 · 总股本口径</p>
@@ -34,7 +34,7 @@ onMounted(() => { load('dividend'); load('treasury') })
       <p v-if="state.treasury.error" class="yield-error" role="status">读取失败{{ state.treasury.data ? '，保留上次数据' : '' }} <button :disabled="state.treasury.loading" @click="load('treasury')">重试</button></p>
       <a href="https://yield.chinabond.com.cn/cbweb-cbrc-web/cbrc/showCbrc" target="_blank" rel="noopener noreferrer">来源：中债</a>
     </div>
-    <p v-if="instrument === '512890'" class="yield-note">展示跟踪指数的股息率，不代表 ETF 实际分红收益率。</p>
+    <p v-if="showDividend && instrument === '512890'" class="yield-note">展示跟踪指数的股息率，不代表 ETF 实际分红收益率。</p>
   </article>
 </template>
 
@@ -47,6 +47,7 @@ h2, h3 { font-size: 13px; font-weight: 500; color: #dfe5f1; }
 .yield-date { margin-top: 5px; color: #93a3bb; }
 a { color: #8ba8cd; text-decoration: underline; text-underline-offset: 3px; }
 .treasury { margin-top: 12px; padding-top: 12px; border-top: 1px solid #25364c; }
+.treasury:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .treasury-value { font-size: 24px; color: #d9e4f8; }
 .yield-note { margin-top: 10px; color: #93a3bb; }
 .yield-error { color: #dab57b; margin-top: 4px; }

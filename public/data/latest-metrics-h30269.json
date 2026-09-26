@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "ruleVersion": "latest-metrics-v2-all-history",
+  "code": "H30269",
+  "generatedAt": "2026-09-26T05:06:00.165Z",
+  "metrics": {
+    "pe": {
+      "unit": "multiple",
+      "source": "https://fundztapi.eastmoney.com/FundSpecialApiNew/FundSpecialZSB30ZSIndex?IndexCode=H30269&Version=6.5.5&deviceid=-&pageIndex=1&pageSize=10000&plat=Iphone&product=EFund",
+      "basis": "provider_unspecified",
+      "value": 8.45845086,
+      "asOf": "2026-09-24",
+      "status": "ok",
+      "reason": null
+    },
+    "pb": {
+      "unit": "multiple",
+      "source": "https://fundztapi.eastmoney.com/FundSpecialApiNew/FundSpecialZSB30ZSIndex?IndexCode=H30269&Version=6.5.5&deviceid=-&pageIndex=1&pageSize=10000&plat=Iphone&product=EFund",
+      "basis": "provider_unspecified",
+      "value": 0.7844,
+      "asOf": "2026-09-24",
+      "status": "ok",
+      "reason": null
+    },
+    "dividendYield": {
+      "unit": "ratio",
+      "source": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/indicator/H30269indicator.xls",
+      "basis": "total_share_capital",
+      "value": 0.042699999999999995,
+      "asOf": "2026-09-24",
+      "status": "ok",
+      "reason": null
+    },
+    "annualReturn": {
+      "unit": "ratio",
+      "source": "/data/h30269.json",
+      "basis": "price_index_act365",
+      "value": 0.03555048396628635,
+      "asOf": "2026-09-17",
+      "status": "ok",
+      "reason": null
+    },
+    "maxDrawdown": {
+      "unit": "ratio",
+      "source": "/data/h30269.json",
+      "basis": "price_index_close_drawdown",
+      "value": 0.1746781700633332,
+      "asOf": "2026-09-17",
+      "status": "ok",
+      "reason": null
+    },
+    "sharpe": {
+      "unit": "dimensionless",
+      "source": "/data/h30269.json",
+      "basis": "price_index_daily_sample_rf0_252",
+      "value": 0.31677804475134697,
+      "asOf": "2026-09-17",
+      "status": "ok",
+      "reason": null
+    }
+  },
+  "calculation": {
+    "windowMode": "all_history",
+    "windowStart": "2023-03-01",
+    "windowEnd": "2026-09-17",
+    "calendarDays": 1296,
+    "priceCount": 864,
+    "returnCount": 863,
+    "calendarVerified": true,
+    "calendarId": "sse-a-share-2023-2026-v2",
+    "calendarSources": [
+      "https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20221227_5714459.shtml",
+      "https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20231226_5733941.shtml",
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20241223_10767108.shtml",
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml"
+    ],
+    "annualizationSessions": 252,
+    "annualRiskFreeRate": 0,
+    "riskFreeMode": "fixed_assumption",
+    "dailyMean": 0.00018829067827830535,
+    "dailySampleStd": 0.009435697653360477,
+    "drawdownPeakDate": "2024-05-27",
+    "drawdownTroughDate": "2024-09-11",
+    "inputSummary": {
+      "code": "H30269",
+      "source": "eastmoney",
+      "startClose": 9620.14,
+      "endClose": 10890.55,
+      "historyCount": 864,
+      "sourceUpdatedAt": "2026-09-17T13:38:12.563Z",
+      "sha256": "1b4f43e35ce4fdee0ac54b6f7c589bcebdd5a3f2844f737ddcd9336746ef6274"
+    }
+  }
+}

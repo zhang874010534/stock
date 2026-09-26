@@ -1,0 +1,57 @@
+{
+  "purpose": "stage2 formula reference; not production output",
+  "ruleVersion": "latest-metrics-v1",
+  "sourceSha256": "52848c0fc77c431b2edfda54a690e964a116ad55bc3fa02872966bf00fa34d99",
+  "calendarSources": [
+    "https://www.sse.com.cn/disclosure/announcement/general/c/c_20241223_10767108.shtml",
+    "https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml"
+  ],
+  "calendarClosuresInWindow": [
+    [
+      "2025-10-01",
+      "2025-10-08"
+    ],
+    [
+      "2026-01-01",
+      "2026-01-03"
+    ],
+    [
+      "2026-02-15",
+      "2026-02-23"
+    ],
+    [
+      "2026-04-04",
+      "2026-04-06"
+    ],
+    [
+      "2026-05-01",
+      "2026-05-05"
+    ],
+    [
+      "2026-06-19",
+      "2026-06-21"
+    ]
+  ],
+  "expectedCount": 243,
+  "actualCount": 243,
+  "missing": [],
+  "unexpected": [],
+  "start": "2025-09-24",
+  "end": "2026-09-24",
+  "calendarDays": 365,
+  "priceCount": 243,
+  "returnCount": 242,
+  "startClose": 11155.5,
+  "endClose": 10848.95,
+  "annualReturn": -0.0274797185244946,
+  "maxDrawdown": 0.161825639115469,
+  "drawdownPeakTrough": [
+    "2025-11-12",
+    "2026-06-30"
+  ],
+  "dailyMean": -8.390234783260732e-05,
+  "dailySampleStd": 0.00791439827081698,
+  "annualRiskFreeRate": 0,
+  "annualizationSessions": 252,
+  "sharpe": -0.16828929188316166
+}

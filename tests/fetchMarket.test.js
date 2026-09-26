@@ -15,6 +15,7 @@ test('两个标的的近期更新均优先于历史回补，阶段间保留请�
     updater: async ({ instrument, phase }) => { calls.push(`${instrument.code}:${phase}`); return success() },
   })
   assert.equal(result.failed, false)
+  assert.deepEqual(result.sources, { H30269: null, '512890': null })
   assert.deepEqual(calls, ['H30269:recent', '512890:recent', 'H30269:backfill', '512890:backfill'])
   assert.deepEqual(waits, [3000, 3000, 3000])
 })
@@ -43,6 +44,8 @@ test('近期失败保留失败状态并跳过该标的回补，不阻止其他�
     },
   })
   assert.equal(result.failed, true)
+  assert.equal(result.sources.H30269, '近期行情更新失败')
+  assert.equal(result.sources['512890'], null)
   assert.deepEqual(calls, ['H30269:recent', '512890:recent', '512890:backfill'])
 })
 

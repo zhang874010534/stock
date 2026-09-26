@@ -11,6 +11,7 @@ export async function updateMarket({
   requestDelayMs = REQUEST_DELAY_MS,
 } = {}) {
   let failed = false
+  const sources = {}
   let attempted = false
   const readyForBackfill = []
   async function update(instrument, phase) {
@@ -26,12 +27,15 @@ export async function updateMarket({
       const result = await update(instrument, 'recent')
       if (result.errors.length || !result.data) {
         failed = true
+        sources[instrument.code] = '近期行情更新失败'
         logger.error(`${instrument.code} 近期行情更新失败，保留已有数据，本轮跳过该标的历史回补`)
-      } else if (!result.data.backfill.completed) {
-        readyForBackfill.push(instrument)
+      } else {
+        sources[instrument.code] = null
+        if (!result.data.backfill.completed) readyForBackfill.push(instrument)
       }
     } catch (error) {
       failed = true
+      sources[instrument.code] = '近期行情更新失败'
       logger.error(`${instrument.code} 近期行情更新失败：${describeError(error)}`)
     }
   }
@@ -45,10 +49,11 @@ export async function updateMarket({
     } catch (error) {
       // 文件读写或校验异常仍需报错，不能归为可延后的上游失败。
       failed = true
+      sources[instrument.code] = '历史回补处理异常'
       logger.error(`${instrument.code} 历史回补处理异常：${describeError(error)}`)
     }
   }
-  return { failed }
+  return { failed, sources }
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {

@@ -13,6 +13,9 @@ import KLineQuote from './kline/KLineQuote.vue'
 import KLineRangeSelection from './kline/KLineRangeSelection.vue'
 import KLineDrawingTools from './kline/KLineDrawingTools.vue'
 import YieldMetricCard from './YieldMetricCard.vue'
+import LatestIndexMetrics from './LatestIndexMetrics.vue'
+import IndexDetails from './IndexDetails.vue'
+import IndexConstituents from './IndexConstituents.vue'
 import { useKlineChart } from './kline/useKlineChart.js'
 import { useKlineFullscreen } from './kline/useKlineFullscreen.js'
 
@@ -32,6 +35,8 @@ const maOptions = ref(MA_OPTIONS.map((item) => ({ ...item })))
 const bollEnabled = ref(false)
 const bbiEnabled = ref(true)
 const subIndicatorKey = ref('kdj')
+const sidebarView = ref('overview')
+const overviewView = ref('analysis')
 const indicatorSettings = ref({
   wave: { ...WAVE_PARAMETERS },
   boll: { ...BOLL_PARAMETERS },
@@ -133,7 +138,19 @@ function setIndicatorSettings(key, settings) {
 
         </div>
         <aside v-if="expanded" class="chart-sidebar" aria-label="证券行情与指标信息">
+          <div class="sidebar-top">
           <div class="sidebar-heading"><h2>{{ instrument }} · {{ instrument === '512890' ? 'ETF' : '指数' }}</h2><button class="expand-button" aria-label="退出全屏" title="退出全屏（ESC）" @click="toggle"><Minimize2 :size="14" />退出</button></div>
+          <div class="sidebar-switch" role="group" aria-label="右侧信息切换">
+            <button type="button" :aria-pressed="sidebarView === 'overview'" @click="sidebarView = 'overview'">简况</button>
+            <button type="button" :aria-pressed="sidebarView === 'constituents'" @click="sidebarView = 'constituents'">成分股</button>
+          </div>
+          <div v-show="sidebarView === 'overview'" class="sidebar-switch sidebar-sub-switch" role="group" aria-label="简况内容切换">
+            <button type="button" :aria-pressed="overviewView === 'analysis'" @click="overviewView = 'analysis'">指数分析</button>
+            <button type="button" :aria-pressed="overviewView === 'details'" @click="overviewView = 'details'">指数详情</button>
+          </div>
+          </div>
+          <div v-show="sidebarView === 'overview'" aria-label="简况">
+          <div v-show="overviewView === 'analysis'" aria-label="指数分析">
           <p class="sidebar-name">{{ instrument === '512890' ? '华泰柏瑞红利低波ETF' : '中证红利低波动指数' }}</p>
           <p class="sidebar-price" :class="{ up: latestQuote?.change > 0, down: latestQuote?.change < 0 }">{{ formatIndexValue(latestQuote?.close, instrument === '512890' ? 3 : 2) }}</p>
           <p class="sidebar-caption">{{ latestQuote?.date ?? '—' }} · {{ periodLabel }}最新已同步行情</p>
@@ -151,8 +168,13 @@ function setIndicatorSettings(key, settings) {
             <span>{{ summary.startDate }} — {{ summary.endDate }} · {{ dataWindow.endIndex - dataWindow.startIndex + 1 }} 根</span>
             <span :class="summary.changePercent >= 0 ? 'up' : 'down'">区间 {{ summary.changePercent > 0 ? '+' : '' }}{{ summary.changePercent.toFixed(2) }}%</span>
           </div>
-          <YieldMetricCard :instrument="instrument" />
-          <p class="sidebar-note">股息率和国债收益率为各自最新发布值。未提供的字段显示 —。</p>
+          <LatestIndexMetrics :instrument="instrument" />
+          <YieldMetricCard :instrument="instrument" :show-dividend="false" />
+          <p class="sidebar-note">国债收益率独立展示，不参与本版夏普计算。各项保留原始数据日期。</p>
+          </div>
+          <div v-show="overviewView === 'details'" aria-label="指数详情"><IndexDetails :instrument="instrument" /></div>
+          </div>
+          <div v-show="sidebarView === 'constituents'" aria-label="成分股"><IndexConstituents :instrument="instrument" /></div>
         </aside>
       </section>
     </Teleport>
@@ -169,7 +191,17 @@ function setIndicatorSettings(key, settings) {
 .chart-main > :not(.chart-body) { flex-shrink: 0; }
 .index-chart.is-expanded { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 10px; }
 .chart-sidebar { min-height: 0; overflow-y: auto; border-left: 1px solid #30333e; padding: 4px 10px; }
-.sidebar-heading { position: sticky; top: -4px; z-index: 6; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-block: 4px; background: #101116; }
+.sidebar-top { position: sticky; top: -4px; z-index: 6; background: #101116; }
+.sidebar-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-block: 4px; }
+.sidebar-switch { display: flex; gap: 18px; margin-top: 8px; border-bottom: 1px solid #30333e; }
+.sidebar-switch button { padding: 7px 2px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #959baa; font: inherit; font-size: 13px; cursor: pointer; }
+.sidebar-switch button[aria-pressed="true"] { border-bottom-color: #67d5df; color: #67d5df; }
+.sidebar-switch button:hover { color: #dfe5f1; }
+.sidebar-switch button:focus-visible { outline: 1px solid #6382aa; outline-offset: 2px; }
+.sidebar-sub-switch { gap: 8px; margin-top: 0; padding-block: 10px; border-bottom: 0; }
+.sidebar-sub-switch button { padding: 5px 10px; border: 1px solid #30333e; border-radius: 4px; font-size: 12px; }
+.sidebar-sub-switch button[aria-pressed="true"] { border-color: #39606b; background: #19303a; }
+.sidebar-empty { padding: 28px 0; color: #959baa; font-size: 12px; text-align: center; }
 .sidebar-heading h2 { color: #dfe5f1; font-size: 14px; }
 .sidebar-name, .sidebar-caption, .sidebar-note { color: #959baa; font-size: 11px; line-height: 1.6; margin-top: 5px; }
 .sidebar-price { font-size: 30px; line-height: 1.4; font-variant-numeric: tabular-nums; }

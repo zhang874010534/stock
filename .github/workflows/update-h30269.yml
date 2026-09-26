@@ -15,6 +15,7 @@ concurrency:
 jobs:
   update-data:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v7
@@ -33,14 +34,14 @@ jobs:
       - name: Update market data
         id: update
         continue-on-error: true
-        run: npm run data:update
+        run: npm run data:refresh-market
 
       - name: Check for data changes
         id: data-changes
         shell: bash
         run: |
-          if git diff --quiet -- public/data/h30269.json public/data/512890.json && \
-             [[ -z "$(git ls-files --others --exclude-standard -- public/data/h30269.json public/data/512890.json)" ]]; then
+          if git diff --quiet -- public/data/h30269.json public/data/512890.json public/data/latest-metrics-h30269.json public/data/latest-metrics-source-status.json && \
+             [[ -z "$(git ls-files --others --exclude-standard -- public/data/h30269.json public/data/512890.json public/data/latest-metrics-h30269.json public/data/latest-metrics-source-status.json)" ]]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No market data changes"
           else
@@ -56,6 +57,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- public/data/h30269.json
           if [[ -f public/data/512890.json ]]; then git add -- public/data/512890.json; fi
+          for path in public/data/latest-metrics-h30269.json public/data/latest-metrics-source-status.json; do
+            if [[ -f "$path" ]]; then git add -- "$path"; fi
+          done
           git diff --cached --quiet && exit 0
           git commit -m "chore(data): update market data"
           git push

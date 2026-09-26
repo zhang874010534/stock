@@ -24,15 +24,22 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
       - run: python -m pip install -r scripts/requirements-indicators.txt
       - name: Fetch valuations, CSI dividend and ChinaBond yield
         id: update
         continue-on-error: true
-        run: python scripts/fetch-indicators.py
+        run: npm run data:refresh-indicators
+      - name: Fetch CSI constituents
+        id: constituents
+        continue-on-error: true
+        run: python scripts/fetch-constituents.py
       - name: Commit successful updates
         shell: bash
         run: |
-          for path in public/data/dividend-h30269.json public/data/valuation-h30269.json public/data/china-bond-10y.json; do
+          for path in public/data/dividend-h30269.json public/data/valuation-h30269.json public/data/china-bond-10y.json public/data/latest-metrics-h30269.json public/data/latest-metrics-source-status.json public/data/constituents-h30269.json; do
             if [[ -f "$path" ]]; then git add -- "$path"; fi
           done
           git diff --cached --quiet && exit 0
@@ -41,5 +48,5 @@ jobs:
           git commit -m "chore(data): update valuations and treasury yield"
           git push
       - name: Report incomplete update
-        if: steps.update.outcome == 'failure'
+        if: steps.update.outcome == 'failure' || steps.constituents.outcome == 'failure'
         run: exit 1
