@@ -10,8 +10,8 @@ const loading = ref(true)
 const error = ref(false)
 const title = computed(() => props.instrument === '512890' ? '标的指数最新指标' : '最新指标')
 const rows = [
-  { key: 'pe', label: '市盈率 PE' },
-  { key: 'pb', label: '市净率 PB' },
+  { key: 'pe', label: '市盈率 PE', note: '东方财富口径' },
+  { key: 'pb', label: '市净率 PB', note: '东方财富口径' },
   { key: 'dividendYield', label: '股息率', note: '中证 · 总股本口径' },
   { key: 'annualReturn', label: '年化收益率', performance: true },
   { key: 'maxDrawdown', label: '最大回撤', performance: true },

@@ -164,9 +164,122 @@ def save_payload(path, payload):
 
 
 def fetch_dividend():
+    return parse_dividend_rows(fetch_csi_rows())
+
+
+def fetch_csi_rows():
     import xlrd
     sheet = xlrd.open_workbook(file_contents=download(DIVIDEND_URL)).sheet_by_index(0)
-    return parse_dividend_rows([sheet.row_values(i) for i in range(sheet.nrows)])
+    return [sheet.row_values(i) for i in range(sheet.nrows)]
+
+
+CSI_METADATA = {'schemaVersion': 1, 'code': 'H30269', 'provider': 'CSI',
+                'source': DIVIDEND_URL, 'basis': 'dual_share_capital',
+                'unit': 'pe_multiple_dividend_percent', 'collection': 'rolling_file_accumulation'}
+CSI_FIELDS = {'peTotal': 'P/E1', 'peCalculation': 'P/E2',
+              'dividendTotal': 'D/P1', 'dividendCalculation': 'D/P2'}
+
+
+def validate_csi_point(record):
+    day = record.get('date', '')
+    if not isinstance(day, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', day):
+        raise ValueError('Invalid CSI history date')
+    valid_point(day, 0)
+    for key in CSI_FIELDS:
+        value = record.get(key)
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+            raise ValueError(f'Invalid CSI {key}')
+        if (key.startswith('pe') and value <= 0) or (key.startswith('dividend') and not 0 <= value <= 100):
+            raise ValueError(f'Invalid CSI {key}')
+    return {key: record[key] for key in ('date', *CSI_FIELDS)}
+
+
+def parse_csi_valuation_rows(rows):
+    if len(rows) < 2:
+        raise ValueError('Empty CSI valuation file')
+    header, *records = rows
+    columns = {}
+    for key, field in {**CSI_FIELDS, 'code': 'Index Code', 'date': 'Date'}.items():
+        matches = [i for i, name in enumerate(header) if field in str(name)]
+        if len(matches) != 1:
+            raise ValueError(f'CSI column missing or ambiguous: {field}')
+        columns[key] = matches[0]
+    points = {}
+    for row in records:
+        if len(row) <= max(columns.values()) or str(row[columns['code']]).strip() != 'H30269':
+            raise ValueError('Unexpected CSI index/row')
+        raw = str(row[columns['date']]).strip()
+        if not re.fullmatch(r'\d{8}', raw):
+            raise ValueError('Invalid CSI source date')
+        point = {'date': f'{raw[:4]}-{raw[4:6]}-{raw[6:]}'}
+        for key in CSI_FIELDS:
+            value = row[columns[key]]
+            if isinstance(value, bool):
+                raise ValueError('Invalid CSI boolean')
+            point[key] = float(value)
+        point = validate_csi_point(point)
+        if point['date'] in points:
+            raise ValueError('Duplicate CSI source date')
+        points[point['date']] = point
+    return sorted(points.values(), key=lambda point: point['date'])
+
+
+def save_csi_valuation_history(path, points):
+    if not points:
+        raise ValueError('Empty CSI valuation update')
+    incoming = [validate_csi_point(point) for point in points]
+    if len({p['date'] for p in incoming}) != len(incoming):
+        raise ValueError('Duplicate CSI update date')
+    records = {}
+    if path.exists():
+        old = json.loads(path.read_text(encoding='utf-8'))
+        if any(old.get(key) != value for key, value in CSI_METADATA.items()):
+            raise ValueError('CSI history metadata mismatch')
+        if not isinstance(old.get('history'), list) or not old['history']:
+            raise ValueError('Invalid CSI history')
+        previous = ''
+        for point in old['history']:
+            point = validate_csi_point(point)
+            if point['date'] <= previous:
+                raise ValueError('Unsorted/duplicate CSI history')
+            previous = point['date']
+            records[previous] = point
+        if previous != old.get('date') or max(p['date'] for p in incoming) < previous:
+            raise ValueError('CSI upstream date regressed')
+    # Merge all returned observations, including revisions, retaining older dates.
+    records.update({p['date']: p for p in incoming})
+    history = sorted(records.values(), key=lambda p: p['date'])
+    return save_payload(path, {**CSI_METADATA, 'date': history[-1]['date'], 'history': history})
+
+
+def update_csi_valuation(rows=None):
+    status_path = OUTPUT / 'valuation-csi-status-h30269.json'
+    old = json.loads(status_path.read_text(encoding='utf-8')) if status_path.exists() else {}
+    now = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+    status = {'code': 'H30269', 'provider': 'CSI', 'source': DIVIDEND_URL,
+              'lastAttemptAt': now, 'lastSuccessAt': old.get('lastSuccessAt')}
+    error = None
+    try:
+        points = parse_csi_valuation_rows(rows if rows is not None else fetch_csi_rows())
+        save_csi_valuation_history(OUTPUT / 'valuation-history-csi-h30269.json', points)
+        status.update(status='ok', lastSuccessAt=now, error=None)
+    except Exception as cause:
+        error = cause
+        status.update(status='error', error='中证估值更新失败，保留上次数据')
+    # Status is separate: failed attempts must never alter historical observations.
+    status_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=status_path.parent, delete=False) as stream:
+            temporary = stream.name
+            json.dump(status, stream, ensure_ascii=False, indent=2, allow_nan=False)
+            stream.write('\n')
+        os.replace(temporary, status_path)
+    finally:
+        if temporary and os.path.exists(temporary):
+            os.unlink(temporary)
+    if error:
+        raise error
 
 
 def save_valuation_history(path, snapshots):
@@ -225,8 +338,22 @@ def main():
         failed = True
         sources['valuation'] = '估值更新失败'
         print(f'H30269 valuation: failed, existing file preserved: {error}', file=sys.stderr)
+    # Share a single CSI download between dividend and historical PE parsing.
+    csi_rows = None
+    try:
+        csi_rows = fetch_csi_rows()
+    except Exception as error:
+        print(f'CSI download failed: {error}', file=sys.stderr)
+    try:
+        update_csi_valuation(csi_rows if csi_rows is not None else [])
+        sources['csiValuation'] = None
+    except Exception as error:
+        failed = True
+        sources['csiValuation'] = '中证估值更新失败'
+        print(f'CSI valuation: failed, existing history preserved: {error}', file=sys.stderr)
     for filename, code, source, basis, fetcher in [
-        ('dividend-h30269.json', 'H30269', DIVIDEND_URL, 'total_share_capital', fetch_dividend),
+        ('dividend-h30269.json', 'H30269', DIVIDEND_URL, 'total_share_capital',
+         lambda: parse_dividend_rows(csi_rows if csi_rows is not None else [])),
         ('china-bond-10y.json', 'CN10Y', BOND_URL, 'government_bond_yield_curve_10y',
          lambda: parse_bond(download(BOND_URL).decode('utf-8'))),
     ]:

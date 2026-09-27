@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "code": "H30269",
+  "provider": "CSI",
+  "source": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/indicator/H30269indicator.xls",
+  "basis": "dual_share_capital",
+  "unit": "pe_multiple_dividend_percent",
+  "collection": "rolling_file_accumulation",
+  "date": "2026-09-24",
+  "history": [
+    {
+      "date": "2026-08-28",
+      "peTotal": 8.01,
+      "peCalculation": 7.78,
+      "dividendTotal": 4.34,
+      "dividendCalculation": 4.83
+    },
+    {
+      "date": "2026-08-31",
+      "peTotal": 8.18,
+      "peCalculation": 7.84,
+      "dividendTotal": 4.24,
+      "dividendCalculation": 4.79
+    },
+    {
+      "date": "2026-09-01",
+      "peTotal": 8.29,
+      "peCalculation": 7.98,
+      "dividendTotal": 4.19,
+      "dividendCalculation": 4.74
+    },
+    {
+      "date": "2026-09-02",
+      "peTotal": 8.29,
+      "peCalculation": 7.93,
+      "dividendTotal": 4.19,
+      "dividendCalculation": 4.77
+    },
+    {
+      "date": "2026-09-03",
+      "peTotal": 8.21,
+      "peCalculation": 7.92,
+      "dividendTotal": 4.23,
+      "dividendCalculation": 4.77
+    },
+    {
+      "date": "2026-09-04",
+      "peTotal": 8.25,
+      "peCalculation": 7.96,
+      "dividendTotal": 4.21,
+      "dividendCalculation": 4.75
+    },
+    {
+      "date": "2026-09-07",
+      "peTotal": 8.12,
+      "peCalculation": 7.88,
+      "dividendTotal": 4.28,
+      "dividendCalculation": 4.79
+    },
+    {
+      "date": "2026-09-08",
+      "peTotal": 8.13,
+      "peCalculation": 7.96,
+      "dividendTotal": 4.27,
+      "dividendCalculation": 4.75
+    },
+    {
+      "date": "2026-09-09",
+      "peTotal": 8.17,
+      "peCalculation": 7.98,
+      "dividendTotal": 4.25,
+      "dividendCalculation": 4.73
+    },
+    {
+      "date": "2026-09-10",
+      "peTotal": 8.24,
+      "peCalculation": 8.01,
+      "dividendTotal": 4.21,
+      "dividendCalculation": 4.72
+    },
+    {
+      "date": "2026-09-11",
+      "peTotal": 8.23,
+      "peCalculation": 7.93,
+      "dividendTotal": 4.22,
+      "dividendCalculation": 4.77
+    },
+    {
+      "date": "2026-09-14",
+      "peTotal": 8.26,
+      "peCalculation": 7.96,
+      "dividendTotal": 4.2,
+      "dividendCalculation": 4.75
+    },
+    {
+      "date": "2026-09-15",
+      "peTotal": 8.19,
+      "peCalculation": 7.88,
+      "dividendTotal": 4.24,
+      "dividendCalculation": 4.79
+    },
+    {
+      "date": "2026-09-16",
+      "peTotal": 8.13,
+      "peCalculation": 7.82,
+      "dividendTotal": 4.27,
+      "dividendCalculation": 4.83
+    },
+    {
+      "date": "2026-09-17",
+      "peTotal": 8.11,
+      "peCalculation": 7.79,
+      "dividendTotal": 4.28,
+      "dividendCalculation": 4.85
+    },
+    {
+      "date": "2026-09-18",
+      "peTotal": 8.06,
+      "peCalculation": 7.78,
+      "dividendTotal": 4.31,
+      "dividendCalculation": 4.86
+    },
+    {
+      "date": "2026-09-21",
+      "peTotal": 8.11,
+      "peCalculation": 7.79,
+      "dividendTotal": 4.28,
+      "dividendCalculation": 4.85
+    },
+    {
+      "date": "2026-09-22",
+      "peTotal": 8.13,
+      "peCalculation": 7.79,
+      "dividendTotal": 4.27,
+      "dividendCalculation": 4.85
+    },
+    {
+      "date": "2026-09-23",
+      "peTotal": 8.08,
+      "peCalculation": 7.76,
+      "dividendTotal": 4.3,
+      "dividendCalculation": 4.87
+    },
+    {
+      "date": "2026-09-24",
+      "peTotal": 8.12,
+      "peCalculation": 7.76,
+      "dividendTotal": 4.27,
+      "dividendCalculation": 4.87
+    }
+  ],
+  "updatedAt": "2026-09-27T01:29:44.691594Z"
+}

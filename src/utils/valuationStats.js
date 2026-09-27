@@ -1,4 +1,4 @@
-export const VALUATION_RANGES = { '1y': '近1年', '3y': '近3年', '5y': '近5年', all: '全部' }
+export const VALUATION_RANGES = { all: '全部已积累', '1y': '近1年', '3y': '近3年', '5y': '近5年' }
 
 export function quantile(sorted, probability) {
   if (!sorted.length) return null

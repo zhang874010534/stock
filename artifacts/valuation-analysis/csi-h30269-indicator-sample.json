@@ -1,0 +1,166 @@
+{
+  "source": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/indicator/H30269indicator.xls",
+  "checkedOn": "2026-09-27",
+  "records": [
+    {
+      "date": "2026-08-28",
+      "code": "H30269",
+      "pe_total_shares": 8.01,
+      "pe_calculation_shares": 7.78,
+      "dividend_total_shares_percent": 4.34,
+      "dividend_calculation_shares_percent": 4.83
+    },
+    {
+      "date": "2026-08-31",
+      "code": "H30269",
+      "pe_total_shares": 8.18,
+      "pe_calculation_shares": 7.84,
+      "dividend_total_shares_percent": 4.24,
+      "dividend_calculation_shares_percent": 4.79
+    },
+    {
+      "date": "2026-09-01",
+      "code": "H30269",
+      "pe_total_shares": 8.29,
+      "pe_calculation_shares": 7.98,
+      "dividend_total_shares_percent": 4.19,
+      "dividend_calculation_shares_percent": 4.74
+    },
+    {
+      "date": "2026-09-02",
+      "code": "H30269",
+      "pe_total_shares": 8.29,
+      "pe_calculation_shares": 7.93,
+      "dividend_total_shares_percent": 4.19,
+      "dividend_calculation_shares_percent": 4.77
+    },
+    {
+      "date": "2026-09-03",
+      "code": "H30269",
+      "pe_total_shares": 8.21,
+      "pe_calculation_shares": 7.92,
+      "dividend_total_shares_percent": 4.23,
+      "dividend_calculation_shares_percent": 4.77
+    },
+    {
+      "date": "2026-09-04",
+      "code": "H30269",
+      "pe_total_shares": 8.25,
+      "pe_calculation_shares": 7.96,
+      "dividend_total_shares_percent": 4.21,
+      "dividend_calculation_shares_percent": 4.75
+    },
+    {
+      "date": "2026-09-07",
+      "code": "H30269",
+      "pe_total_shares": 8.12,
+      "pe_calculation_shares": 7.88,
+      "dividend_total_shares_percent": 4.28,
+      "dividend_calculation_shares_percent": 4.79
+    },
+    {
+      "date": "2026-09-08",
+      "code": "H30269",
+      "pe_total_shares": 8.13,
+      "pe_calculation_shares": 7.96,
+      "dividend_total_shares_percent": 4.27,
+      "dividend_calculation_shares_percent": 4.75
+    },
+    {
+      "date": "2026-09-09",
+      "code": "H30269",
+      "pe_total_shares": 8.17,
+      "pe_calculation_shares": 7.98,
+      "dividend_total_shares_percent": 4.25,
+      "dividend_calculation_shares_percent": 4.73
+    },
+    {
+      "date": "2026-09-10",
+      "code": "H30269",
+      "pe_total_shares": 8.24,
+      "pe_calculation_shares": 8.01,
+      "dividend_total_shares_percent": 4.21,
+      "dividend_calculation_shares_percent": 4.72
+    },
+    {
+      "date": "2026-09-11",
+      "code": "H30269",
+      "pe_total_shares": 8.23,
+      "pe_calculation_shares": 7.93,
+      "dividend_total_shares_percent": 4.22,
+      "dividend_calculation_shares_percent": 4.77
+    },
+    {
+      "date": "2026-09-14",
+      "code": "H30269",
+      "pe_total_shares": 8.26,
+      "pe_calculation_shares": 7.96,
+      "dividend_total_shares_percent": 4.2,
+      "dividend_calculation_shares_percent": 4.75
+    },
+    {
+      "date": "2026-09-15",
+      "code": "H30269",
+      "pe_total_shares": 8.19,
+      "pe_calculation_shares": 7.88,
+      "dividend_total_shares_percent": 4.24,
+      "dividend_calculation_shares_percent": 4.79
+    },
+    {
+      "date": "2026-09-16",
+      "code": "H30269",
+      "pe_total_shares": 8.13,
+      "pe_calculation_shares": 7.82,
+      "dividend_total_shares_percent": 4.27,
+      "dividend_calculation_shares_percent": 4.83
+    },
+    {
+      "date": "2026-09-17",
+      "code": "H30269",
+      "pe_total_shares": 8.11,
+      "pe_calculation_shares": 7.79,
+      "dividend_total_shares_percent": 4.28,
+      "dividend_calculation_shares_percent": 4.85
+    },
+    {
+      "date": "2026-09-18",
+      "code": "H30269",
+      "pe_total_shares": 8.06,
+      "pe_calculation_shares": 7.78,
+      "dividend_total_shares_percent": 4.31,
+      "dividend_calculation_shares_percent": 4.86
+    },
+    {
+      "date": "2026-09-21",
+      "code": "H30269",
+      "pe_total_shares": 8.11,
+      "pe_calculation_shares": 7.79,
+      "dividend_total_shares_percent": 4.28,
+      "dividend_calculation_shares_percent": 4.85
+    },
+    {
+      "date": "2026-09-22",
+      "code": "H30269",
+      "pe_total_shares": 8.13,
+      "pe_calculation_shares": 7.79,
+      "dividend_total_shares_percent": 4.27,
+      "dividend_calculation_shares_percent": 4.85
+    },
+    {
+      "date": "2026-09-23",
+      "code": "H30269",
+      "pe_total_shares": 8.08,
+      "pe_calculation_shares": 7.76,
+      "dividend_total_shares_percent": 4.3,
+      "dividend_calculation_shares_percent": 4.87
+    },
+    {
+      "date": "2026-09-24",
+      "code": "H30269",
+      "pe_total_shares": 8.12,
+      "pe_calculation_shares": 7.76,
+      "dividend_total_shares_percent": 4.27,
+      "dividend_calculation_shares_percent": 4.87
+    }
+  ]
+}
