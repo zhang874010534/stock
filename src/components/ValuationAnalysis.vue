@@ -5,7 +5,7 @@ import { getCsiValuationHistory, getCsiValuationStatus, csiChartHistory, CSI_VAL
 import { valuationStats, VALUATION_RANGES } from '../utils/valuationStats.js'
 import ValuationAnalysisContent from './ValuationAnalysisContent.vue'
 
-const props = defineProps({ instrument: { type: String, default: 'H30269' }, summary: Boolean })
+const props = defineProps({ instrument: { type: String, default: 'H30269' }, summary: Boolean, collectionNotice: String, collectionWarning: Boolean })
 const source = ref(props.summary ? 'eastmoney' : 'csi'), basis = ref('total'), expanded = ref(false), dialog = ref(null), expandButton = ref(null)
 const states = reactive(Object.fromEntries(['csi', 'eastmoney'].map(key => [key, { data: null, loading: false, error: '', status: null, statusNotice: '', metric: 'pe', range: 'all' }])))
 const current = computed(() => states[source.value])
@@ -44,7 +44,7 @@ async function loadSource(key) {
 }
 function load() { return loadSource(source.value) }
 function refresh() { return Promise.all([...new Set([source.value, ...(props.summary ? ['eastmoney'] : [])])].map(loadSource)) }
-defineExpose({ refresh, loading: computed(() => Object.values(states).some(state => state.loading)) })
+defineExpose({ refresh, loading: computed(() => Object.values(states).some(state => state.loading)), error: computed(() => Boolean(states.eastmoney.error || current.value.error)) })
 async function open(event, selectedMetric) {
   if (props.summary) { source.value = 'eastmoney'; if (selectedMetric) states.eastmoney.metric = selectedMetric }
   returnFocus = event?.currentTarget ?? expandButton.value
@@ -61,6 +61,7 @@ onBeforeUnmount(() => { disposed = true; dialog.value?.close() })
     <template v-if="summary">
       <div class="summary-toolbar"><p>H30269 · 东方财富口径 · 与上方 PE/PB 来源一致</p><label>统计范围 <select v-model="states.eastmoney.range" aria-label="首页估值统计范围"><option v-for="(label, key) in VALUATION_RANGES" :key="key" :value="key">{{ label }}</option></select></label></div>
       <p v-if="instrument === '512890'" class="summary-caption">以下为跟踪指数估值，非 ETF 自身估值。</p>
+      <p v-if="collectionNotice" class="summary-caption" :class="{ 'summary-notice': collectionWarning }">{{ collectionNotice }}</p>
       <p v-if="states.eastmoney.loading" class="summary-caption" role="status">正在读取估值历史…</p>
       <p v-if="states.eastmoney.error" class="summary-notice" role="status">{{ states.eastmoney.error }} <button :disabled="states.eastmoney.loading" @click="loadSource('eastmoney')">重新读取</button></p>
       <div class="summary-grid">

@@ -6,6 +6,7 @@ export async function getMarketData(code, { fetcher = fetch, cacheKey = Date.now
   if (!DATA_URLS[code]) throw new Error('不支持的证券代码')
   const response = await fetcher(`${DATA_URLS[code]}?t=${encodeURIComponent(cacheKey)}`, {
     cache: 'no-store',
+    signal: AbortSignal.timeout(15_000),
     headers: {
       Accept: 'application/json',
     },

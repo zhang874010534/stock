@@ -6,6 +6,7 @@ import { spawn } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { updateMarket } from './fetch-market.mjs'
 import { generateLatestMetrics } from './build-latest-metrics.mjs'
+import { validateSourceStatus } from '../src/utils/sourceStatus.js'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -36,10 +37,30 @@ export async function refreshLatestMetrics({ mode, directory = join(root, 'publi
   try { status = JSON.parse(await readFile(statusPath, 'utf8')) }
   catch (error) { if (error.code !== 'ENOENT') throw error }
   if (status.schemaVersion !== 1 || !status.errors || Object.entries(status.errors).some(([key, value]) => !['market', 'valuation', 'dividend'].includes(key) || typeof value !== 'string' || !value)) throw new Error('指标来源状态文件无效')
+  const dashboardPath = join(directory, 'dashboard-source-status.json')
+  let dashboard = { schemaVersion: 1, sources: {} }
+  try { dashboard = validateSourceStatus(JSON.parse(await readFile(dashboardPath, 'utf8'))) }
+  catch (error) { if (error.code !== 'ENOENT') throw error }
+  // Preserve known legacy failures without inventing collection timestamps.
+  for (const [key, error] of Object.entries(status.errors)) {
+    const source = key === 'market' ? 'H30269' : key
+    dashboard.sources[source] ??= { status: 'error', lastAttemptAt: null, lastSuccessAt: null, error }
+  }
   const keys = mode === 'market' ? { market: 'H30269' } : { valuation: 'valuation', dividend: 'dividend' }
   let result
   try { result = await (mode === 'market' ? marketUpdater() : indicatorUpdater()) }
   catch { result = { failed: true, sources: {} } }
+  const attemptedKeys = mode === 'market' ? ['H30269', '512890'] : ['valuation', 'dividend', 'bond', 'csiValuation']
+  for (const key of attemptedKeys) {
+    const outcome = result?.sources?.[key]
+    const success = outcome === null
+    dashboard.sources[key] = {
+      status: success ? 'ok' : 'error',
+      lastAttemptAt: now.toISOString(),
+      lastSuccessAt: success ? now.toISOString() : dashboard.sources[key]?.lastSuccessAt ?? null,
+      error: success ? null : typeof outcome === 'string' && outcome ? outcome : '上游更新未返回有效状态',
+    }
+  }
   for (const [key, reportKey] of Object.entries(keys)) {
     const outcome = result?.sources?.[reportKey]
     if (outcome === null) delete status.errors[key]
@@ -50,8 +71,13 @@ export async function refreshLatestMetrics({ mode, directory = join(root, 'publi
     await writeFile(temporary, `${JSON.stringify(status, null, 2)}\n`, { flag: 'wx' })
     await rename(temporary, statusPath)
   } finally { await unlink(temporary).catch(error => { if (error.code !== 'ENOENT') throw error }) }
+  const dashboardTemporary = `${dashboardPath}.${randomUUID()}.tmp`
+  try {
+    await writeFile(dashboardTemporary, `${JSON.stringify(dashboard, null, 2)}\n`, { flag: 'wx' })
+    await rename(dashboardTemporary, dashboardPath)
+  } finally { await unlink(dashboardTemporary).catch(error => { if (error.code !== 'ENOENT') throw error }) }
   const generated = await generateLatestMetrics({ directory, now })
-  return { ...generated, failed: Boolean(result?.failed) || generated.failed }
+  return { ...generated, failed: Boolean(result?.failed) || generated.failed || attemptedKeys.some(key => dashboard.sources[key].status === 'error') }
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {

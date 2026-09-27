@@ -3,8 +3,10 @@ import { computed, onMounted, ref } from 'vue'
 import { getLatestMetrics } from '../api/latestMetrics.js'
 import { DIVIDEND_SOURCE, formatLatestMetric } from '../utils/latestMetrics.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
+import { collectionNotice, dataFreshness } from '../utils/sourceStatus.js'
 
-const props = defineProps({ instrument: { type: String, default: 'H30269' }, performanceOnly: Boolean })
+const props = defineProps({ instrument: { type: String, default: 'H30269' }, performanceOnly: Boolean,
+  collectionEntry: Object, collectionUnavailable: Boolean, checkedAt: { type: Date, default: () => new Date() } })
 const data = ref(null)
 const loading = ref(false)
 const error = ref(false)
@@ -20,6 +22,10 @@ const rows = [
   { key: 'sharpe', label: '夏普比率', performance: true, note: '无风险利率假设 0%' },
 ]
 const groups = computed(() => props.performanceOnly ? [rows.slice(3)] : [rows.slice(0, 3), rows.slice(3)])
+const asOf = computed(() => data.value?.calculation?.windowEnd)
+const hasWarning = computed(() => rows.slice(3).some(row => data.value?.metrics[row.key].status && data.value.metrics[row.key].status !== 'ok'))
+const collection = computed(() => collectionNotice(props.collectionEntry, { unavailable: props.collectionUnavailable, hasData: Boolean(asOf.value) }))
+const freshness = computed(() => dataFreshness(asOf.value, { now: props.checkedAt }))
 
 async function load() {
   if (loading.value) return
@@ -29,7 +35,7 @@ async function load() {
   catch { error.value = true }
   finally { loading.value = false }
 }
-defineExpose({ refresh: load, loading, error })
+defineExpose({ refresh: load, loading, error, asOf, hasWarning })
 onMounted(load)
 </script>
 
@@ -41,6 +47,10 @@ onMounted(load)
     </div>
     <p class="metrics-context">H30269 · 中证红利低波动指数</p>
     <p v-if="instrument === '512890'" class="metrics-context">以下为标的指数数据，非 ETF 自身表现或实际分红收益率。</p>
+    <template v-if="performanceOnly">
+      <p class="metrics-context" :class="{ 'metrics-status': collection.warning }">行情来源：{{ collection.text }}。指标计算状态与日期见下方。</p>
+      <p v-if="!loading && freshness.text" class="metrics-context" :class="{ 'metrics-status': freshness.level === 'old' }">{{ freshness.text }}</p>
+    </template>
     <p v-if="error" class="metrics-status" role="status">指标读取失败{{ data ? '，保留上次数据及日期。' : '，请重试。' }}</p>
     <p v-else-if="loading" class="metrics-context" role="status">{{ data ? '正在刷新指标…' : '正在读取最新指标…' }}</p>
     <template v-for="(group, groupIndex) in groups" :key="groupIndex">

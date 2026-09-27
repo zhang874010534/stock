@@ -70,7 +70,7 @@ const { loading: chartLoading, error: chartError, range, activeIndex, isHovering
 })
 const isBusy = computed(() => chartLoading.value || props.loading)
 const displayError = computed(() => props.error || chartError.value)
-const showChart = computed(() => !isBusy.value && !displayError.value && history.value.length > 0)
+const showChart = computed(() => !chartLoading.value && !chartError.value && history.value.length > 0)
 const quote = computed(() => showChart.value ? getKlineQuote(history.value, activeIndex.value) : null)
 const latestQuote = computed(() => showChart.value ? getKlineQuote(history.value, history.value.length - 1) : null)
 const dataWindow = computed(() => ({ startIndex: visibleWindow.value.startIndex, endIndex: Math.min(history.value.length - 1, visibleWindow.value.endIndex) }))
@@ -123,6 +123,8 @@ function setIndicatorSettings(key, settings) {
         </div>
         <KLineQuote hide-details :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
+        <p v-if="showChart && error" class="wave-note" role="status">行情文件读取失败，保留上次图表与原日期。<button type="button" :disabled="isBusy" @click="emit('retry')">重新读取</button></p>
+        <p v-else-if="showChart && loading" class="wave-note" role="status">正在重新读取行情，暂显示上次图表。</p>
         <KLineRangeSelection class="chart-body" :aria-busy="isBusy" :history="history" :layout="layout" :visible-window="visibleWindow" :index-at-pixel="indexAtPixel" :enabled="showChart" :instrument="instrument" :period-label="periodLabel" @zoom="zoomToWindow" @mouseleave="resetHover">
             <div ref="chartElement" class="chart-canvas" tabindex="0" aria-label="K线图，按左右方向键查看上一根或下一根K线" aria-keyshortcuts="ArrowLeft ArrowRight" :style="{ visibility: showChart ? 'visible' : 'hidden' }" @pointerdown="chartElement?.focus({ preventScroll: true })" @keydown="handleKeydown" />
           <template v-if="showChart">

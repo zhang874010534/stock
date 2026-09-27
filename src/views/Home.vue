@@ -9,6 +9,8 @@ import { getMarketData } from '../api/h30269.js'
 import { getYield } from '../api/yields.js'
 import { getValuation, VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
+import { getSourceStatus } from '../api/sourceStatus.js'
+import { collectionNotice, dataFreshness } from '../utils/sourceStatus.js'
 
 const props = defineProps({ instrument: { type: String, default: '512890' } })
 const isEtf = computed(() => props.instrument === '512890')
@@ -22,18 +24,40 @@ const sources = {
 }
 const valuationAnalysis = ref(null)
 const performanceMetrics = ref(null)
-const loading = computed(() => Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading)
+const collection = reactive({ data: null, loading: false, error: '' })
+const checkedAt = ref(new Date())
+let collectionRequestId = 0
+const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
 const dateOf = kind => kind === 'market' ? latest.value?.date : state[kind].data?.date
 const datesDiffer = computed(() => new Set(Object.keys(state).map(dateOf).filter(Boolean)).size > 1)
+const sourceKey = kind => ({ market: props.instrument, dividend: 'dividend', valuation: 'valuation', treasury: 'bond', performance: 'H30269' })[kind]
+const entryOf = kind => collection.data?.sources[sourceKey(kind)]
+const noticeOf = kind => collectionNotice(entryOf(kind), { unavailable: Boolean(collection.error), hasData: kind === 'performance' ? Boolean(performanceMetrics.value?.asOf) : Boolean(state[kind].data) })
+const freshnessOf = kind => dataFreshness(kind === 'performance' ? performanceMetrics.value?.asOf : dateOf(kind), { now: checkedAt.value, kind: ['market', 'performance'].includes(kind) ? 'market' : 'indicator' })
+const sourceRows = computed(() => [
+  { kind: 'market', name: `${props.instrument} 行情` }, { kind: 'valuation', name: 'H30269 PE / PB 与估值历史' },
+  { kind: 'dividend', name: 'H30269 股息率' }, { kind: 'treasury', name: '十年期国债收益率' },
+  { kind: 'performance', name: 'H30269 收益风险的行情来源' },
+].map(row => ({ ...row, entry: entryOf(row.kind), notice: noticeOf(row.kind), freshness: freshnessOf(row.kind) })))
+const collectionFailed = computed(() => sourceRows.value.some(row => row.notice.warning))
+const oldData = computed(() => sourceRows.value.some(row => row.freshness.level === 'old'))
+const collectionUnknown = computed(() => Boolean(collection.error) || sourceRows.value.some(row => !row.entry))
+const formatTime = value => value ? new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', dateStyle: 'short', timeStyle: 'short' }).format(new Date(value)) : '暂无记录'
 const statusLabel = computed(() => {
   if (loading.value) return '正在读取数据…'
-  if (Object.values(state).some(item => item.error) || performanceMetrics.value?.error) return '部分数据读取失败，可重试'
+  const messages = []
+  if (Object.values(state).some(item => item.error) || performanceMetrics.value?.error || valuationAnalysis.value?.error) messages.push('部分文件读取失败，可重新读取')
+  if (collectionFailed.value) messages.push('部分后台更新失败')
+  if (performanceMetrics.value?.hasWarning) messages.push('收益风险指标含保留值或不可用项')
+  if (oldData.value) messages.push('部分数据较旧')
+  if (collectionUnknown.value) messages.push('部分后台采集状态未知')
+  if (messages.length) return messages.join(' · ')
   if (!dailyHistory.value.length) return '暂无行情数据'
-  return datesDiffer.value ? '数据日期不一致，请分别查看' : '数据已读取 · 日线数据'
+  return datesDiffer.value ? '各来源分别发布，数据日期可能不同' : '已读取保存的数据 · 非实时行情'
 })
-const hasWarning = computed(() => datesDiffer.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error)
+const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error)
 const period = kind => state[kind].loading ? '正在读取…' : dateOf(kind) ? `数据日期：${dateOf(kind)}` : '暂无数据'
 const formatYield = (kind, digits) => state[kind].data ? `${state[kind].data.value.toFixed(digits)}%` : '—'
 const metrics = computed(() => [
@@ -55,35 +79,64 @@ async function load(kind) {
     if (requestId === requestIds[kind]) item.loading = false
   }
 }
-function refresh() { return Promise.all([...Object.keys(state).map(load), valuationAnalysis.value?.refresh(), performanceMetrics.value?.refresh()]) }
+async function loadCollection() {
+  const requestId = ++collectionRequestId
+  collection.loading = true
+  collection.error = ''
+  checkedAt.value = new Date()
+  try {
+    const data = await getSourceStatus()
+    if (requestId === collectionRequestId) collection.data = data
+  } catch (error) {
+    if (requestId === collectionRequestId) collection.error = error.message
+  } finally { if (requestId === collectionRequestId) collection.loading = false }
+}
+function refresh() { return Promise.all([...Object.keys(state).map(load), loadCollection(), valuationAnalysis.value?.refresh(), performanceMetrics.value?.refresh()]) }
 watch(() => props.instrument, () => {
   document.title = `红利低波数据看板 · ${props.instrument}`
   state.market.data = null
   load('market')
 }, { immediate: true })
 for (const kind of ['dividend', 'valuation', 'treasury']) load(kind)
+loadCollection()
 </script>
 
 <template>
   <div class="dashboard">
     <section class="page-heading" aria-labelledby="index-title">
       <div><p class="eyebrow">首页 / 红利低波观察</p><h1 id="index-title">{{ instrumentName }} <span class="mono">{{ instrument }}</span></h1><p class="intro">以长期视角，观察红利与低波动的价值。</p></div>
-      <button class="refresh-button" :disabled="loading" @click="refresh"><RefreshCw :size="14" />{{ loading ? '读取中' : '刷新数据' }}</button>
+      <button class="refresh-button" :disabled="loading" @click="refresh"><RefreshCw :size="14" />{{ loading ? '读取中' : '重新读取' }}</button>
     </section>
     <div class="data-status" :class="{ warning: hasWarning }" role="status"><Database :size="14" /><span>{{ statusLabel }}</span><span class="status-caption">各项日期见卡片</span></div>
+    <details class="collection-details panel">
+      <summary>查看后台采集状态与时间</summary>
+      <p>重新读取只获取站点已保存的文件，不触发后台采集。来源日期不同本身不表示更新失败。</p>
+      <p v-if="collection.error" role="status">采集状态文件暂不可用；已有记录仅供参考，不能确认当前状态。<button :disabled="collection.loading" @click="loadCollection">重试读取状态</button></p>
+      <div v-for="row in sourceRows" :key="row.kind" class="source-row">
+        <strong>{{ row.name }}</strong>
+        <span :class="{ 'load-error': row.notice.warning }">{{ row.notice.text }}</span>
+        <span v-if="row.entry?.error">原因：{{ row.entry.error }}</span>
+        <span>最近尝试：{{ formatTime(row.entry?.lastAttemptAt) }} · 最近成功：{{ formatTime(row.entry?.lastSuccessAt) }}（北京时间）</span>
+      </div>
+      <p>成功时间是采集时间，不是数据日期。数据较旧按已覆盖的 A 股交易日历作时效参考：行情在 17:30、指标在 19:15 后计入当日，落后至少 2 个交易日才提示；国债也仅使用此参考，不代表其官方发布日历。</p>
+    </details>
     <section id="key-metrics" class="metrics-grid" aria-label="关键指标">
       <MetricCard v-for="metric in metrics" :key="metric.key" v-bind="metric" :period="period(metric.kind || metric.key)" :aria-busy="state[metric.kind || metric.key].loading">
+        <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf(metric.kind || metric.key).warning }">{{ noticeOf(metric.kind || metric.key).text }}</p>
+        <p v-if="!state[metric.kind || metric.key].loading && freshnessOf(metric.kind || metric.key).text" class="source-notice" :class="{ 'load-error': freshnessOf(metric.kind || metric.key).level === 'old' }">{{ freshnessOf(metric.kind || metric.key).text }}</p>
         <p v-if="state[metric.kind || metric.key].error" class="load-error" role="status">读取失败{{ state[metric.kind || metric.key].data ? '，保留上次数据' : '' }} <button :disabled="state[metric.kind || metric.key].loading" @click="load(metric.kind || metric.key)">重试</button></p>
       </MetricCard>
     </section>
-    <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" performance-only />
+    <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
     <section id="market-chart" class="chart-section" aria-label="行情走势">
       <IndexChart :key="instrument" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" @retry="load('market')" />
       <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
     </section>
-    <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" summary />
+    <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
     <section id="data-notes" class="bottom-grid" aria-label="收益率参考与数据说明">
       <MetricCard title="中国十年期国债收益率" :value="formatYield('treasury', 4)" description="中债国债到期收益率曲线 · 10年" :period="period('treasury')" source="中债" :source-url="sources.treasury" detail="国债到期收益率与指数股息率口径不同，不能直接等同。" :aria-busy="state.treasury.loading">
+        <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf('treasury').warning }">{{ noticeOf('treasury').text }}</p>
+        <p v-if="!state.treasury.loading && freshnessOf('treasury').text" class="source-notice" :class="{ 'load-error': freshnessOf('treasury').level === 'old' }">{{ freshnessOf('treasury').text }}</p>
         <p v-if="state.treasury.error" class="load-error" role="status">读取失败{{ state.treasury.data ? '，保留上次数据' : '' }} <button :disabled="state.treasury.loading" @click="load('treasury')">重试</button></p>
       </MetricCard>
       <article class="data-notes panel">
@@ -116,6 +169,13 @@ h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .
 .data-notes { padding: 18px 20px; }
 .data-notes p { color: #93a4bf; margin-top: 9px; font-size: 12px; line-height: 1.7; }
 .load-error { color: #d5b57f; font-size: 11px; margin-top: 7px; }
+.source-notice { color: #93a4bf; font-size: 11px; margin-top: 7px; line-height: 1.6; }
+.source-notice.load-error { color: #d5b57f; }
+.collection-details { padding: 12px 16px; color: #93a4bf; font-size: 11px; line-height: 1.8; }
+.collection-details summary { cursor: pointer; color: #b8ceec; }
+.collection-details p { margin-top: 8px; }
+.collection-details button { background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
+.source-row { display: grid; gap: 2px; padding: 10px 0; border-bottom: 1px solid #24334b; overflow-wrap: anywhere; }
 .load-error button { padding: 0; background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
 #key-metrics, #performance-metrics, #market-chart, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
 @media (max-width: 1100px) and (min-width: 901px), (max-width: 700px) { .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
