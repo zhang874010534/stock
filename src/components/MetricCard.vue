@@ -1,50 +1,43 @@
 <script setup>
-import { Info, ChartNoAxesCombined } from 'lucide-vue-next'
-
+import { Info } from 'lucide-vue-next'
+import { NPopover } from 'naive-ui'
 defineProps({
   title: { type: String, required: true },
   description: { type: String, default: '' },
   period: { type: String, default: '' },
   accent: { type: String, default: 'blue' },
   value: { type: String, default: '—' },
-  signal: Boolean,
+  source: { type: String, default: '' },
+  sourceUrl: { type: String, default: '' },
+  detail: { type: String, default: '' },
 })
 </script>
-
 <template>
-  <article class="metric-card panel" :class="[`accent-${accent}`, { 'is-signal': signal }]">
+  <article class="metric-card panel" :class="`accent-${accent}`">
     <div class="metric-heading">
       <h2>{{ title }}</h2>
-      <Info :size="16" aria-hidden="true" />
+      <NPopover v-if="source || detail" trigger="click" placement="bottom" :width="260">
+        <template #trigger><button class="info-button" :aria-label="`${title}来源与口径说明`"><Info :size="15" /></button></template>
+        <div class="metric-info"><p>{{ detail }}</p><a v-if="sourceUrl" :href="sourceUrl" target="_blank" rel="noopener noreferrer">来源：{{ source }} ↗</a><p v-else-if="source">来源：{{ source }}</p></div>
+      </NPopover>
     </div>
-    <p class="metric-value" :class="{ 'signal-value': signal }">{{ signal ? '待评估' : value }}</p>
+    <p class="metric-value">{{ value }}</p>
     <p class="metric-description">{{ description }}</p>
-    <div v-if="signal" class="signal-placeholder" aria-hidden="true">
-      <span v-for="position in 5" :key="position" />
-    </div>
-    <div v-else class="sparkline-placeholder" aria-hidden="true">
-      <ChartNoAxesCombined :size="20" :stroke-width="1.3" />
-      <span>趋势图预留</span>
-    </div>
     <p class="metric-period">{{ period }}</p>
     <slot />
   </article>
 </template>
-
 <style scoped>
-.metric-card { --metric-accent: var(--color-blue); position: relative; overflow: hidden; min-height: 170px; padding: 14px 17px 12px; }
-.accent-cyan { --metric-accent: var(--color-cyan); }
-.accent-purple { --metric-accent: var(--color-purple); }
-.metric-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.metric-heading h2 { font-size: 13px; font-weight: 500; color: #dfe5f1; }
-.metric-heading svg { color: var(--color-text-muted); }
-.metric-value { margin-top: 7px; font-family: var(--font-mono); font-size: 30px; font-weight: 600; line-height: 1.25; color: #d9e4f8; }
-.metric-description { margin-top: 2px; font-size: 11px; color: var(--color-text-muted); }
-.sparkline-placeholder { display: flex; align-items: center; justify-content: center; gap: 6px; height: 42px; margin: 5px -17px 0; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--metric-accent) 5%, transparent)); border-bottom: 1px solid color-mix(in srgb, var(--metric-accent) 18%, transparent); color: color-mix(in srgb, var(--metric-accent) 58%, #4c5870); font-size: 10px; }
-.sparkline-placeholder svg { opacity: .65; }
-.metric-period { margin-top: 6px; font-size: 11px; color: #7e8da6; }
-.signal-value { color: #759acf; font-family: var(--font-sans); font-size: 25px; line-height: 1.5; letter-spacing: 2px; }
-.signal-placeholder { display: flex; gap: 5px; padding: 20px 0 16px; }
-.signal-placeholder span { flex: 1; height: 7px; border-radius: 5px; background: #1e2b42; }
-.signal-placeholder span:nth-child(3) { background: #2b405f; }
+.metric-card { --metric-accent: #d9e4f8; min-width: 0; padding: 16px 17px 14px; }
+.accent-cyan { --metric-accent: #68d5de; }
+.accent-purple { --metric-accent: #bfabef; }
+.metric-heading { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
+.metric-heading h2 { font-size: 12px; font-weight: 500; color: #c3d0e3; }
+.info-button { display: flex; padding: 3px; margin: -3px; border: 0; background: none; color: #8b9db8; }
+.metric-value { margin-top: 13px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(23px, 2.1vw, 32px); font-weight: 600; line-height: 1.25; color: var(--metric-accent); white-space: nowrap; }
+.metric-description { margin-top: 5px; font-size: 11px; color: #8b9bb4; line-height: 1.5; }
+.metric-period { margin-top: 14px; padding-top: 10px; border-top: 1px solid #1e2c42; font-size: 11px; color: #9aabc4; }
+.metric-info { font-size: 12px; line-height: 1.7; }
+.metric-info a { display: inline-block; margin-top: 7px; color: #9bc5ff; text-decoration: underline; }
+@media (max-width: 640px) { .metric-card { padding: 14px 12px; } .metric-value { font-size: 24px; } .metric-heading h2 { font-size: 11px; } }
 </style>
