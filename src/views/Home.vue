@@ -4,6 +4,7 @@ import { ArrowRight, RefreshCw, Database } from 'lucide-vue-next'
 import MetricCard from '../components/MetricCard.vue'
 import IndexChart from '../components/IndexChart.vue'
 import ValuationAnalysis from '../components/ValuationAnalysis.vue'
+import LatestIndexMetrics from '../components/LatestIndexMetrics.vue'
 import { getMarketData } from '../api/h30269.js'
 import { getYield } from '../api/yields.js'
 import { getValuation, VALUATION_SOURCE } from '../api/valuations.js'
@@ -20,18 +21,19 @@ const sources = {
   treasury: 'https://yield.chinabond.com.cn/cbweb-cbrc-web/cbrc/showCbrc',
 }
 const valuationAnalysis = ref(null)
-const loading = computed(() => Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading)
+const performanceMetrics = ref(null)
+const loading = computed(() => Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
 const dateOf = kind => kind === 'market' ? latest.value?.date : state[kind].data?.date
 const datesDiffer = computed(() => new Set(Object.keys(state).map(dateOf).filter(Boolean)).size > 1)
 const statusLabel = computed(() => {
   if (loading.value) return '正在读取数据…'
-  if (Object.values(state).some(item => item.error)) return '部分数据读取失败，可重试'
+  if (Object.values(state).some(item => item.error) || performanceMetrics.value?.error) return '部分数据读取失败，可重试'
   if (!dailyHistory.value.length) return '暂无行情数据'
   return datesDiffer.value ? '数据日期不一致，请分别查看' : '数据已读取 · 日线数据'
 })
-const hasWarning = computed(() => datesDiffer.value || Object.values(state).some(item => item.error))
+const hasWarning = computed(() => datesDiffer.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error)
 const period = kind => state[kind].loading ? '正在读取…' : dateOf(kind) ? `数据日期：${dateOf(kind)}` : '暂无数据'
 const formatYield = (kind, digits) => state[kind].data ? `${state[kind].data.value.toFixed(digits)}%` : '—'
 const metrics = computed(() => [
@@ -53,7 +55,7 @@ async function load(kind) {
     if (requestId === requestIds[kind]) item.loading = false
   }
 }
-function refresh() { return Promise.all([...Object.keys(state).map(load), valuationAnalysis.value?.refresh()]) }
+function refresh() { return Promise.all([...Object.keys(state).map(load), valuationAnalysis.value?.refresh(), performanceMetrics.value?.refresh()]) }
 watch(() => props.instrument, () => {
   document.title = `红利低波数据看板 · ${props.instrument}`
   state.market.data = null
@@ -74,6 +76,7 @@ for (const kind of ['dividend', 'valuation', 'treasury']) load(kind)
         <p v-if="state[metric.kind || metric.key].error" class="load-error" role="status">读取失败{{ state[metric.kind || metric.key].data ? '，保留上次数据' : '' }} <button :disabled="state[metric.kind || metric.key].loading" @click="load(metric.kind || metric.key)">重试</button></p>
       </MetricCard>
     </section>
+    <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" performance-only />
     <section id="market-chart" class="chart-section" aria-label="行情走势">
       <IndexChart :key="instrument" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" @retry="load('market')" />
       <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
@@ -114,7 +117,7 @@ h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .
 .data-notes p { color: #93a4bf; margin-top: 9px; font-size: 12px; line-height: 1.7; }
 .load-error { color: #d5b57f; font-size: 11px; margin-top: 7px; }
 .load-error button { padding: 0; background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
-#key-metrics, #market-chart, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
+#key-metrics, #performance-metrics, #market-chart, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
 @media (max-width: 1100px) and (min-width: 901px), (max-width: 700px) { .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) {
   .dashboard { gap: 14px; }

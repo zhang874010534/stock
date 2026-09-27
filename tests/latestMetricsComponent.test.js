@@ -27,6 +27,44 @@ async function mountSfc(name, props = {}) {
 }
 const flush = async () => { await new Promise(resolve => setImmediate(resolve)); await nextTick() }
 
+test('homepage performance summary shows only index risk metrics and retains them on refresh failure', async () => {
+  const previousFetch = globalThis.fetch
+  let mounted
+  try {
+    const payload = JSON.parse(await readFile(new URL('../public/data/latest-metrics-h30269.json', import.meta.url), 'utf8'))
+    globalThis.fetch = async () => Response.json(payload)
+    mounted = await mountSfc('LatestIndexMetrics', { instrument: '512890', performanceOnly: true })
+    await flush()
+    assert.match(mounted.text(), /标的指数收益与风险/)
+    assert.match(mounted.text(), /非 ETF 自身表现/)
+    assert.match(mounted.text(), /不含分红再投资/)
+    assert.match(mounted.text(), /无风险利率假设 0%/)
+    assert.ok(mounted.text().includes(payload.calculation.windowStart))
+    assert.ok(mounted.text().includes(payload.calculation.windowEnd))
+    assert.ok(!mounted.text().includes('市盈率 PE'))
+    assert.equal(mounted.nodes().filter(n => n.props.class === 'metric-row').length, 3)
+    const values = () => mounted.nodes().filter(n => n.props.class === 'metric-value').map(n => n.text)
+    const expected = [
+      `${(payload.metrics.annualReturn.value * 100).toFixed(2)}%`,
+      `${(payload.metrics.maxDrawdown.value * 100).toFixed(2)}%`,
+      payload.metrics.sharpe.value.toFixed(2),
+    ]
+    assert.deepEqual(values(), expected)
+    globalThis.fetch = async () => { throw new Error('offline') }
+    await mounted.button().props.onClick()
+    await flush()
+    assert.match(mounted.text(), /指标读取失败，保留上次数据及日期/)
+    assert.deepEqual(values(), expected)
+    mounted.app.unmount(); mounted = null
+    globalThis.fetch = async () => Response.json(payload)
+    mounted = await mountSfc('LatestIndexMetrics', { instrument: 'H30269', performanceOnly: true })
+    await flush()
+    assert.match(mounted.text(), /指数收益与风险/)
+    assert.ok(!mounted.text().includes('非 ETF 自身表现'))
+    assert.deepEqual(values(), expected)
+  } finally { mounted?.app.unmount(); globalThis.fetch = previousFetch }
+})
+
 test('latest metrics loading, initial failure, retry, stale and unavailable values, retained data', async () => {
   const previousFetch = globalThis.fetch
   let mounted
