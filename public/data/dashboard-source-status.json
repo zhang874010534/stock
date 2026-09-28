@@ -12,6 +12,30 @@
       "lastAttemptAt": "2026-09-28T16:51:10.192Z",
       "lastSuccessAt": null,
       "error": "近期行情更新失败"
+    },
+    "valuation": {
+      "status": "ok",
+      "lastAttemptAt": "2026-09-28T18:08:24.411Z",
+      "lastSuccessAt": "2026-09-28T18:08:24.411Z",
+      "error": null
+    },
+    "dividend": {
+      "status": "ok",
+      "lastAttemptAt": "2026-09-28T18:08:24.411Z",
+      "lastSuccessAt": "2026-09-28T18:08:24.411Z",
+      "error": null
+    },
+    "bond": {
+      "status": "ok",
+      "lastAttemptAt": "2026-09-28T18:08:24.411Z",
+      "lastSuccessAt": "2026-09-28T18:08:24.411Z",
+      "error": null
+    },
+    "csiValuation": {
+      "status": "ok",
+      "lastAttemptAt": "2026-09-28T18:08:24.411Z",
+      "lastSuccessAt": "2026-09-28T18:08:24.411Z",
+      "error": null
     }
   }
 }

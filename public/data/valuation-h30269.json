@@ -4,9 +4,9 @@
   "source": "https://fundztapi.eastmoney.com/FundSpecialApiNew/FundSpecialZSB30ZSIndex?IndexCode=H30269&Version=6.5.5&deviceid=-&pageIndex=1&pageSize=10000&plat=Iphone&product=EFund",
   "basis": "provider_unspecified",
   "unit": "multiple",
-  "date": "2026-09-24",
-  "pe": 8.45845086,
-  "pb": 0.7844,
+  "date": "2026-09-28",
+  "pe": 8.48432383,
+  "pb": 0.7868,
   "dividendYield": null,
-  "updatedAt": "2026-09-24T15:00:43.559885Z"
+  "updatedAt": "2026-09-28T18:08:25.664031Z"
 }

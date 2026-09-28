@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "ruleVersion": "latest-metrics-v2-all-history",
   "code": "H30269",
-  "generatedAt": "2026-09-28T16:51:10.192Z",
+  "generatedAt": "2026-09-28T18:08:24.411Z",
   "metrics": {
     "pe": {
       "unit": "multiple",
       "source": "https://fundztapi.eastmoney.com/FundSpecialApiNew/FundSpecialZSB30ZSIndex?IndexCode=H30269&Version=6.5.5&deviceid=-&pageIndex=1&pageSize=10000&plat=Iphone&product=EFund",
       "basis": "provider_unspecified",
-      "value": 8.45845086,
-      "asOf": "2026-09-24",
+      "value": 8.48432383,
+      "asOf": "2026-09-28",
       "status": "ok",
       "reason": null
     },
@@ -17,8 +17,8 @@
       "unit": "multiple",
       "source": "https://fundztapi.eastmoney.com/FundSpecialApiNew/FundSpecialZSB30ZSIndex?IndexCode=H30269&Version=6.5.5&deviceid=-&pageIndex=1&pageSize=10000&plat=Iphone&product=EFund",
       "basis": "provider_unspecified",
-      "value": 0.7844,
-      "asOf": "2026-09-24",
+      "value": 0.7868,
+      "asOf": "2026-09-28",
       "status": "ok",
       "reason": null
     },
@@ -27,7 +27,7 @@
       "source": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/indicator/H30269indicator.xls",
       "basis": "total_share_capital",
       "value": 0.042699999999999995,
-      "asOf": "2026-09-24",
+      "asOf": "2026-09-28",
       "status": "ok",
       "reason": null
     },
