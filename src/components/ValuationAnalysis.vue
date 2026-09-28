@@ -4,6 +4,7 @@ import { getValuationHistory, VALUATION_SOURCE } from '../api/valuations.js'
 import { getCsiValuationHistory, getCsiValuationStatus, csiChartHistory, CSI_VALUATION_SOURCE } from '../api/csiValuations.js'
 import { valuationStats, VALUATION_RANGES } from '../utils/valuationStats.js'
 import ValuationAnalysisContent from './ValuationAnalysisContent.vue'
+import ValuationCoverage from './ValuationCoverage.vue'
 
 const props = defineProps({ instrument: { type: String, default: 'H30269' }, summary: Boolean, collectionNotice: String, collectionWarning: Boolean })
 const source = ref(props.summary ? 'eastmoney' : 'csi'), basis = ref('total'), expanded = ref(false), dialog = ref(null), expandButton = ref(null)
@@ -14,6 +15,7 @@ const range = computed({ get: () => current.value.range, set: v => { current.val
 const history = computed(() => source.value === 'csi' ? csiChartHistory(current.value.data, basis.value) : current.value.data?.history ?? [])
 const stats = computed(() => valuationStats(history.value, metric.value, range.value))
 const summaryStats = computed(() => ['pe', 'pb'].map(key => ({ key, ...valuationStats(states.eastmoney.data?.history ?? [], key, states.eastmoney.range) })))
+const csiSummaryStats = computed(() => valuationStats(csiChartHistory(states.csi.data, 'total'), 'pe', states.eastmoney.range))
 const format = value => value == null ? '—' : value.toFixed(2)
 const title = computed(() => props.instrument === '512890' ? '标的指数估值分析' : '估值分析')
 const lastSuccess = computed(() => {
@@ -43,8 +45,8 @@ async function loadSource(key) {
   state.loading = false
 }
 function load() { return loadSource(source.value) }
-function refresh() { return Promise.all([...new Set([source.value, ...(props.summary ? ['eastmoney'] : [])])].map(loadSource)) }
-defineExpose({ refresh, loading: computed(() => Object.values(states).some(state => state.loading)), error: computed(() => Boolean(states.eastmoney.error || current.value.error)) })
+function refresh() { return Promise.all([...new Set([source.value, ...(props.summary ? ['eastmoney', 'csi'] : [])])].map(loadSource)) }
+defineExpose({ refresh, loading: computed(() => Object.values(states).some(state => state.loading)), error: computed(() => Object.values(states).some(state => Boolean(state.error))) })
 async function open(event, selectedMetric) {
   if (props.summary) { source.value = 'eastmoney'; if (selectedMetric) states.eastmoney.metric = selectedMetric }
   returnFocus = event?.currentTarget ?? expandButton.value
@@ -52,6 +54,7 @@ async function open(event, selectedMetric) {
 }
 function closed() { expanded.value = false; returnFocus?.focus({ preventScroll: true }) }
 watch(source, load, { immediate: true })
+if (props.summary) loadSource('csi')
 onBeforeUnmount(() => { disposed = true; dialog.value?.close() })
 </script>
 
@@ -59,20 +62,27 @@ onBeforeUnmount(() => { disposed = true; dialog.value?.close() })
   <section class="valuation-analysis" :class="{ 'summary-panel panel': summary }" aria-label="估值分析" :aria-busy="summary ? states.eastmoney.loading : current.loading">
     <header><h3>{{ title }}</h3><button ref="expandButton" type="button" @click="open">{{ summary ? '查看完整分析 ↗' : '放大 ↗' }}</button></header>
     <template v-if="summary">
-      <div class="summary-toolbar"><p>H30269 · 东方财富口径 · 与上方 PE/PB 来源一致</p><label>统计范围 <select v-model="states.eastmoney.range" aria-label="首页估值统计范围"><option v-for="(label, key) in VALUATION_RANGES" :key="key" :value="key">{{ label }}</option></select></label></div>
+      <div class="summary-toolbar"><p>H30269 · 分来源展示积累进度 · 下方 PE/PB 沿用东方财富口径</p><label>统计范围 <select v-model="states.eastmoney.range" aria-label="首页估值统计范围"><option v-for="(label, key) in VALUATION_RANGES" :key="key" :value="key">{{ label }}</option></select></label></div>
       <p v-if="instrument === '512890'" class="summary-caption">以下为跟踪指数估值，非 ETF 自身估值。</p>
       <p v-if="collectionNotice" class="summary-caption" :class="{ 'summary-notice': collectionWarning }">{{ collectionNotice }}</p>
       <p v-if="states.eastmoney.loading" class="summary-caption" role="status">正在读取估值历史…</p>
       <p v-if="states.eastmoney.error" class="summary-notice" role="status">{{ states.eastmoney.error }} <button :disabled="states.eastmoney.loading" @click="loadSource('eastmoney')">重新读取</button></p>
+      <div class="summary-grid" aria-label="各来源历史积累">
+        <ValuationCoverage title="东方财富 · PE / PB" :stats="summaryStats[0]" :range="states.eastmoney.range" :loading="states.eastmoney.loading" />
+        <div class="source-coverage">
+          <ValuationCoverage title="中证 · PE（总股本）" :stats="csiSummaryStats" :range="states.eastmoney.range" :loading="states.csi.loading" :error="states.csi.error" />
+          <p v-if="states.csi.statusNotice" class="summary-notice">{{ states.csi.statusNotice }}</p>
+          <button v-if="states.csi.error || states.csi.statusNotice" :disabled="states.csi.loading" @click="loadSource('csi')">重新读取中证历史</button>
+        </div>
+      </div>
+      <p class="summary-caption">两个来源独立积累、独立统计，不拼接样本；中证不提供 PB。下方数值与分位使用东方财富历史。</p>
       <div class="summary-grid">
         <article v-for="item in summaryStats" :key="item.key" class="summary-metric">
           <div class="summary-heading"><h4>{{ item.key.toUpperCase() }} · {{ item.key === 'pe' ? '市盈率' : '市净率' }}</h4><button :aria-label="`查看 ${item.key.toUpperCase()} 估值详情`" @click="open($event, item.key)">详情 →</button></div>
-          <div class="summary-values"><p><span>历史最新值</span><strong>{{ format(item.latest?.value) }}<small> 倍</small></strong></p><p><span>{{ states.eastmoney.range === 'all' || item.partial ? '已积累区间分位' : '所选区间分位' }}</span><strong>{{ item.rank == null ? '—' : `${format(item.rank)}%` }}</strong></p></div>
+          <div class="summary-values"><p><span>历史最新值</span><strong>{{ format(item.latest?.value) }}<small> 倍</small></strong></p><p><span>{{ states.eastmoney.range === 'all' || item.partial ? '已积累区间分位' : '所选区间分位' }}</span><strong v-if="item.rank != null">{{ format(item.rank) }}%</strong><span v-else class="accumulating">{{ states.eastmoney.loading ? '读取中' : item.count ? '样本积累中' : '暂无样本' }}</span></p></div>
           <div v-if="item.rank != null" class="rank-track" role="meter" :aria-label="`${item.key.toUpperCase()} 历史分位`" :aria-valuenow="item.rank" aria-valuemin="0" aria-valuemax="100"><span :style="{ width: `${item.rank}%` }" /></div>
           <p class="summary-caption">实际样本：{{ item.points[0]?.date ?? '—' }} — {{ item.latest?.date ?? '—' }} · {{ item.count }} 个交易日</p>
-          <p v-if="!states.eastmoney.loading && !item.count" class="summary-notice">暂无可用估值历史。</p>
-          <p v-else-if="!states.eastmoney.loading && item.count < 20" class="summary-notice">样本不足 20 个，暂不计算分位。</p>
-          <p v-if="item.partial" class="summary-notice">历史不足所选范围，仅统计已积累样本。</p>
+          <p v-if="item.rank != null" class="summary-caption">分位仅描述上述样本，不代表长期估值水平。</p>
         </article>
       </div>
       <p class="summary-caption summary-footer">历史积累中，不代表完整历史。分位不代表上涨概率。<a :href="VALUATION_SOURCE" target="_blank" rel="noopener noreferrer">查看数据来源 ↗</a></p>
@@ -100,6 +110,8 @@ onBeforeUnmount(() => { disposed = true; dialog.value?.close() })
 .summary-values span { display: block; color: #95a7c1; font-size: 11px; }
 .summary-values strong { display: block; margin-top: 6px; color: #c3d7fa; font: 600 25px var(--font-mono); }
 .summary-values small { font: 12px var(--font-sans); color: #98abc7; }
+.summary-values .accumulating { margin-top: 9px; font-size: 15px; color: #a6bedf; }
+.source-coverage { min-width: 0; }
 .summary-caption, .summary-notice { font-size: 11px; line-height: 1.8; color: #95a7c1; }
 .summary-notice { color: #dab57b; }
 .summary-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin-top: 12px; }

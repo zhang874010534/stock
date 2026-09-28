@@ -1,6 +1,7 @@
 <script setup>
 import { VALUATION_RANGES } from '../utils/valuationStats.js'
 import ValuationTrend from './ValuationTrend.vue'
+import ValuationCoverage from './ValuationCoverage.vue'
 
 defineProps({ source: String, metric: String, basis: String, range: String, stats: Object, data: Object,
   loading: Boolean, error: String, statusNotice: String, lastSuccess: String, instrument: String, expanded: Boolean, sourceUrl: String })
@@ -28,18 +29,16 @@ const format = value => value == null ? '—' : value.toFixed(2)
       <button v-for="(label, key) in { pe: '市盈率', pb: '市净率' }" :key="key" :aria-pressed="metric === key" @click="$emit('update:metric', key)">{{ label }}</button>
     </div>
     <p class="caption">{{ source === 'csi' ? `中证 · ${basis === 'total' ? '总股本 P/E1' : '计算用股本 P/E2'}` : '东方财富 · 来源未明确财报及聚合口径' }}</p>
+    <ValuationCoverage :stats="stats" :range="range" :loading="loading" />
     <p class="current">{{ metric.toUpperCase() }} {{ format(stats.latest?.value) }} 倍</p>
-    <p class="caption">{{ range === 'all' || stats.partial ? '已积累区间分位' : '所选区间分位' }} {{ stats.rank == null ? '—' : `${format(stats.rank)}%` }}</p>
-    <div class="levels"><span>70%分位值 {{ format(stats.high) }}</span><span>30%分位值 {{ format(stats.low) }}</span></div>
+    <p v-if="stats.rank != null" class="caption">{{ range === 'all' || stats.partial ? '已积累区间分位' : '所选区间分位' }} {{ format(stats.rank) }}% · 仅描述当前样本，不代表长期估值水平</p>
+    <div v-if="stats.rank != null" class="levels"><span>70%分位值 {{ format(stats.high) }}</span><span>30%分位值 {{ format(stats.low) }}</span></div>
     <p v-if="loading" class="caption" role="status">正在读取估值历史…</p>
     <p v-if="error" class="notice" role="status">{{ error }}</p>
     <p v-if="statusNotice" class="notice" role="status">{{ statusNotice }}</p>
     <button v-if="error || statusNotice" :disabled="loading" @click="$emit('retry')">重新读取</button>
     <ValuationTrend v-if="stats.count" :stats="stats" :metric="metric" :expanded="expanded" />
     <p v-else-if="!loading" class="empty">暂无可用估值历史</p>
-    <p class="caption">实际样本：{{ stats.points[0]?.date ?? '—' }} — {{ stats.latest?.date ?? '—' }} · {{ stats.count }} 个交易日</p>
-    <p v-if="stats.partial" class="notice">历史不足所选范围，仅统计实际已积累样本。</p>
-    <p v-if="stats.count < 20" class="notice">样本不足 20 个，暂不计算分位。</p>
     <p class="caption">历史积累中，不代表完整历史；窗口外缺失日期不会填补。</p>
     <p v-if="source === 'csi'" class="caption">最后成功获取：{{ lastSuccess || '尚无成功记录' }}</p>
     <p class="caption"><a :href="sourceUrl" target="_blank" rel="noopener noreferrer">来源：{{ source === 'csi' ? '中证指数' : '东方财富 / 天天基金' }}</a> · 截至 {{ data?.date ?? '—' }}</p>
