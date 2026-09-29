@@ -3,13 +3,13 @@
   "sources": {
     "512890": {
       "status": "error",
-      "lastAttemptAt": "2026-09-28T16:51:10.192Z",
+      "lastAttemptAt": "2026-09-29T14:54:59.957Z",
       "lastSuccessAt": null,
       "error": "近期行情更新失败"
     },
     "H30269": {
       "status": "error",
-      "lastAttemptAt": "2026-09-28T16:51:10.192Z",
+      "lastAttemptAt": "2026-09-29T14:54:59.957Z",
       "lastSuccessAt": null,
       "error": "近期行情更新失败"
     },
