@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import * as echarts from 'echarts'
+import { initValuationTrend } from '../charts/valuationTrendRuntime.js'
 import { valuationTrendOption } from '../charts/valuationTrend.js'
 
 const props = defineProps({ stats: { type: Object, required: true }, metric: { type: String, default: 'pe' }, expanded: Boolean })
@@ -8,7 +8,7 @@ const canvas = ref(null)
 let chart, observer
 function render() {
   if (!canvas.value?.clientWidth || !canvas.value?.clientHeight) return
-  if (!chart) chart = echarts.init(canvas.value)
+  if (!chart) chart = initValuationTrend(canvas.value)
   chart.setOption(valuationTrendOption(props.stats, props.metric, props.expanded), { notMerge: true })
   chart.resize()
 }
