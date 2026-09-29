@@ -6,19 +6,27 @@ import { valuationTrendOption } from '../charts/valuationTrend.js'
 const props = defineProps({ stats: { type: Object, required: true }, metric: { type: String, default: 'pe' }, expanded: Boolean })
 const canvas = ref(null)
 let chart, observer
+let dirty = true
+let disposed = false
 function render() {
-  if (!canvas.value?.clientWidth || !canvas.value?.clientHeight) return
+  if (disposed || !canvas.value?.clientWidth || !canvas.value?.clientHeight) return
   if (!chart) chart = initValuationTrend(canvas.value)
-  chart.setOption(valuationTrendOption(props.stats, props.metric, props.expanded), { notMerge: true })
+  if (dirty) {
+    chart.setOption(valuationTrendOption(props.stats, props.metric, props.expanded), { notMerge: true })
+    dirty = false
+  }
   chart.resize()
 }
 onMounted(() => {
-  observer = new ResizeObserver(() => { if (chart) chart.resize(); else render() })
+  observer = new ResizeObserver(render)
   observer.observe(canvas.value)
   render()
 })
-watch(() => [props.stats, props.metric, props.expanded], render, { flush: 'post' })
-onBeforeUnmount(() => { observer?.disconnect(); chart?.dispose() })
+watch(() => [props.stats, props.metric, props.expanded], () => {
+  dirty = true
+  render()
+}, { flush: 'post' })
+onBeforeUnmount(() => { disposed = true; observer?.disconnect(); chart?.dispose() })
 </script>
 
 <template>
