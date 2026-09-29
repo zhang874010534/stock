@@ -1,10 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { createRenderer, nextTick } from 'vue'
+import { createRenderer, nextTick, h } from 'vue'
+import { createDashboardData, provideDashboardData } from '../src/composables/useDashboardData.js'
 import { parse, compileScript } from '@vue/compiler-sfc'
 
-async function mountSfc(name, props = {}) {
+async function mountSfc(name, props = {}, dashboard = null) {
   const file = new URL(`../src/components/${name}.vue`, import.meta.url)
   const { descriptor } = parse(await readFile(file, 'utf8'))
   const script = compileScript(descriptor, { id: 'metrics-component-test', inlineTemplate: true, templateOptions: { compilerOptions: { hoistStatic: false } } }).content
@@ -20,7 +21,9 @@ async function mountSfc(name, props = {}) {
     patchProp: (n, key, oldValue, value) => { n.props[key] = value },
   })
   const host = node('host')
-  const app = renderer.createApp(component, props)
+  const app = dashboard ? renderer.createApp({
+    setup() { provideDashboardData(dashboard); return () => h(component, props) },
+  }) : renderer.createApp(component, props)
   app.mount(host)
   const all = n => [n, ...n.children.flatMap(all)]
   return { app, nodes: () => all(host), text: () => all(host).map(n => n.text).join(' '), button: () => all(host).find(n => n.tag === 'button') }
@@ -133,4 +136,45 @@ test('treasury-only sidebar omits duplicate dividend and does not request it; ho
     assert.match(mounted.text(), /标的指数股息率/)
     assert.match(mounted.text(), /4.31%/)
   } finally { mounted?.app.unmount(); globalThis.fetch = previousFetch }
+})
+
+
+test('homepage and detail share latest metrics, refresh failures and reopened state', async () => {
+  const payload = JSON.parse(await readFile(new URL('../public/data/latest-metrics-h30269.json', import.meta.url), 'utf8'))
+  let calls = 0, fail = false
+  const dashboard = createDashboardData({ latestMetrics: async () => {
+    calls++
+    if (fail) throw new Error('offline')
+    return structuredClone(payload)
+  } })
+  let home, detail
+  try {
+    home = await mountSfc('LatestIndexMetrics', { performanceOnly: true }, dashboard)
+    await flush()
+    detail = await mountSfc('LatestIndexMetrics', {}, dashboard)
+    await flush()
+    assert.equal(calls, 1)
+    payload.metrics.annualReturn.value = .1234
+    await detail.button().props.onClick()
+    await flush()
+    assert.equal(calls, 2)
+    assert.match(home.text(), /12.34%/)
+    assert.match(detail.text(), /12.34%/)
+    fail = true
+    await home.button().props.onClick()
+    await flush()
+    for (const view of [home, detail]) {
+      assert.match(view.text(), /指标读取失败，保留上次数据及日期/)
+      assert.match(view.text(), /12.34%/)
+    }
+    detail.app.unmount(); detail = null
+    detail = await mountSfc('LatestIndexMetrics', {}, dashboard)
+    await flush()
+    assert.equal(calls, 3)
+    assert.match(detail.text(), /指标读取失败，保留上次数据及日期/)
+    fail = false
+    await detail.button().props.onClick()
+    await flush()
+    assert.ok(!home.text().includes('指标读取失败'))
+  } finally { home?.app.unmount(); detail?.app.unmount() }
 })

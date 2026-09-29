@@ -1,21 +1,15 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { getValuation, VALUATION_SOURCE } from '../api/valuations.js'
+import { computed, onMounted, toRefs } from 'vue'
+import { VALUATION_SOURCE } from '../api/valuations.js'
+import { useDashboardData } from '../composables/useDashboardData.js'
 import MetricCard from './MetricCard.vue'
 
 const props = defineProps({ instrument: { type: String, default: '512890' } })
 const prefix = computed(() => props.instrument === '512890' ? '标的指数' : '指数')
-const data = ref(null)
-const loading = ref(true)
-const error = ref(false)
-async function load() {
-  loading.value = true
-  error.value = false
-  try { data.value = await getValuation() }
-  catch { error.value = true }
-  finally { loading.value = false }
-}
-onMounted(load)
+const dashboard = useDashboardData()
+const { data, loading, error } = toRefs(dashboard.states.valuation)
+function load() { return dashboard.refresh(['valuation']) }
+onMounted(() => dashboard.ensure('valuation'))
 </script>
 
 <template>

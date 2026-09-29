@@ -1,19 +1,14 @@
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
-import { getYield } from '../api/yields.js'
+import { computed, onMounted } from 'vue'
+import { useDashboardData } from '../composables/useDashboardData.js'
 
 const props = defineProps({ instrument: { type: String, default: '512890' }, showDividend: { type: Boolean, default: true } })
 const title = computed(() => props.instrument === '512890' ? '标的指数股息率' : '指数股息率')
-const state = reactive({ dividend: { data: null, loading: true, error: false }, treasury: { data: null, loading: true, error: false } })
-async function load(kind) {
-  state[kind].loading = true
-  state[kind].error = false
-  try { state[kind].data = await getYield(kind) }
-  catch { state[kind].error = true }
-  finally { state[kind].loading = false }
-}
+const dashboard = useDashboardData()
+const state = dashboard.states
+function load(kind) { return dashboard.refresh([kind]) }
 const format = (data, digits) => data ? `${data.value.toFixed(digits)}%` : '—'
-onMounted(() => { if (props.showDividend) load('dividend'); load('treasury') })
+onMounted(() => { if (props.showDividend) dashboard.ensure('dividend'); dashboard.ensure('treasury') })
 </script>
 
 <template>

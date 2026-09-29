@@ -5,28 +5,28 @@ import MetricCard from '../components/MetricCard.vue'
 import IndexChart from '../components/IndexChart.vue'
 import ValuationAnalysis from '../components/ValuationAnalysis.vue'
 import LatestIndexMetrics from '../components/LatestIndexMetrics.vue'
-import { getMarketData } from '../api/h30269.js'
-import { getYield } from '../api/yields.js'
-import { getValuation, VALUATION_SOURCE } from '../api/valuations.js'
+import { provideDashboardData } from '../composables/useDashboardData.js'
+import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
-import { getSourceStatus } from '../api/sourceStatus.js'
 import { collectionNotice, dataFreshness } from '../utils/sourceStatus.js'
 
 const props = defineProps({ instrument: { type: String, default: '512890' } })
 const isEtf = computed(() => props.instrument === '512890')
 const instrumentName = computed(() => isEtf.value ? '华泰柏瑞红利低波ETF' : '中证红利低波动指数')
 const prefix = computed(() => isEtf.value ? '标的指数' : '指数')
-const state = reactive(Object.fromEntries(['market', 'dividend', 'valuation', 'treasury'].map(key => [key, { data: null, loading: false, error: '' }])))
-const requestIds = { market: 0, dividend: 0, valuation: 0, treasury: 0 }
+const dashboard = provideDashboardData()
+const state = reactive({
+  get market() { return dashboard.states[props.instrument] },
+  dividend: dashboard.states.dividend, valuation: dashboard.states.valuation, treasury: dashboard.states.treasury,
+})
 const sources = {
   dividend: 'https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/indicator/H30269indicator.xls',
   treasury: 'https://yield.chinabond.com.cn/cbweb-cbrc-web/cbrc/showCbrc',
 }
 const valuationAnalysis = ref(null)
 const performanceMetrics = ref(null)
-const collection = reactive({ data: null, loading: false, error: '' })
-const checkedAt = ref(new Date())
-let collectionRequestId = 0
+const collection = dashboard.states.collection
+const checkedAt = dashboard.checkedAt
 const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
@@ -65,40 +65,18 @@ const metrics = computed(() => [
   { key: 'dividend', title: `${prefix.value}股息率`, value: formatYield('dividend', 2), description: 'H30269 · 总股本口径', source: '中证指数', sourceUrl: sources.dividend, detail: isEtf.value ? '展示跟踪指数的股息率，不代表 ETF 实际分红收益率。' : '采用中证指数发布的总股本口径股息率。', accent: 'cyan' },
   ...['pe', 'pb'].map(kind => ({ key: kind, kind: 'valuation', title: `${prefix.value} ${kind.toUpperCase()}`, value: state.valuation.data ? `${state.valuation.data[kind].toFixed(2)} 倍` : '—', description: `${kind === 'pe' ? '市盈率' : '市净率'} · 东方财富口径`, source: '东方财富 / 天天基金', sourceUrl: VALUATION_SOURCE, detail: `H30269 · ${kind === 'pe' ? 'TTM' : '加权'}口径待确认。`, accent: kind === 'pe' ? 'blue' : 'purple' })),
 ])
-async function load(kind) {
-  const requestId = ++requestIds[kind]
-  const item = state[kind]
-  item.loading = true
-  item.error = ''
-  try {
-    const result = await (kind === 'market' ? getMarketData(props.instrument) : kind === 'valuation' ? getValuation() : getYield(kind))
-    if (requestId === requestIds[kind]) item.data = result
-  } catch (cause) {
-    if (requestId === requestIds[kind]) item.error = cause?.message || '数据读取失败'
-  } finally {
-    if (requestId === requestIds[kind]) item.loading = false
-  }
+function load(kind) { return dashboard.refresh([kind === 'market' ? props.instrument : kind]) }
+function loadCollection() { return dashboard.refresh(['collection']) }
+function refresh() {
+  const keys = Object.keys(dashboard.states).filter(key => dashboard.states[key].attempted &&
+    (!['H30269', '512890'].includes(key) || key === props.instrument))
+  return dashboard.refresh(keys)
 }
-async function loadCollection() {
-  const requestId = ++collectionRequestId
-  collection.loading = true
-  collection.error = ''
-  checkedAt.value = new Date()
-  try {
-    const data = await getSourceStatus()
-    if (requestId === collectionRequestId) collection.data = data
-  } catch (error) {
-    if (requestId === collectionRequestId) collection.error = error.message
-  } finally { if (requestId === collectionRequestId) collection.loading = false }
-}
-function refresh() { return Promise.all([...Object.keys(state).map(load), loadCollection(), valuationAnalysis.value?.refresh(), performanceMetrics.value?.refresh()]) }
 watch(() => props.instrument, () => {
   document.title = `红利低波数据看板 · ${props.instrument}`
-  state.market.data = null
-  load('market')
+  dashboard.ensure(props.instrument)
 }, { immediate: true })
-for (const kind of ['dividend', 'valuation', 'treasury']) load(kind)
-loadCollection()
+for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboard.ensure(kind)
 </script>
 
 <template>

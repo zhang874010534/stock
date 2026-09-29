@@ -1,14 +1,31 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
-import { getValuationHistory, VALUATION_SOURCE } from '../api/valuations.js'
-import { getCsiValuationHistory, getCsiValuationStatus, csiChartHistory, CSI_VALUATION_SOURCE } from '../api/csiValuations.js'
+import { VALUATION_SOURCE } from '../api/valuations.js'
+import { csiChartHistory, CSI_VALUATION_SOURCE } from '../api/csiValuations.js'
 import { valuationStats, VALUATION_RANGES } from '../utils/valuationStats.js'
 import ValuationAnalysisContent from './ValuationAnalysisContent.vue'
+import { useDashboardData } from '../composables/useDashboardData.js'
 import ValuationCoverage from './ValuationCoverage.vue'
 
 const props = defineProps({ instrument: { type: String, default: 'H30269' }, summary: Boolean, collectionNotice: String, collectionWarning: Boolean })
 const source = ref(props.summary ? 'eastmoney' : 'csi'), basis = ref('total'), expanded = ref(false), dialog = ref(null), expandButton = ref(null)
-const states = reactive(Object.fromEntries(['csi', 'eastmoney'].map(key => [key, { data: null, loading: false, error: '', status: null, statusNotice: '', metric: 'pe', range: 'all' }])))
+const dashboard = useDashboardData()
+const sourceKeys = key => key === 'csi' ? ['csiHistory', 'csiStatus'] : ['eastmoneyHistory']
+const states = reactive(Object.fromEntries(['csi', 'eastmoney'].map(key => {
+  const snapshot = dashboard.states[sourceKeys(key)[0]]
+  return [key, {
+    get data() { return snapshot.data },
+    get loading() { return sourceKeys(key).some(name => dashboard.states[name].loading) },
+    get error() { return snapshot.error ? `${snapshot.error}${snapshot.data ? '，保留上次数据' : ''}` : '' },
+    get status() { return key === 'csi' ? dashboard.states.csiStatus.data : null },
+    get statusNotice() {
+      if (key !== 'csi') return ''
+      if (dashboard.states.csiStatus.error) return '无法确认中证定时更新状态；最后成功时间仅为上次已知记录。'
+      return dashboard.states.csiStatus.data?.status === 'error' ? '中证定时更新失败，当前显示上次成功保存的数据。' : ''
+    },
+    metric: 'pe', range: 'all',
+  }]
+})))
 const current = computed(() => states[source.value])
 const metric = computed({ get: () => source.value === 'csi' ? 'pe' : current.value.metric, set: v => { current.value.metric = v } })
 const range = computed({ get: () => current.value.range, set: v => { current.value.range = v } })
@@ -27,23 +44,8 @@ const view = computed(() => ({ stats: stats.value, data: current.value.data, loa
   sourceUrl: source.value === 'csi' ? CSI_VALUATION_SOURCE : VALUATION_SOURCE }))
 let disposed = false
 let returnFocus = null
-async function loadSource(key) {
-  const state = states[key]
-  if (state.loading) return
-  state.loading = true
-  state.error = ''
-  const results = await Promise.allSettled(key === 'csi' ? [getCsiValuationHistory(), getCsiValuationStatus()] : [getValuationHistory()])
-  if (disposed) return
-  if (results[0].status === 'fulfilled') state.data = results[0].value
-  else state.error = `${results[0].reason.message}${state.data ? '，保留上次数据' : ''}`
-  if (key === 'csi') {
-    if (results[1].status === 'fulfilled') {
-      state.status = results[1].value
-      state.statusNotice = state.status.status === 'error' ? '中证定时更新失败，当前显示上次成功保存的数据。' : ''
-    } else state.statusNotice = '无法确认中证定时更新状态；最后成功时间仅为上次已知记录。'
-  }
-  state.loading = false
-}
+function loadSource(key) { return dashboard.refresh(sourceKeys(key)) }
+function ensureSource(key) { return Promise.all(sourceKeys(key).map(dashboard.ensure)) }
 function load() { return loadSource(source.value) }
 function refresh() { return Promise.all([...new Set([source.value, ...(props.summary ? ['eastmoney', 'csi'] : [])])].map(loadSource)) }
 defineExpose({ refresh, loading: computed(() => Object.values(states).some(state => state.loading)), error: computed(() => Object.values(states).some(state => Boolean(state.error))) })
@@ -53,8 +55,8 @@ async function open(event, selectedMetric) {
   expanded.value = true; await nextTick(); if (!disposed) dialog.value.showModal()
 }
 function closed() { expanded.value = false; returnFocus?.focus({ preventScroll: true }) }
-watch(source, load, { immediate: true })
-if (props.summary) loadSource('csi')
+watch(source, ensureSource, { immediate: true })
+if (props.summary) ensureSource('csi')
 onBeforeUnmount(() => { disposed = true; dialog.value?.close() })
 </script>
 

@@ -1,15 +1,14 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { getLatestMetrics } from '../api/latestMetrics.js'
+import { computed, onMounted, toRefs } from 'vue'
+import { useDashboardData } from '../composables/useDashboardData.js'
 import { DIVIDEND_SOURCE, formatLatestMetric } from '../utils/latestMetrics.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { collectionNotice, dataFreshness } from '../utils/sourceStatus.js'
 
 const props = defineProps({ instrument: { type: String, default: 'H30269' }, performanceOnly: Boolean,
   collectionEntry: Object, collectionUnavailable: Boolean, checkedAt: { type: Date, default: () => new Date() } })
-const data = ref(null)
-const loading = ref(false)
-const error = ref(false)
+const dashboard = useDashboardData()
+const { data, loading, error } = toRefs(dashboard.states.latestMetrics)
 const title = computed(() => props.performanceOnly
   ? `${props.instrument === '512890' ? '标的指数' : '指数'}收益与风险`
   : props.instrument === '512890' ? '标的指数最新指标' : '最新指标')
@@ -27,16 +26,9 @@ const hasWarning = computed(() => rows.slice(3).some(row => data.value?.metrics[
 const collection = computed(() => collectionNotice(props.collectionEntry, { unavailable: props.collectionUnavailable, hasData: Boolean(asOf.value) }))
 const freshness = computed(() => dataFreshness(asOf.value, { now: props.checkedAt }))
 
-async function load() {
-  if (loading.value) return
-  loading.value = true
-  error.value = false
-  try { data.value = await getLatestMetrics() }
-  catch { error.value = true }
-  finally { loading.value = false }
-}
+function load() { return dashboard.refresh(['latestMetrics']) }
 defineExpose({ refresh: load, loading, error, asOf, hasWarning })
-onMounted(load)
+onMounted(() => dashboard.ensure('latestMetrics'))
 </script>
 
 <template>
