@@ -64,6 +64,12 @@ jobs:
           git commit -m "chore(data): update market data"
           git push
 
+      - name: Check trading calendar coverage
+        if: always()
+        id: calendar
+        continue-on-error: true
+        run: npm run calendar:check
+
       - name: Report incomplete update
-        if: steps.update.outcome == 'failure'
+        if: always() && (steps.update.outcome == 'failure' || steps.calendar.outcome == 'failure')
         run: exit 1

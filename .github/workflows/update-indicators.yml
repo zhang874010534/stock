@@ -47,6 +47,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(data): update valuations and treasury yield"
           git push
+      - name: Check trading calendar coverage
+        if: always()
+        id: calendar
+        continue-on-error: true
+        run: npm run calendar:check
+
       - name: Report incomplete update
-        if: steps.update.outcome == 'failure' || steps.constituents.outcome == 'failure'
+        if: always() && (steps.update.outcome == 'failure' || steps.constituents.outcome == 'failure' || steps.calendar.outcome == 'failure')
         run: exit 1

@@ -4,12 +4,13 @@ export const tradingCalendar = {
   id: 'sse-a-share-2023-2026-v2',
   start: '2023-01-01',
   end: '2026-12-31',
-  sources: [
-    'https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20221227_5714459.shtml',
-    'https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20231226_5733941.shtml',
-    'https://www.sse.com.cn/disclosure/announcement/general/c/c_20241223_10767108.shtml',
-    'https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml',
-  ],
+  annualSources: {
+    2023: 'https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20221227_5714459.shtml',
+    2024: 'https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20231226_5733941.shtml',
+    2025: 'https://www.sse.com.cn/disclosure/announcement/general/c/c_20241223_10767108.shtml',
+    2026: 'https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml',
+  },
+  get sources() { return Object.values(this.annualSources) },
   closures: [
     ['2023-01-01', '2023-01-02'], ['2023-01-21', '2023-01-27'],
     ['2023-04-05', '2023-04-05'], ['2023-04-29', '2023-05-03'],
