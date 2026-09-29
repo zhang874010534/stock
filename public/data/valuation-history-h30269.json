@@ -6,7 +6,7 @@
   "basis": "provider_unspecified",
   "unit": "multiple",
   "collection": "daily_snapshots",
-  "date": "2026-09-28",
+  "date": "2026-09-29",
   "history": [
     {
       "date": "2026-09-18",
@@ -37,7 +37,12 @@
       "date": "2026-09-28",
       "pe": 8.48432383,
       "pb": 0.7868
+    },
+    {
+      "date": "2026-09-29",
+      "pe": 8.49291922,
+      "pb": 0.7876
     }
   ],
-  "updatedAt": "2026-09-28T18:08:25.664593Z"
+  "updatedAt": "2026-09-29T16:29:02.654337Z"
 }
