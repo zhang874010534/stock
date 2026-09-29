@@ -2,7 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getRangeWindow, getZoomWindow } from '../../utils/indexHistory.js'
 import { getDefaultKlineWindow } from '../../utils/kline.js'
 import { getKeyboardKlineTarget } from '../../utils/klineKeyboard.js'
-import { clampKlineViewport, getKlineTimelineLength } from '../../utils/klineViewport.js'
+import { clampKlineViewport, getKlineTimelineLength, restoreKlineViewport } from '../../utils/klineViewport.js'
 
 export function useKlineChart({ element, history, period, movingAverages, mainIndicators, subIndicator, chartType, compact, pricePrecision }) {
   const loading = ref(true)
@@ -127,7 +127,9 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
         chart.getZr().on('mousemove', handleMouseMove)
       }
       height.value = element.value.clientHeight
-      visibleWindow.value = presetWindow(range.value === 'custom' ? 'recent' : range.value)
+      visibleWindow.value = range.value === 'custom'
+        ? clampKlineViewport(history.value.length, visibleWindow.value)
+        : presetWindow(range.value)
       chart.setOption(runtime.createIndexTrendOption(history.value, visibleWindow.value, {
         height: height.value,
         compact: compact.value,
@@ -168,8 +170,12 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     }
   }
 
-  watch([history, period], () => {
-    range.value = 'recent'
+  watch([history, period], ([rows, currentPeriod], [previousRows, previousPeriod]) => {
+    if (currentPeriod !== previousPeriod || !previousRows.length || !rows.length) {
+      range.value = 'recent'
+    } else if (range.value === 'custom') {
+      visibleWindow.value = restoreKlineViewport(previousRows, rows, visibleWindow.value)
+    }
     renderChart()
   }, { flush: 'post' })
 
