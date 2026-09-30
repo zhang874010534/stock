@@ -125,7 +125,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     </section>
     <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
     <section id="market-chart" class="chart-section" aria-label="行情走势">
-      <IndexChart :key="instrument" ref="indexChart" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" @retry="load('market')" />
+      <IndexChart :key="instrument" ref="indexChart" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" @retry="load('market')" />
       <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
     </section>
     <DrawdownAnalysis id="drawdown-analysis" :instrument="instrument" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :backfill-completed="state.market.data?.backfill?.completed === true" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />

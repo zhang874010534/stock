@@ -5,8 +5,10 @@ import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import Home from './views/Home.vue'
 import { providePreferences } from './composables/usePreferences.js'
+import { provideObservationNotes } from './composables/useObservationNotes.js'
 
 const preferences = providePreferences()
+provideObservationNotes()
 const instrument = toRef(preferences.state, 'instrument')
 const sidebarOpen = ref(false)
 const themeOverrides = {

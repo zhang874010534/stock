@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { Info, Maximize2, Minimize2 } from 'lucide-vue-next'
 import { formatIndexValue, getWindowSummary } from '../utils/indexHistory.js'
 import { aggregateKlines, formatVolume, getKlineQuote, KLINE_PERIODS } from '../utils/kline.js'
@@ -11,6 +11,8 @@ import KLineToolbar from './kline/KLineToolbar.vue'
 import KLineQuote from './kline/KLineQuote.vue'
 import KLineRangeSelection from './kline/KLineRangeSelection.vue'
 import KLineDrawingTools from './kline/KLineDrawingTools.vue'
+import KLineNotesPanel from './kline/KLineNotesPanel.vue'
+import KLineNotesOverlay from './kline/KLineNotesOverlay.vue'
 import YieldMetricCard from './YieldMetricCard.vue'
 import LatestIndexMetrics from './LatestIndexMetrics.vue'
 import ValuationAnalysis from './ValuationAnalysis.vue'
@@ -19,6 +21,9 @@ import IndexConstituents from './IndexConstituents.vue'
 import { useKlineChart } from './kline/useKlineChart.js'
 import { useKlineFullscreen } from './kline/useKlineFullscreen.js'
 import { usePreferences } from '../composables/usePreferences.js'
+import { useObservationNotes } from '../composables/useObservationNotes.js'
+import { projectNotes } from '../utils/observationNotes.js'
+import { chartExportMetadata, createChartPng, downloadBlob } from '../utils/chartExport.js'
 
 const props = defineProps({
   instrument: { type: String, default: '512890' },
@@ -26,6 +31,7 @@ const props = defineProps({
   backfillCompleted: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   error: { type: String, default: '' },
+  sourceNotice: { type: String, default: '' },
 })
 const emit = defineEmits(['retry'])
 const chartElement = ref(null)
@@ -44,15 +50,25 @@ const subIndicatorKey = preference('subIndicatorKey')
 const sidebarView = ref('overview')
 const overviewView = ref('analysis')
 const indicatorSettings = preference('indicatorSettings')
+const noteStore = useObservationNotes()
+const notesPanel = ref(null), notesOverlay = ref(null), drawingTools = ref(null)
+const pickingNote = ref(false), exporting = ref(false), exportStatus = ref('')
 
 const history = computed(() => aggregateKlines(props.history, period.value))
+const chartNotes = computed(() => projectNotes(noteStore.notes.value.filter(note => note.instrument === props.instrument)
+  .sort((a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id)), props.history, history.value))
 const maData = computed(() => Object.fromEntries(maOptions.value.map(({ period }) => [period, calculateMA(history.value, period)])))
 const movingAverages = computed(() => maOptions.value.map((item) => ({ ...item, data: maData.value[item.period] })))
 const mainIndicators = computed(() => [
   ...(bollEnabled.value ? [buildMainIndicator(history.value, 'boll', indicatorSettings.value.boll)] : []),
   ...(expanded.value && bbiEnabled.value ? [buildMainIndicator(history.value, 'bbi', indicatorSettings.value.bbi, { period: period.value })] : []),
 ])
-const { expanded, inlineHeight, toggle } = useKlineFullscreen(panelElement, () => resize())
+const { expanded, inlineHeight, toggle } = useKlineFullscreen(panelElement, () => resize(), () => {
+  if (!pickingNote.value) return false
+  pickingNote.value = false
+  return true
+})
+watch(expanded, value => { if (!value) pickingNote.value = false })
 async function openConstituents() {
   sidebarView.value = 'constituents'
   if (!expanded.value) await toggle()
@@ -60,7 +76,7 @@ async function openConstituents() {
 defineExpose({ openConstituents })
 const compact = computed(() => !expanded.value)
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
-const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel, priceToPixel } = useKlineChart({
+const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel, priceToPixel, exportImage } = useKlineChart({
   compact,
   pricePrecision: computed(() => props.instrument === '512890' ? 3 : 2),
   element: chartElement,
@@ -80,6 +96,46 @@ const dataWindow = computed(() => ({ startIndex: visibleWindow.value.startIndex,
 const summary = computed(() => getWindowSummary(history.value, dataWindow.value))
 const layout = computed(() => getKlineLayout(height.value, subIndicatorKey.value, compact.value))
 const periodLabel = computed(() => KLINE_PERIODS.find((item) => item.key === period.value)?.label)
+const defaultNotePoint = computed(() => quote.value ? { date: quote.value.date, price: quote.value.close } : null)
+
+async function openNotes(noteId) {
+  sidebarView.value = 'notes'
+  if (!expanded.value) await toggle()
+  await nextTick()
+  if (noteId) notesPanel.value?.editNote(noteId)
+  else notesPanel.value?.newNote(defaultNotePoint.value)
+  notesPanel.value?.focusEditor()
+}
+function beginNotePick() {
+  drawingTools.value?.cancel(); pickingNote.value = true
+  chartElement.value?.scrollIntoView({ block: 'nearest' })
+}
+function acceptNotePoint(point) { pickingNote.value = false; notesPanel.value?.selectPoint(point) }
+function locateNote(note) {
+  if (!note.point) return
+  const index = history.value.findIndex(row => row.date === note.point.date)
+  const span = Math.min(history.value.length - 1, Math.max(20, visibleWindow.value.endIndex - visibleWindow.value.startIndex))
+  const start = Math.max(0, Math.min(index - Math.floor(span / 2), history.value.length - 1 - span))
+  zoomToWindow(start, start + span)
+}
+async function exportChart() {
+  if (exporting.value || !showChart.value) return
+  exporting.value = true; exportStatus.value = ''
+  try {
+    drawingTools.value?.cancel(); pickingNote.value = false
+    await nextTick()
+    const metadata = chartExportMetadata({ instrument: props.instrument, period: period.value, chartType: chartType.value,
+      history: history.value, dailyHistory: props.history, window: visibleWindow.value,
+      indicators: [...maOptions.value.filter(line => line.enabled).map(line => `MA${line.period}`), ...mainIndicators.value.map(item => item.title), ...(!compact.value ? [subIndicator.value.title] : [])],
+      warning: [props.error ? '行情重新读取失败，使用原数据' : '', props.sourceNotice,
+        !compact.value && subIndicatorKey.value === 'wave' ? '波段信号含未来函数，历史信号可能重绘' : ''].filter(Boolean).join('；') })
+    const blob = await createChartPng({ image: exportImage(), metadata,
+      overlays: [drawingTools.value?.exportOverlay(), notesOverlay.value?.exportOverlay()], notes: notesOverlay.value?.visibleNotes() ?? [] })
+    downloadBlob(blob, metadata.filename)
+    exportStatus.value = 'PNG 已导出，含证券、查看区间、行情日期及可见画线／笔记。'
+  } catch (error) { exportStatus.value = `导出失败：${error.message}` }
+  finally { exporting.value = false }
+}
 
 function setMainSettings(settings) {
   maOptions.value = settings.maOptions
@@ -122,7 +178,10 @@ function setIndicatorSettings(key, settings) {
           @main-settings-change="setMainSettings"
           @indicator-change="subIndicatorKey = $event"
           @settings-change="setIndicatorSettings"
-        />
+        >
+          <template #actions><button type="button" class="chart-action" :disabled="isBusy" @click="openNotes()">观察笔记{{ chartNotes.length ? ` (${chartNotes.length})` : '' }}</button><button type="button" class="chart-action" :disabled="isBusy || !showChart || exporting" @click="exportChart">{{ exporting ? '导出中…' : '导出 PNG' }}</button></template>
+        </KLineToolbar>
+        <p v-if="exportStatus" class="wave-note" role="status">{{ exportStatus }}</p>
         </div>
         <KLineQuote hide-details :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
@@ -131,7 +190,8 @@ function setIndicatorSettings(key, settings) {
         <KLineRangeSelection class="chart-body" :aria-busy="isBusy" :history="history" :layout="layout" :visible-window="visibleWindow" :index-at-pixel="indexAtPixel" :enabled="showChart" :instrument="instrument" :period-label="periodLabel" @zoom="zoomToWindow" @mouseleave="resetHover">
             <div ref="chartElement" class="chart-canvas" tabindex="0" aria-label="K线图，按左右方向键查看上一根或下一根K线" aria-keyshortcuts="ArrowLeft ArrowRight" :style="{ visibility: showChart ? 'visible' : 'hidden' }" @pointerdown="chartElement?.focus({ preventScroll: true })" @keydown="handleKeydown" />
           <template v-if="showChart">
-            <KLineDrawingTools v-if="expanded" :instrument="instrument" :period="period" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" :price-to-pixel="priceToPixel" />
+            <KLineDrawingTools v-if="expanded" ref="drawingTools" :instrument="instrument" :period="period" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" :price-to-pixel="priceToPixel" @begin="pickingNote = false" />
+            <KLineNotesOverlay ref="notesOverlay" :notes="chartNotes" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" :picking="pickingNote" @select="openNotes" @point="acceptNotePoint" @cancel="pickingNote = false" />
             <KLineQuote v-if="isHovering" floating hide-ma :side="quoteSide" :overlay-offset="layout.priceTop + 6" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :active-index="activeIndex" :is-latest="activeIndex === history.length - 1" />
             <div v-if="expanded" class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
             <div v-if="expanded" class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex], subIndicatorKey === 'wave' ? 3 : 2) }}</b></div>
@@ -147,8 +207,9 @@ function setIndicatorSettings(key, settings) {
           <div class="sidebar-top">
           <div class="sidebar-heading"><h2>{{ instrument }} · {{ instrument === '512890' ? 'ETF' : '指数' }}</h2><button class="expand-button" aria-label="退出全屏" title="退出全屏（ESC）" @click="toggle"><Minimize2 :size="14" />退出</button></div>
           <div class="sidebar-switch" role="group" aria-label="右侧信息切换">
-            <button type="button" :aria-pressed="sidebarView === 'overview'" @click="sidebarView = 'overview'">简况</button>
-            <button type="button" :aria-pressed="sidebarView === 'constituents'" @click="sidebarView = 'constituents'">成分股</button>
+            <button type="button" :aria-pressed="sidebarView === 'overview'" @click="sidebarView = 'overview'; pickingNote = false">简况</button>
+            <button type="button" :aria-pressed="sidebarView === 'constituents'" @click="sidebarView = 'constituents'; pickingNote = false">成分股</button>
+            <button type="button" :aria-pressed="sidebarView === 'notes'" @click="sidebarView = 'notes'">笔记</button>
           </div>
           <div v-show="sidebarView === 'overview'" class="sidebar-switch sidebar-sub-switch" role="group" aria-label="简况内容切换">
             <button type="button" :aria-pressed="overviewView === 'analysis'" @click="overviewView = 'analysis'">指数分析</button>
@@ -183,6 +244,7 @@ function setIndicatorSettings(key, settings) {
           <div v-show="overviewView === 'details'" aria-label="指数详情"><IndexDetails :instrument="instrument" /></div>
           </div>
           <div v-show="sidebarView === 'constituents'" aria-label="成分股"><IndexConstituents :instrument="instrument" /></div>
+          <div v-show="sidebarView === 'notes'"><KLineNotesPanel ref="notesPanel" :instrument="instrument" :notes="chartNotes" :default-point="defaultNotePoint" :picking="pickingNote" @pick="beginNotePick" @cancel-pick="pickingNote = false" @locate="locateNote" /></div>
         </aside>
       </section>
     </Teleport>
@@ -191,6 +253,9 @@ function setIndicatorSettings(key, settings) {
 
 <style scoped>
 .wave-note { color: #b8a77b; font-size: 11px; line-height: 1.6; padding: 5px 0; }
+.chart-action { padding: 3px 8px; border: 1px solid #373b48; border-radius: 3px; background: #1c1f28; color: #bfc3d1; font-size: 11px; white-space: nowrap; }
+.chart-action:disabled { opacity: .45; }
+.chart-action:focus-visible { outline: 2px solid #67d5df; outline-offset: 2px; }
 .wave-readout { display: flex; flex-wrap: wrap; gap: 5px 14px; color: #bfc3d1; font-size: 11px; padding: 8px 0; min-height: 30px; }
 .index-chart-slot { display: flex; min-width: 0; min-height: 580px; }
 .index-chart { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 14px 15px 11px; border: 1px solid #30333e; border-radius: 10px; background: #101116; color: #bcc1cf; }

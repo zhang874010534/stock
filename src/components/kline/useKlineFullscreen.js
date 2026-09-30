@@ -1,6 +1,6 @@
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
-export function useKlineFullscreen(panel, resize) {
+export function useKlineFullscreen(panel, resize, cancelInteraction = () => false) {
   const expanded = ref(false)
   const inlineHeight = ref(null)
   let previousFocus
@@ -39,9 +39,10 @@ export function useKlineFullscreen(panel, resize) {
     if (event.key === 'Escape') {
       event.preventDefault()
       event.stopPropagation()
+      if (cancelInteraction()) return
       toggle()
     } else if (event.key === 'Tab') {
-      const controls = [...panel.value.querySelectorAll('button:not(:disabled), a[href], summary, select:not(:disabled), input:not(:disabled), [tabindex="0"]')]
+      const controls = [...panel.value.querySelectorAll('button:not(:disabled), a[href], summary, select:not(:disabled), input:not(:disabled), textarea:not(:disabled), [tabindex="0"]')]
         .filter((element) => element.getClientRects().length > 0)
       const first = controls[0]
       const last = controls.at(-1)

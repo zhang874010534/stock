@@ -3,7 +3,9 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Eye, EyeOff, Minus, MousePointer2, Trash2, Undo2 } from 'lucide-vue-next'
 import { clipParallelLine, validParallelDrawing } from '../../utils/parallelLines.js'
 import { clipHorizontalLine, validHorizontalDrawing } from '../../utils/horizontalLines.js'
+import { serializeOverlay } from '../../utils/chartExport.js'
 
+const emit = defineEmits(['begin'])
 const props = defineProps({
   instrument: String, period: String, layout: Object, revision: Number,
   pointAtPixel: Function, pointToPixel: Function, priceToPixel: Function,
@@ -17,7 +19,8 @@ const rect = computed(() => ({ left: props.layout.left, right: width.value - pro
   top: props.layout.priceTop, bottom: props.layout.priceTop + props.layout.priceHeight }))
 const hint = computed(() => tool.value === 'horizontal' ? '点击确定水平线价格' : ['点击起点', '点击第二点确定方向', '点击第三点确定平行线间距'][points.value.length])
 function cancel() { drawing.value = false; points.value = []; cursor.value = null }
-function begin(type) { cancel(); tool.value = type; hidden.value = false; selected.value = null; drawing.value = true; root.value.focus({ preventScroll: true }) }
+defineExpose({ cancel, exportOverlay: () => serializeOverlay(root.value?.querySelector('.drawing-svg'), '.hit-line, .anchor, .draw-surface, [data-preview]') })
+function begin(type) { emit('begin'); cancel(); tool.value = type; hidden.value = false; selected.value = null; drawing.value = true; root.value.focus({ preventScroll: true }) }
 function save() {
   try { localStorage.setItem(storageKey.value, JSON.stringify(drawings.value)); storageError.value = '' }
   catch { storageError.value = '本机保存失败，刷新后画线会丢失' }
@@ -99,7 +102,7 @@ onBeforeUnmount(() => { observer?.disconnect(); window.removeEventListener('keyd
   <div ref="root" class="drawing-overlay" tabindex="-1" aria-label="画线工具">
     <svg class="drawing-svg" width="100%" height="100%" aria-label="画线画布">
       <svg :x="layout.left" :y="layout.priceTop" :width="Math.max(0, width - layout.left - layout.right)" :height="layout.priceHeight" :viewBox="`${layout.left} ${layout.priceTop} ${Math.max(1, width - layout.left - layout.right)} ${layout.priceHeight}`" overflow="hidden">
-        <g v-for="item in rendered" :key="item.id" :class="{ selected: selected === item.id }">
+        <g v-for="item in rendered" :key="item.id" :class="{ selected: selected === item.id }" :data-preview="item.id === 'preview' ? '' : undefined">
           <line v-for="(line, index) in item.lines" :key="`visible-${index}`" v-bind="line" class="drawn-line" :stroke-dasharray="item.id === 'preview' ? '5 4' : undefined" />
           <line v-for="(line, index) in item.lines" :key="`hit-${index}`" v-bind="line" class="hit-line" :style="{ pointerEvents: drawing ? 'none' : 'stroke' }" @pointerdown.stop.prevent="choose(item.id)" />
           <template v-if="selected === item.id || item.id === 'preview'">

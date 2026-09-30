@@ -103,6 +103,12 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     return Number.isFinite(y) ? y : null
   }
 
+  function exportImage() {
+    if (!chart || disposed || loading.value || error.value || !history.value.length) throw new Error('暂无可导出的图表')
+    chart.dispatchAction({ type: 'hideTip' })
+    return chart.getDataURL({ type: 'svg' })
+  }
+
   function zoomToWindow(startIndex, endIndex) {
     chart?.dispatchAction({ type: 'dataZoom', dataZoomIndex: 0, startValue: startIndex, endValue: endIndex })
     visibleWindow.value = { startIndex, endIndex }
@@ -208,5 +214,5 @@ export function useKlineChart({ element, history, period, movingAverages, mainIn
     chart?.dispose()
   })
 
-  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel, priceToPixel }
+  return { loading, error, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel, priceToPixel, exportImage }
 }

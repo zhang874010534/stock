@@ -36,6 +36,7 @@ const emit = defineEmits(['period-change', 'chart-type-change', 'range-change', 
         </select>
       </label>
       <KLineIndicatorSettings v-if="!compact" :sub-indicator="subIndicator" :settings="indicatorSettings" :ma-options="maOptions" :boll-enabled="bollEnabled" :bbi-enabled="bbiEnabled" :period-label="KLINE_PERIODS.find(item => item.key === period)?.label" :disabled="disabled" @apply="(key, value) => emit('settings-change', key, value)" @main-apply="emit('main-settings-change', $event)" />
+      <slot name="actions" />
     </div>
     <div class="range-buttons" role="group" aria-label="指数 K 线时间范围">
       <button type="button" :class="{ selected: range === 'recent' }" :aria-pressed="range === 'recent'" :disabled="disabled" @click="emit('range-change', 'recent')">最近</button>
