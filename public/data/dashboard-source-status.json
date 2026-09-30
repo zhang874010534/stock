@@ -36,6 +36,12 @@
       "lastAttemptAt": "2026-09-29T16:29:01.419Z",
       "lastSuccessAt": "2026-09-29T16:29:01.419Z",
       "error": null
+    },
+    "000300": {
+      "status": "ok",
+      "lastAttemptAt": "2026-09-30T14:24:43.030Z",
+      "lastSuccessAt": "2026-09-30T14:24:43.030Z",
+      "error": null
     }
   }
 }

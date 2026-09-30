@@ -39,7 +39,7 @@ test('homepage separates readable snapshots, source failure, unknown status and 
   const previousFetch = globalThis.fetch, previousDocument = globalThis.document
   let mounted, statusUnavailable = false
   const ok = { status: 'ok', lastAttemptAt: '2026-09-27T08:00:00Z', lastSuccessAt: '2026-09-27T08:00:00Z', error: null }
-  const sources = Object.fromEntries(['H30269', '512890', 'valuation', 'dividend', 'bond'].map(key => [key, { ...ok }]))
+  const sources = Object.fromEntries(['H30269', '512890', '000300', 'valuation', 'dividend', 'bond'].map(key => [key, { ...ok }]))
   sources['512890'] = { ...ok, status: 'error', error: 'ETF 来源失败' }
   const snapshots = Object.fromEntries(await Promise.all(['512890', 'h30269', 'valuation-h30269', 'dividend-h30269', 'china-bond-10y'].map(async name => [name, JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), 'utf8'))])))
   try {

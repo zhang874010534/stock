@@ -38,7 +38,7 @@ export function validateKlineData(history) {
 }
 
 export function validateMarketData(data, code = 'H30269') {
-  if (!data || !['H30269', '512890'].includes(code) || data.code !== code || data.interval !== '1d') throw new Error(`${code} 行情文件格式异常`)
+  if (!data || !['H30269', '512890', '000300'].includes(code) || data.code !== code || data.interval !== '1d') throw new Error(`${code} 行情文件格式异常`)
   validateKlineData(data.history)
   const latest = data.history.at(-1)
   const latestMatches = ['date', 'open', 'close', 'high', 'low', 'volume', 'amount', 'turnover'].every((key) => data.latest?.[key] === latest[key])

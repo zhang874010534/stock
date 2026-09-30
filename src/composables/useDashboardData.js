@@ -14,6 +14,7 @@ export function createDashboardData(overrides = {}) {
   const loaders = {
     H30269: () => getMarketData('H30269'),
     '512890': () => getMarketData('512890'),
+    '000300': () => getMarketData('000300'),
     dividend: () => getYield('dividend'), treasury: () => getYield('treasury'),
     valuation: getValuation, latestMetrics: getLatestMetrics, collection: getSourceStatus,
     eastmoneyHistory: getValuationHistory, csiHistory: getCsiValuationHistory, csiStatus: getCsiValuationStatus,
@@ -49,6 +50,12 @@ export function createDashboardData(overrides = {}) {
 
   function refresh(keys) {
     const selected = new Set(keys)
+    // A used comparison refreshes both inputs as one group. Its view commits
+    // the pair only after both requests finish successfully.
+    if (states['000300'].attempted && keys.some(key => ['H30269', '000300'].includes(key))) {
+      selected.add('H30269')
+      selected.add('000300')
+    }
     // Raw cards and calculated metrics have different files, but refresh together
     // once used on this page. Each retains its own date and failure state.
     if (keys.some(key => metricKeys.includes(key))) {

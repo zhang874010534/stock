@@ -1,10 +1,10 @@
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { describeError, REQUEST_DELAY_MS, updateH30269 } from './fetch-h30269.mjs'
-import { H30269, ETF512890 } from './lib/market-data.mjs'
+import { H30269, ETF512890, CSI300 } from './lib/market-data.mjs'
 
 export async function updateMarket({
-  instruments = [H30269, ETF512890],
+  instruments = [H30269, ETF512890, CSI300],
   updater = updateH30269,
   logger = console,
   delay = (ms) => new Promise((done) => setTimeout(done, ms)),

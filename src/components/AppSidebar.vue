@@ -5,6 +5,7 @@ defineEmits(['close'])
 const navigation = [
   { label: '关键指标', icon: LayoutGrid, href: '#key-metrics' },
   { label: '收益与风险', icon: ChartNoAxesCombined, href: '#performance-metrics' },
+  { label: '收益风险对比', icon: ChartNoAxesCombined, href: '#index-comparison' },
   { label: '行情走势', icon: ChartNoAxesCombined, href: '#market-chart' },
   { label: 'ETF 分红与收益', icon: ChartNoAxesCombined, href: '#etf-income', etf: true },
   { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },

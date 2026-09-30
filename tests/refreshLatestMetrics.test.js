@@ -24,6 +24,16 @@ async function fixture(run) {
   } finally { await rm(directory, { recursive: true, force: true }) }
 }
 
+test('沪深300采集失败独立记录，不把红利低波收益风险标为失败', async () => fixture(async ({ refresh, directory }) => {
+  const result = await refresh({ mode: 'market', marketUpdater: async () => ({ failed: true, sources: { H30269: null, '512890': null, '000300': '基准行情失败' } }) })
+  assert.equal(result.failed, true)
+  assert.equal(result.data.metrics.annualReturn.status, 'ok')
+  assert.equal(result.data.metrics.maxDrawdown.status, 'ok')
+  const status = JSON.parse(await readFile(join(directory, 'dashboard-source-status.json'), 'utf8'))
+  assert.equal(status.sources['000300'].status, 'error')
+  assert.equal(status.sources.H30269.status, 'ok')
+}))
+
 test('source failure survives unrelated schedule and manual generation; only recovery clears it', async () => fixture(async ({ refresh, directory, initial }) => {
   const failed = await refresh({ mode: 'indicators', indicatorUpdater: async () => ({ failed: true, sources: { valuation: null, dividend: '股息率更新失败', bond: null } }) })
   assert.equal(failed.failed, true)

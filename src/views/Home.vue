@@ -7,6 +7,7 @@ import ValuationAnalysis from '../components/ValuationAnalysis.vue'
 import LatestIndexMetrics from '../components/LatestIndexMetrics.vue'
 import DrawdownAnalysis from '../components/DrawdownAnalysis.vue'
 import EtfIncomeAnalysis from '../components/EtfIncomeAnalysis.vue'
+import IndexComparisonAnalysis from '../components/IndexComparisonAnalysis.vue'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -21,6 +22,7 @@ const dashboard = provideDashboardData()
 const state = reactive({
   get market() { return dashboard.states[props.instrument] },
   dividend: dashboard.states.dividend, valuation: dashboard.states.valuation, treasury: dashboard.states.treasury,
+  benchmark: dashboard.states['000300'],
 })
 const sources = {
   dividend: 'https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/indicator/H30269indicator.xls',
@@ -30,23 +32,25 @@ const valuationAnalysis = ref(null)
 const performanceMetrics = ref(null)
 const indexChart = ref(null)
 const etfIncome = ref(null)
+const indexComparison = ref(null)
 const collection = dashboard.states.collection
 const checkedAt = dashboard.checkedAt
-const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading)
+const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading || indexComparison.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
 const priceSummary = computed(() => marketSummary(dailyHistory.value))
 const priceTone = value => value > 0 ? 'price-up' : value < 0 ? 'price-down' : ''
-const dateOf = kind => kind === 'market' ? latest.value?.date : state[kind].data?.date
+const dateOf = kind => kind === 'market' ? latest.value?.date : kind === 'benchmark' ? state.benchmark.data?.latest.date : state[kind].data?.date
 const datesDiffer = computed(() => new Set(Object.keys(state).map(dateOf).filter(Boolean)).size > 1)
-const sourceKey = kind => ({ market: props.instrument, dividend: 'dividend', valuation: 'valuation', treasury: 'bond', performance: 'H30269' })[kind]
+const sourceKey = kind => ({ market: props.instrument, benchmark: '000300', dividend: 'dividend', valuation: 'valuation', treasury: 'bond', performance: 'H30269' })[kind]
 const entryOf = kind => collection.data?.sources[sourceKey(kind)]
 const noticeOf = kind => collectionNotice(entryOf(kind), { unavailable: Boolean(collection.error), hasData: kind === 'performance' ? Boolean(performanceMetrics.value?.asOf) : Boolean(state[kind].data) })
-const freshnessOf = kind => dataFreshness(kind === 'performance' ? performanceMetrics.value?.asOf : dateOf(kind), { now: checkedAt.value, kind: ['market', 'performance'].includes(kind) ? 'market' : 'indicator' })
+const freshnessOf = kind => dataFreshness(kind === 'performance' ? performanceMetrics.value?.asOf : dateOf(kind), { now: checkedAt.value, kind: ['market', 'performance', 'benchmark'].includes(kind) ? 'market' : 'indicator' })
 const sourceRows = computed(() => [
   { kind: 'market', name: `${props.instrument} 行情` }, { kind: 'valuation', name: 'H30269 PE / PB 与估值历史' },
   { kind: 'dividend', name: 'H30269 股息率' }, { kind: 'treasury', name: '十年期国债收益率' },
   { kind: 'performance', name: 'H30269 收益风险的行情来源' },
+  { kind: 'benchmark', name: '沪深300 对比行情' },
 ].map(row => ({ ...row, entry: entryOf(row.kind), notice: noticeOf(row.kind), freshness: freshnessOf(row.kind) })))
 const collectionFailed = computed(() => sourceRows.value.some(row => row.notice.warning))
 const oldData = computed(() => sourceRows.value.some(row => row.freshness.level === 'old'))
@@ -127,6 +131,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
       </MetricCard>
     </section>
     <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
+    <IndexComparisonAnalysis id="index-comparison" ref="indexComparison" :instrument="instrument" />
     <section id="market-chart" class="chart-section" aria-label="行情走势">
       <IndexChart :key="instrument" ref="indexChart" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" @retry="load('market')" />
       <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
@@ -185,7 +190,7 @@ h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .
 .collection-details button { background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
 .source-row { display: grid; gap: 2px; padding: 10px 0; border-bottom: 1px solid #24334b; overflow-wrap: anywhere; }
 .load-error button { padding: 0; background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
-#key-metrics, #performance-metrics, #market-chart, #drawdown-analysis, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
+#key-metrics, #performance-metrics, #index-comparison, #market-chart, #drawdown-analysis, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
 @media (max-width: 1100px) and (min-width: 901px), (max-width: 700px) { .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) {
   .dashboard { gap: 14px; }

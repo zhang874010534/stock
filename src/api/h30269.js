@@ -1,6 +1,6 @@
 import { validateMarketData } from '../utils/kline.js'
 
-const DATA_URLS = { H30269: '/data/h30269.json', '512890': '/data/512890.json' }
+const DATA_URLS = { H30269: '/data/h30269.json', '512890': '/data/512890.json', '000300': '/data/000300.json' }
 
 export async function getMarketData(code, { fetcher = fetch, cacheKey = Date.now() } = {}) {
   if (!DATA_URLS[code]) throw new Error('不支持的证券代码')

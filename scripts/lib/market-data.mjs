@@ -7,6 +7,7 @@ export const H30269 = {
 }
 
 export const ETF512890 = { code: '512890', name: '华泰柏瑞红利低波ETF', secid: '1.512890' }
+export const CSI300 = { code: '000300', name: '沪深300指数', secid: '1.000300' }
 
 export class MarketDataError extends Error {
   constructor(message, { kind = 'upstream', upstreamStatus, retryAfterSeconds, cause } = {}) {

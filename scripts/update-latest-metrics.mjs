@@ -50,7 +50,7 @@ export async function refreshLatestMetrics({ mode, directory = join(root, 'publi
   let result
   try { result = await (mode === 'market' ? marketUpdater() : indicatorUpdater()) }
   catch { result = { failed: true, sources: {} } }
-  const attemptedKeys = mode === 'market' ? ['H30269', '512890'] : ['valuation', 'dividend', 'bond', 'csiValuation']
+  const attemptedKeys = mode === 'market' ? ['H30269', '512890', '000300'] : ['valuation', 'dividend', 'bond', 'csiValuation']
   for (const key of attemptedKeys) {
     const outcome = result?.sources?.[key]
     const success = outcome === null

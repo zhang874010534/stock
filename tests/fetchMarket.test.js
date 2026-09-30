@@ -7,7 +7,7 @@ import { MarketDataError } from '../scripts/lib/market-data.mjs'
 const success = () => ({ errors: [], data: { backfill: { completed: false } } })
 const logger = { log() {}, warn() {}, error() {} }
 
-test('两个标的的近期更新均优先于历史回补，阶段间保留请求间隔', async () => {
+test('三个标的的近期更新均优先于历史回补，阶段间保留请求间隔', async () => {
   const calls = []
   const waits = []
   const result = await updateMarket({ logger,
@@ -15,9 +15,9 @@ test('两个标的的近期更新均优先于历史回补，阶段间保留请�
     updater: async ({ instrument, phase }) => { calls.push(`${instrument.code}:${phase}`); return success() },
   })
   assert.equal(result.failed, false)
-  assert.deepEqual(result.sources, { H30269: null, '512890': null })
-  assert.deepEqual(calls, ['H30269:recent', '512890:recent', 'H30269:backfill', '512890:backfill'])
-  assert.deepEqual(waits, [3000, 3000, 3000])
+  assert.deepEqual(result.sources, { H30269: null, '512890': null, '000300': null })
+  assert.deepEqual(calls, ['H30269:recent', '512890:recent', '000300:recent', 'H30269:backfill', '512890:backfill', '000300:backfill'])
+  assert.deepEqual(waits, [3000, 3000, 3000, 3000, 3000])
 })
 
 test('仅历史回补失败给出警告，仍继续其他标的回补', async () => {
@@ -30,8 +30,8 @@ test('仅历史回补失败给出警告，仍继续其他标的回补', async ()
     },
   })
   assert.equal(result.failed, false)
-  assert.equal(backfills, 2)
-  assert.equal(warnings.length, 2)
+  assert.equal(backfills, 3)
+  assert.equal(warnings.length, 3)
   assert.match(warnings[0], /::warning::H30269/)
 })
 
@@ -46,7 +46,7 @@ test('近期失败保留失败状态并跳过该标的回补，不阻止其他�
   assert.equal(result.failed, true)
   assert.equal(result.sources.H30269, '近期行情更新失败')
   assert.equal(result.sources['512890'], null)
-  assert.deepEqual(calls, ['H30269:recent', '512890:recent', '512890:backfill'])
+  assert.deepEqual(calls, ['H30269:recent', '512890:recent', '000300:recent', '512890:backfill', '000300:backfill'])
 })
 
 test('回补文件异常不能降级为成功，且仍继续处理其他标的', async () => {
@@ -58,7 +58,7 @@ test('回补文件异常不能降级为成功，且仍继续处理其他标的',
     },
   })
   assert.equal(result.failed, true)
-  assert.equal(backfills, 2)
+  assert.equal(backfills, 3)
 })
 
 test('历史已补齐时不再请求回补', async () => {
@@ -67,7 +67,7 @@ test('历史已补齐时不再请求回补', async () => {
     updater: async ({ phase }) => { phases.push(phase); return { errors: [], data: { backfill: { completed: true } } } },
   })
   assert.equal(result.failed, false)
-  assert.deepEqual(phases, ['recent', 'recent'])
+  assert.deepEqual(phases, ['recent', 'recent', 'recent'])
 })
 
 test('网络诊断包含嵌套和聚合错误码，不输出地址等底层明细', () => {
