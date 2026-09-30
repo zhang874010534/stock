@@ -6,7 +6,7 @@
   "basis": "dual_share_capital",
   "unit": "pe_multiple_dividend_percent",
   "collection": "rolling_file_accumulation",
-  "date": "2026-09-29",
+  "date": "2026-09-30",
   "history": [
     {
       "date": "2026-08-28",
@@ -168,7 +168,14 @@
       "peCalculation": 7.74,
       "dividendTotal": 4.26,
       "dividendCalculation": 4.88
+    },
+    {
+      "date": "2026-09-30",
+      "peTotal": 8.24,
+      "peCalculation": 7.85,
+      "dividendTotal": 4.39,
+      "dividendCalculation": 5.03
     }
   ],
-  "updatedAt": "2026-09-29T16:29:03.712405Z"
+  "updatedAt": "2026-09-30T16:23:26.468021Z"
 }
