@@ -4,9 +4,8 @@ import { Info, Maximize2, Minimize2 } from 'lucide-vue-next'
 import { formatIndexValue, getWindowSummary } from '../utils/indexHistory.js'
 import { aggregateKlines, formatVolume, getKlineQuote, KLINE_PERIODS } from '../utils/kline.js'
 import { calculateMA } from '../utils/indicators.js'
-import { BBI_PARAMETERS, BOLL_PARAMETERS, getKlineLayout, KDJ_PARAMETERS, MACD_PARAMETERS, MA_OPTIONS, RSI_PARAMETERS } from '../charts/kline/config.js'
+import { getKlineLayout } from '../charts/kline/config.js'
 import { buildMainIndicator } from '../charts/kline/mainIndicators.js'
-import { WAVE_PARAMETERS } from '../charts/kline/waveIndicator.js'
 import { buildSubIndicator } from '../charts/kline/subIndicators.js'
 import KLineToolbar from './kline/KLineToolbar.vue'
 import KLineQuote from './kline/KLineQuote.vue'
@@ -19,6 +18,7 @@ import IndexDetails from './IndexDetails.vue'
 import IndexConstituents from './IndexConstituents.vue'
 import { useKlineChart } from './kline/useKlineChart.js'
 import { useKlineFullscreen } from './kline/useKlineFullscreen.js'
+import { usePreferences } from '../composables/usePreferences.js'
 
 const props = defineProps({
   instrument: { type: String, default: '512890' },
@@ -30,22 +30,20 @@ const props = defineProps({
 const emit = defineEmits(['retry'])
 const chartElement = ref(null)
 const panelElement = ref(null)
-const period = ref('day')
-const chartType = ref('candlestick')
-const maOptions = ref(MA_OPTIONS.map((item) => ({ ...item })))
-const bollEnabled = ref(false)
-const bbiEnabled = ref(true)
-const subIndicatorKey = ref('kdj')
+const preferences = usePreferences()
+const preference = key => computed({
+  get: () => preferences.state.charts[props.instrument][key],
+  set: value => { preferences.state.charts[props.instrument][key] = value },
+})
+const period = preference('period')
+const chartType = preference('chartType')
+const maOptions = preference('maOptions')
+const bollEnabled = preference('bollEnabled')
+const bbiEnabled = preference('bbiEnabled')
+const subIndicatorKey = preference('subIndicatorKey')
 const sidebarView = ref('overview')
 const overviewView = ref('analysis')
-const indicatorSettings = ref({
-  wave: { ...WAVE_PARAMETERS },
-  boll: { ...BOLL_PARAMETERS },
-  bbi: { ...BBI_PARAMETERS },
-  kdj: { ...KDJ_PARAMETERS },
-  macd: { ...MACD_PARAMETERS },
-  rsi: { ...RSI_PARAMETERS },
-})
+const indicatorSettings = preference('indicatorSettings')
 
 const history = computed(() => aggregateKlines(props.history, period.value))
 const maData = computed(() => Object.fromEntries(maOptions.value.map(({ period }) => [period, calculateMA(history.value, period)])))

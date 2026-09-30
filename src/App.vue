@@ -1,11 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, toRef } from 'vue'
 import { NConfigProvider, darkTheme, zhCN, dateZhCN } from 'naive-ui'
 import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import Home from './views/Home.vue'
+import { providePreferences } from './composables/usePreferences.js'
 
-const instrument = ref('512890')
+const preferences = providePreferences()
+const instrument = toRef(preferences.state, 'instrument')
 const sidebarOpen = ref(false)
 const themeOverrides = {
   common: {
@@ -31,10 +33,11 @@ const themeOverrides = {
   <NConfigProvider :theme="darkTheme" :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
     <div class="app-shell" @keydown.esc="sidebarOpen = false">
       <a class="skip-link" href="#main-content">跳转到主要内容</a>
-      <AppHeader v-model:instrument="instrument" :menu-open="sidebarOpen" @toggle-menu="sidebarOpen = !sidebarOpen" />
+      <AppHeader v-model:instrument="instrument" :menu-open="sidebarOpen" @toggle-menu="sidebarOpen = !sidebarOpen" @reset-preferences="preferences.reset" />
       <button v-if="sidebarOpen" class="sidebar-backdrop" aria-label="关闭导航" @click="sidebarOpen = false" />
       <AppSidebar :open="sidebarOpen" @close="sidebarOpen = false" />
       <main id="main-content" class="app-main" tabindex="-1">
+        <p v-if="preferences.message.value" class="preferences-notice" role="status">{{ preferences.message.value }}</p>
         <Home :instrument="instrument" />
       </main>
     </div>
@@ -43,6 +46,7 @@ const themeOverrides = {
 
 <style scoped>
 .app-shell { min-height: 100svh; }
+.preferences-notice { margin-bottom: 12px; color: #c7b282; font-size: 12px; line-height: 1.7; }
 .app-main {
   margin-left: var(--sidebar-width);
   padding: calc(var(--header-height) + 16px) 20px 20px;

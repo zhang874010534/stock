@@ -1,9 +1,9 @@
 <script setup>
-import { Activity, Menu } from 'lucide-vue-next'
+import { Activity, Menu, RotateCcw } from 'lucide-vue-next'
 import { NButton, NSelect } from 'naive-ui'
 
 defineProps({ menuOpen: Boolean, instrument: { type: String, default: '512890' } })
-defineEmits(['toggle-menu', 'update:instrument'])
+defineEmits(['toggle-menu', 'update:instrument', 'reset-preferences'])
 const indexOptions = [{ label: 'H30269 · 指数', value: 'H30269' }, { label: '512890 · ETF', value: '512890' }]
 </script>
 
@@ -22,6 +22,7 @@ const indexOptions = [{ label: 'H30269 · 指数', value: 'H30269' }, { label: '
       <span class="picker-label">证券选择</span>
       <NSelect class="index-select" :value="instrument" @update:value="$emit('update:instrument', $event)" :options="indexOptions" aria-label="选择证券" />
       <span class="index-limit">指数 / ETF</span>
+      <button class="reset-preferences" type="button" aria-label="恢复默认偏好" title="恢复默认证券、周期、图形和指标设置；保留已保存的画线" @click="$emit('reset-preferences')"><RotateCcw :size="14" /><span>恢复默认</span></button>
     </div>
   </header>
 </template>
@@ -50,12 +51,15 @@ const indexOptions = [{ label: 'H30269 · 指数', value: 'H30269' }, { label: '
 .picker-label { color: #c5cedd; white-space: nowrap; }
 .index-limit { padding: 6px 9px; border: 1px solid var(--color-border-soft); border-radius: 6px; color: var(--color-text-secondary); font-size: 12px; }
 .menu-toggle { display: none; }
+.reset-preferences { display: flex; align-items: center; gap: 5px; padding: 6px 8px; border: 1px solid var(--color-border-soft); border-radius: 6px; color: var(--color-text-secondary); background: transparent; font-size: 11px; white-space: nowrap; }
+.reset-preferences:focus-visible { outline: 2px solid #67d5df; outline-offset: 2px; }
 @media (max-width: 900px) { .menu-toggle { display: inline-flex; } .app-header { padding-inline: 14px; } }
 @media (max-width: 640px) {
   .brand { gap: 8px; font-size: 17px; }
   .brand-icon { display: none; }
   .index-limit, .picker-label { display: none; }
   .index-select { width: 114px; }
+  .reset-preferences span { display: none; }
 }
 @media (max-width: 400px) { .brand-suffix { display: none; } }
 </style>
