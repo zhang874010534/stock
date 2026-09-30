@@ -11,8 +11,9 @@ async function mountHome() {
   const { descriptor } = parse(await readFile(file, 'utf8'))
   let script = compileScript(descriptor, { id: 'home-status-test', inlineTemplate: true }).content
   script = script.replace(/import (\w+) from ['"]([^'"]+\.vue)['"]/g, (_, name) => `const ${name} = { setup(props, { slots, expose }) {
-    expose({ loading: false, error: false, hasWarning: false, asOf: '2026-09-17', refresh: async () => {} });
-    return () => testH('div', { 'data-component': '${name}' }, slots.default?.());
+    let opened = false;
+    expose({ loading: false, error: false, hasWarning: false, asOf: '2026-09-17', refresh: async () => {}, openConstituents: () => { opened = true; } });
+    return () => testH('div', { 'data-component': '${name}', onCheckOpened: () => opened }, [slots['value-detail']?.(), slots.default?.()]);
   } }`)
     .replace(/from (['"])([^'"]+)\1/g, (_, quote, specifier) => `from '${specifier.startsWith('.') ? new URL(specifier, file).href : import.meta.resolve(specifier)}'`)
   script = `import { h as testH } from '${import.meta.resolve('vue')}';\n${script}`
@@ -75,5 +76,47 @@ test('homepage separates readable snapshots, source failure, unknown status and 
     mounted = await mountHome(); await flush()
     assert.match(mounted.text(), /后台采集状态未知/)
     assert.ok(!mounted.text().includes('最近一次后台采集成功'))
+  } finally { mounted?.app.unmount(); globalThis.fetch = previousFetch; globalThis.document = previousDocument }
+})
+
+test('homepage summary follows the selected instrument, retains values on failure and opens constituents', async () => {
+  const previousFetch = globalThis.fetch, previousDocument = globalThis.document
+  let mounted, failMarket = false
+  const names = ['512890', 'h30269', 'valuation-h30269', 'dividend-h30269', 'china-bond-10y', 'dashboard-source-status']
+  const snapshots = Object.fromEntries(await Promise.all(names.map(async name => [name,
+    JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), 'utf8')),
+  ])))
+  for (const [name, prices] of [['512890', [1, 1.1, 1.111]], ['h30269', [100, 100, 99]]]) {
+    snapshots[name].history = ['2025-12-31', '2026-01-05', '2026-01-06'].map((date, i) => ({
+      date, open: prices[i], close: prices[i], high: prices[i], low: prices[i],
+    }))
+    snapshots[name].latest = snapshots[name].history.at(-1)
+  }
+  try {
+    globalThis.document = { title: '' }
+    globalThis.fetch = async url => {
+      const name = url.split('/').at(-1).split('.json')[0]
+      if (failMarket && ['512890', 'h30269'].includes(name)) return new Response('', { status: 503 })
+      return Response.json(snapshots[name])
+    }
+    mounted = await mountHome(); await flush()
+    assert.match(mounted.text(), /\+0.011 元/)
+    assert.match(mounted.text(), /\+1.00%/)
+    assert.match(mounted.text(), /2026 年初至今/)
+    assert.match(mounted.text(), /\+11.10%/)
+    assert.match(mounted.text(), /2025-12-31/)
+    assert.match(mounted.text(), /ETF 未复权/)
+    const entry = mounted.nodes().find(n => n.props.class === 'refresh-button constituents-button')
+    entry.props.onClick()
+    assert.equal(mounted.nodes().find(n => n.props['data-component'] === 'IndexChart').props.onCheckOpened(), true)
+    mounted.props.instrument = 'H30269'; await flush()
+    assert.match(mounted.text(), /-1.00 点/)
+    assert.match(mounted.text(), /-1.00%/)
+    assert.ok(!mounted.text().includes('+11.10%'))
+    failMarket = true
+    await mounted.refresh(); await flush()
+    assert.match(mounted.text(), /-1.00 点/)
+    assert.match(mounted.text(), /读取失败，保留上次数据/)
+    assert.match(mounted.text(), /2026-01-06/)
   } finally { mounted?.app.unmount(); globalThis.fetch = previousFetch; globalThis.document = previousDocument }
 })

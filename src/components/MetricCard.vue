@@ -22,6 +22,7 @@ defineProps({
       </NPopover>
     </div>
     <p class="metric-value">{{ value }}</p>
+    <slot name="value-detail" />
     <p class="metric-description">{{ description }}</p>
     <p class="metric-period">{{ period }}</p>
     <slot />

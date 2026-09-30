@@ -55,6 +55,11 @@ const mainIndicators = computed(() => [
   ...(expanded.value && bbiEnabled.value ? [buildMainIndicator(history.value, 'bbi', indicatorSettings.value.bbi, { period: period.value })] : []),
 ])
 const { expanded, inlineHeight, toggle } = useKlineFullscreen(panelElement, () => resize())
+async function openConstituents() {
+  sidebarView.value = 'constituents'
+  if (!expanded.value) await toggle()
+}
+defineExpose({ openConstituents })
 const compact = computed(() => !expanded.value)
 const subIndicator = computed(() => buildSubIndicator(history.value, subIndicatorKey.value, indicatorSettings.value[subIndicatorKey.value]))
 const { loading: chartLoading, error: chartError, range, activeIndex, isHovering, visibleWindow, height, quoteSide, selectRange, resetHover, resize, load, indexAtPixel, zoomToWindow, handleKeydown, chartRevision, pointAtPixel, pointToPixel, priceToPixel } = useKlineChart({

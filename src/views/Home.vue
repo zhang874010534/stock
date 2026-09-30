@@ -9,6 +9,7 @@ import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
 import { collectionNotice, dataFreshness } from '../utils/sourceStatus.js'
+import { marketSummary, signedValue } from '../utils/marketSummary.js'
 
 const props = defineProps({ instrument: { type: String, default: '512890' } })
 const isEtf = computed(() => props.instrument === '512890')
@@ -25,11 +26,14 @@ const sources = {
 }
 const valuationAnalysis = ref(null)
 const performanceMetrics = ref(null)
+const indexChart = ref(null)
 const collection = dashboard.states.collection
 const checkedAt = dashboard.checkedAt
 const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
+const priceSummary = computed(() => marketSummary(dailyHistory.value))
+const priceTone = value => value > 0 ? 'price-up' : value < 0 ? 'price-down' : ''
 const dateOf = kind => kind === 'market' ? latest.value?.date : state[kind].data?.date
 const datesDiffer = computed(() => new Set(Object.keys(state).map(dateOf).filter(Boolean)).size > 1)
 const sourceKey = kind => ({ market: props.instrument, dividend: 'dividend', valuation: 'valuation', treasury: 'bond', performance: 'H30269' })[kind]
@@ -83,7 +87,10 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
   <div class="dashboard">
     <section class="page-heading" aria-labelledby="index-title">
       <div><p class="eyebrow">首页 / 红利低波观察</p><h1 id="index-title">{{ instrumentName }} <span class="mono">{{ instrument }}</span></h1><p class="intro">以长期视角，观察红利与低波动的价值。</p></div>
-      <button class="refresh-button" :disabled="loading" @click="refresh"><RefreshCw :size="14" />{{ loading ? '读取中' : '重新读取' }}</button>
+      <div class="page-actions">
+        <button class="refresh-button constituents-button" @click="indexChart?.openConstituents()">{{ isEtf ? '标的指数成分股' : '查看成分股' }} <ArrowRight :size="14" /></button>
+        <button class="refresh-button" :disabled="loading" @click="refresh"><RefreshCw :size="14" />{{ loading ? '读取中' : '重新读取' }}</button>
+      </div>
     </section>
     <div class="data-status" :class="{ warning: hasWarning }" role="status"><Database :size="14" /><span>{{ statusLabel }}</span><span class="status-caption">各项日期见卡片</span></div>
     <details class="collection-details panel">
@@ -100,6 +107,16 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     </details>
     <section id="key-metrics" class="metrics-grid" aria-label="关键指标">
       <MetricCard v-for="metric in metrics" :key="metric.key" v-bind="metric" :period="period(metric.kind || metric.key)" :aria-busy="state[metric.kind || metric.key].loading">
+        <template #value-detail>
+          <div v-if="metric.key === 'market'" class="price-summary" aria-label="行情涨跌摘要">
+            <p :class="priceTone(priceSummary.change)"><span>日涨跌</span> <strong>{{ signedValue(priceSummary.change, isEtf ? 3 : 2) }}{{ priceSummary.change == null ? '' : isEtf ? ' 元' : ' 点' }}</strong> <strong>{{ signedValue(priceSummary.changePercent, 2, '%') }}</strong></p>
+            <p v-if="priceSummary.dailyReason" class="price-note">{{ priceSummary.dailyReason }}</p>
+            <p :class="priceTone(priceSummary.ytdPercent)"><span>{{ priceSummary.year ? `${priceSummary.year} 年初至今` : '年初至今' }}</span> <strong>{{ signedValue(priceSummary.ytdPercent, 2, '%') }}</strong></p>
+            <p v-if="priceSummary.ytdReason" class="price-note">{{ priceSummary.ytdReason }}</p>
+            <p v-else class="price-note">基准：{{ priceSummary.baseDate }} 收盘；截至 {{ priceSummary.date }}</p>
+            <p class="price-note">{{ isEtf ? 'ETF 未复权价格涨跌，不含现金分红。' : '价格指数涨跌，不含分红再投资。' }}</p>
+          </div>
+        </template>
         <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf(metric.kind || metric.key).warning }">{{ noticeOf(metric.kind || metric.key).text }}</p>
         <p v-if="!state[metric.kind || metric.key].loading && freshnessOf(metric.kind || metric.key).text" class="source-notice" :class="{ 'load-error': freshnessOf(metric.kind || metric.key).level === 'old' }">{{ freshnessOf(metric.kind || metric.key).text }}</p>
         <p v-if="state[metric.kind || metric.key].error" class="load-error" role="status">读取失败{{ state[metric.kind || metric.key].data ? '，保留上次数据' : '' }} <button :disabled="state[metric.kind || metric.key].loading" @click="load(metric.kind || metric.key)">重试</button></p>
@@ -107,7 +124,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     </section>
     <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
     <section id="market-chart" class="chart-section" aria-label="行情走势">
-      <IndexChart :key="instrument" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" @retry="load('market')" />
+      <IndexChart :key="instrument" ref="indexChart" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" @retry="load('market')" />
       <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
     </section>
     <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
@@ -131,6 +148,13 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
 <style scoped>
 .dashboard { display: grid; gap: 16px; max-width: 1800px; margin: 0 auto; }
 .page-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 0; }
+.page-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.price-summary { display: grid; gap: 5px; margin-top: 10px; font-size: 11px; color: #a0b0c9; }
+.price-summary p { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; line-height: 1.6; }
+.price-summary strong { font-family: var(--font-mono); font-weight: 600; }
+.price-summary .price-note { color: #879ab7; font-size: 10px; }
+.price-up strong { color: #ff727c; }
+.price-down strong { color: #55c99b; }
 .eyebrow { color: #8194b2; font-size: 11px; margin-bottom: 7px; }
 h1 { font-size: clamp(19px, 1.8vw, 27px); font-weight: 650; line-height: 1.4; }
 h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .7em; font-weight: 500; }
@@ -160,6 +184,7 @@ h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .
 @media (max-width: 640px) {
   .dashboard { gap: 14px; }
   .page-heading { align-items: flex-start; gap: 8px; }
+  .page-actions { flex-direction: column; align-items: flex-end; flex-shrink: 0; }
   h1 .mono { display: block; margin: 4px 0 0; }
   .intro { font-size: 11px; }
   .refresh-button { padding: 7px 9px; }
