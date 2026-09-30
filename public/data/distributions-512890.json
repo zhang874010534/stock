@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "code": "512890",
+  "unit": "CNY_per_share",
+  "source": "https://fundf10.eastmoney.com/fhsp_512890.html",
+  "coverage": {
+    "start": "2018-12-19",
+    "end": "2026-09-30"
+  },
+  "checkedAt": "2026-09-30T13:32:14.909Z",
+  "status": "ok",
+  "reason": null,
+  "dividends": [],
+  "splits": [
+    {
+      "date": "2021-10-22",
+      "ratio": 2
+    }
+  ]
+}

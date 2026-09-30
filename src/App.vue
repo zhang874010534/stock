@@ -37,7 +37,7 @@ const themeOverrides = {
       <a class="skip-link" href="#main-content">跳转到主要内容</a>
       <AppHeader v-model:instrument="instrument" :menu-open="sidebarOpen" @toggle-menu="sidebarOpen = !sidebarOpen" @reset-preferences="preferences.reset" />
       <button v-if="sidebarOpen" class="sidebar-backdrop" aria-label="关闭导航" @click="sidebarOpen = false" />
-      <AppSidebar :open="sidebarOpen" @close="sidebarOpen = false" />
+      <AppSidebar :open="sidebarOpen" :instrument="instrument" @close="sidebarOpen = false" />
       <main id="main-content" class="app-main" tabindex="-1">
         <p v-if="preferences.message.value" class="preferences-notice" role="status">{{ preferences.message.value }}</p>
         <Home :instrument="instrument" />

@@ -6,6 +6,7 @@ import IndexChart from '../components/IndexChart.vue'
 import ValuationAnalysis from '../components/ValuationAnalysis.vue'
 import LatestIndexMetrics from '../components/LatestIndexMetrics.vue'
 import DrawdownAnalysis from '../components/DrawdownAnalysis.vue'
+import EtfIncomeAnalysis from '../components/EtfIncomeAnalysis.vue'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -28,9 +29,10 @@ const sources = {
 const valuationAnalysis = ref(null)
 const performanceMetrics = ref(null)
 const indexChart = ref(null)
+const etfIncome = ref(null)
 const collection = dashboard.states.collection
 const checkedAt = dashboard.checkedAt
-const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading)
+const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
 const priceSummary = computed(() => marketSummary(dailyHistory.value))
@@ -56,13 +58,14 @@ const statusLabel = computed(() => {
   if (Object.values(state).some(item => item.error) || performanceMetrics.value?.error || valuationAnalysis.value?.error) messages.push('部分文件读取失败，可重新读取')
   if (collectionFailed.value) messages.push('部分后台更新失败')
   if (performanceMetrics.value?.hasWarning) messages.push('收益风险指标含保留值或不可用项')
+  if (etfIncome.value?.hasWarning) messages.push('ETF 分红记录或收益范围待核验')
   if (oldData.value) messages.push('部分数据较旧')
   if (collectionUnknown.value) messages.push('部分后台采集状态未知')
   if (messages.length) return messages.join(' · ')
   if (!dailyHistory.value.length) return '暂无行情数据'
   return datesDiffer.value ? '各来源分别发布，数据日期可能不同' : '已读取保存的数据 · 非实时行情'
 })
-const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error)
+const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error || etfIncome.value?.hasWarning)
 const period = kind => state[kind].loading ? '正在读取…' : dateOf(kind) ? `数据日期：${dateOf(kind)}` : '暂无数据'
 const formatYield = (kind, digits) => state[kind].data ? `${state[kind].data.value.toFixed(digits)}%` : '—'
 const metrics = computed(() => [
@@ -128,6 +131,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
       <IndexChart :key="instrument" ref="indexChart" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" @retry="load('market')" />
       <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
     </section>
+    <EtfIncomeAnalysis v-if="isEtf" id="etf-income" ref="etfIncome" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
     <DrawdownAnalysis id="drawdown-analysis" :instrument="instrument" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :backfill-completed="state.market.data?.backfill?.completed === true" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
     <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
     <section id="data-notes" class="bottom-grid" aria-label="收益率参考与数据说明">

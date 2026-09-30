@@ -5,6 +5,7 @@ import { getValuation, getValuationHistory } from '../api/valuations.js'
 import { getLatestMetrics } from '../api/latestMetrics.js'
 import { getSourceStatus } from '../api/sourceStatus.js'
 import { getCsiValuationHistory, getCsiValuationStatus } from '../api/csiValuations.js'
+import { getEtfDistributions } from '../api/etfDistributions.js'
 
 const dashboardKey = Symbol('dashboard-data')
 const metricKeys = ['latestMetrics', 'valuation', 'dividend']
@@ -16,6 +17,7 @@ export function createDashboardData(overrides = {}) {
     dividend: () => getYield('dividend'), treasury: () => getYield('treasury'),
     valuation: getValuation, latestMetrics: getLatestMetrics, collection: getSourceStatus,
     eastmoneyHistory: getValuationHistory, csiHistory: getCsiValuationHistory, csiStatus: getCsiValuationStatus,
+    etfDistributions: getEtfDistributions,
     ...overrides,
   }
   const states = reactive(Object.fromEntries(Object.keys(loaders).map(key => [key, {

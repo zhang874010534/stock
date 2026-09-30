@@ -10,6 +10,7 @@
     "data:update": "node scripts/fetch-market.mjs --verbose",
     "data:metrics": "node scripts/build-latest-metrics.mjs",
     "data:constituents": "python scripts/fetch-constituents.py",
+    "data:etf-distributions": "node scripts/fetch-etf-distributions.mjs",
     "data:refresh-market": "node scripts/update-latest-metrics.mjs market",
     "data:refresh-indicators": "node scripts/update-latest-metrics.mjs indicators",
     "build": "vite build",
