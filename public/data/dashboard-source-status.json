@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "sources": {
     "512890": {
-      "status": "error",
-      "lastAttemptAt": "2026-09-29T14:54:59.957Z",
-      "lastSuccessAt": null,
-      "error": "近期行情更新失败"
+      "status": "ok",
+      "lastAttemptAt": "2026-09-30T15:01:32.781Z",
+      "lastSuccessAt": "2026-09-30T15:01:32.781Z",
+      "error": null
     },
     "H30269": {
-      "status": "error",
-      "lastAttemptAt": "2026-09-29T14:54:59.957Z",
-      "lastSuccessAt": null,
-      "error": "近期行情更新失败"
+      "status": "ok",
+      "lastAttemptAt": "2026-09-30T15:01:32.781Z",
+      "lastSuccessAt": "2026-09-30T15:01:32.781Z",
+      "error": null
     },
     "valuation": {
       "status": "ok",

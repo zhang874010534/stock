@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "ruleVersion": "latest-metrics-v2-all-history",
   "code": "H30269",
-  "generatedAt": "2026-09-29T16:29:01.419Z",
+  "generatedAt": "2026-09-30T15:01:32.781Z",
   "metrics": {
     "pe": {
       "unit": "multiple",
@@ -38,7 +38,7 @@
       "value": 0.03555048396628635,
       "asOf": "2026-09-17",
       "status": "stale",
-      "reason": "近期行情更新失败"
+      "reason": "交易日历待核验"
     },
     "maxDrawdown": {
       "unit": "ratio",
@@ -47,7 +47,7 @@
       "value": 0.1746781700633332,
       "asOf": "2026-09-17",
       "status": "stale",
-      "reason": "近期行情更新失败"
+      "reason": "交易日历待核验"
     },
     "sharpe": {
       "unit": "dimensionless",
@@ -56,7 +56,7 @@
       "value": 0.31677804475134697,
       "asOf": "2026-09-17",
       "status": "stale",
-      "reason": "近期行情更新失败"
+      "reason": "交易日历待核验"
     }
   },
   "calculation": {
