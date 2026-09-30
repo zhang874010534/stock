@@ -9,6 +9,7 @@ const navigation = [
   { label: '行情走势', icon: ChartNoAxesCombined, href: '#market-chart' },
   { label: 'ETF 分红与收益', icon: ChartNoAxesCombined, href: '#etf-income', etf: true },
   { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },
+  { label: '低波特征分析', icon: ChartNoAxesCombined, href: '#low-volatility' },
   { label: '估值分析', icon: ChartNoAxesCombined, href: '#valuation-analysis' },
   { label: '数据说明', icon: Database, href: '#data-notes' },
 ]

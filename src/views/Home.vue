@@ -8,6 +8,7 @@ import LatestIndexMetrics from '../components/LatestIndexMetrics.vue'
 import DrawdownAnalysis from '../components/DrawdownAnalysis.vue'
 import EtfIncomeAnalysis from '../components/EtfIncomeAnalysis.vue'
 import IndexComparisonAnalysis from '../components/IndexComparisonAnalysis.vue'
+import LowVolatilityAnalysis from '../components/LowVolatilityAnalysis.vue'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -138,6 +139,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     </section>
     <EtfIncomeAnalysis v-if="isEtf" id="etf-income" ref="etfIncome" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
     <DrawdownAnalysis id="drawdown-analysis" :instrument="instrument" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :backfill-completed="state.market.data?.backfill?.completed === true" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
+    <LowVolatilityAnalysis id="low-volatility" :instrument="instrument" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
     <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
     <section id="data-notes" class="bottom-grid" aria-label="收益率参考与数据说明">
       <MetricCard title="中国十年期国债收益率" :value="formatYield('treasury', 4)" description="中债国债到期收益率曲线 · 10年" :period="period('treasury')" source="中债" :source-url="sources.treasury" detail="国债到期收益率与指数股息率口径不同，不能直接等同。" :aria-busy="state.treasury.loading">
@@ -190,7 +192,7 @@ h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .
 .collection-details button { background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
 .source-row { display: grid; gap: 2px; padding: 10px 0; border-bottom: 1px solid #24334b; overflow-wrap: anywhere; }
 .load-error button { padding: 0; background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
-#key-metrics, #performance-metrics, #index-comparison, #market-chart, #drawdown-analysis, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
+#key-metrics, #performance-metrics, #index-comparison, #market-chart, #drawdown-analysis, #low-volatility, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
 @media (max-width: 1100px) and (min-width: 901px), (max-width: 700px) { .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) {
   .dashboard { gap: 14px; }
