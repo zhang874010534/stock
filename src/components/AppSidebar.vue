@@ -6,6 +6,7 @@ const navigation = [
   { label: '关键指标', icon: LayoutGrid, href: '#key-metrics' },
   { label: '收益与风险', icon: ChartNoAxesCombined, href: '#performance-metrics' },
   { label: '行情走势', icon: ChartNoAxesCombined, href: '#market-chart' },
+  { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },
   { label: '估值分析', icon: ChartNoAxesCombined, href: '#valuation-analysis' },
   { label: '数据说明', icon: Database, href: '#data-notes' },
 ]
