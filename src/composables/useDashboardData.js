@@ -6,6 +6,8 @@ import { getLatestMetrics } from '../api/latestMetrics.js'
 import { getSourceStatus } from '../api/sourceStatus.js'
 import { getCsiValuationHistory, getCsiValuationStatus } from '../api/csiValuations.js'
 import { getEtfDistributions } from '../api/etfDistributions.js'
+import { getConstituents } from '../api/constituents.js'
+import { getConstituentHistory } from '../api/constituentHistory.js'
 
 const dashboardKey = Symbol('dashboard-data')
 const metricKeys = ['latestMetrics', 'valuation', 'dividend']
@@ -19,6 +21,7 @@ export function createDashboardData(overrides = {}) {
     valuation: getValuation, latestMetrics: getLatestMetrics, collection: getSourceStatus,
     eastmoneyHistory: getValuationHistory, csiHistory: getCsiValuationHistory, csiStatus: getCsiValuationStatus,
     etfDistributions: getEtfDistributions,
+    constituents: getConstituents, constituentHistory: getConstituentHistory,
     ...overrides,
   }
   const states = reactive(Object.fromEntries(Object.keys(loaders).map(key => [key, {
@@ -50,6 +53,9 @@ export function createDashboardData(overrides = {}) {
 
   function refresh(keys) {
     const selected = new Set(keys)
+    if (keys.some(key => ['constituents', 'constituentHistory'].includes(key))) {
+      for (const key of ['constituents', 'constituentHistory']) if (states[key].attempted) selected.add(key)
+    }
     // A used comparison refreshes both inputs as one group. Its view commits
     // the pair only after both requests finish successfully.
     if (states['000300'].attempted && keys.some(key => ['H30269', '000300'].includes(key))) {

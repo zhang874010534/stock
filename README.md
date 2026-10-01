@@ -334,12 +334,16 @@ npm run data:refresh-indicators
 
 ### 13. 成分股及自动更新
 
-右侧「成分股」显示 H30269 官方完整名单，含证券代码、名称、沪深市场，支持代码／名称搜索。512890 页面明确标为标的指数成分股，不代表 ETF 实际持仓。按代码排序；官方名单不提供权重，不填充推算权重。
+右侧「成分股」显示 H30269 官方完整名单，含证券代码、名称、沪深市场及已匹配行业，支持代码／名称搜索。512890 页面明确标为标的指数成分股，不代表 ETF 实际持仓。按代码排序；官方名单不提供权重，不填充推算权重。
 
 来源：[中证官方成分股 XLS](https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/H30269cons.xls)。首次已获取 2026-09-24 的 50 只样本，存储于 `public/data/constituents-h30269.json`。页面展示文件内的数据日期，抓取时间不替代数据日期。
 
-手动更新：`npm run data:constituents`，需要安装 `scripts/requirements-indicators.txt` 中的 xlrd。工作日北京时间 18:15 的 `Update valuations and yields` 工作流增加独立采集步骤，与指标更新分别处理失败，并一起提交成功数据和失败状态。配置推送到远端默认分支后定时生效，当前未触发远端任务。
+首页新增「成分股变化与行业结构」：按股票数量显示行业分布，点击行业筛选名单，选择历史观察查看当时保存的分类，并比较历次调入调出、名称更新与行业归属观察变化。行业以中证 11 个一级行业指数的官方样本文件匹配；该方法有选样覆盖限制，未匹配项计入未分类，行业数量占比以全部 50 只为分母。当前名单来源日期为 2026-09-30，45 只匹配到 9 个行业，5 只未分类。
 
-采集校验指数身份、统一日期、50 只样本、六位代码、去重、名称及交易所；拒绝未来日期、日期倒退及不完整文件。失败保留上次名单及日期并标记 stale，无旧数据时标记 unavailable；恢复后清除失败标记。若官方修改样本数量或文件结构，需要核实并更新校验规则。内容不变时不改写文件。
+历史保存在 `public/data/constituents-history-h30269.json`，从 Git 中真实保存的 2026-09-24 起名单建立基线，再由采集继续积累。当前 6 次观察尚未发现调入调出；来源日期与采集观察时间分别展示，不推断官方调样生效日，不用今天的行业分类回填旧名单。来源、覆盖限制、历史规则及验证见 [成分股变化与行业结构](docs/constituent-structure.md)。
 
-验证：`python -m unittest discover -s tests -p test_constituents.py`、`node --test tests/constituents.test.js`，以及 `npm run build`。
+手动更新：`npm run data:constituents`，需要安装 `scripts/requirements-indicators.txt` 中的 xlrd；同一命令更新名单、匹配行业并追加历史。工作日北京时间 18:15 的 `Update valuations and yields` 工作流独立采集该数据，与指标更新分别处理失败，并一起提交成功数据和失败状态（含历史文件）。配置推送到远端默认分支后定时生效，当前未触发远端任务。
+
+采集校验指数身份、统一日期、50 只样本、六位代码、去重、名称及交易所；拒绝未来日期、日期倒退及不完整文件。失败保留上次名单及日期并标记 stale，无旧数据时标记 unavailable；恢复后清除失败标记。若官方修改样本数量或文件结构，需要核实并更新校验规则。当前名单内容不变时不改写文件；历史仅在来源日期或名单／分类内容变化时追加观察，保留同一来源日期的修订。行业请求失败时保留已知分类及其原日期并单独标注，历史文件损坏时拒绝覆盖。
+
+验证：`python -m unittest discover -s tests -p test_constituents.py`、`node --test tests/constituents.test.js tests/constituentStructure.test.js tests/constituentStructureComponent.test.js`，以及 `npm run build`。

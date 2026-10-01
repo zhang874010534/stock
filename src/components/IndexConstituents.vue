@@ -1,23 +1,22 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { CONSTITUENTS_SOURCE, getConstituents } from '../api/constituents.js'
+import { CONSTITUENTS_SOURCE } from '../api/constituents.js'
+import { useDashboardData } from '../composables/useDashboardData.js'
+import { matchingSnapshot } from '../utils/constituentStructure.js'
 defineProps({ instrument: { type: String, default: 'H30269' } })
-const data = ref(null)
-const loading = ref(false)
-const error = ref(false)
+const dashboard = useDashboardData()
+const state = dashboard.states.constituents, historyState = dashboard.states.constituentHistory
+const data = computed(() => state.data)
+const loading = computed(() => state.loading || historyState.loading)
+const error = computed(() => state.error)
+const industries = computed(() => new Map(matchingSnapshot(data.value, historyState.data)?.members.map(item => [item.code, item]) ?? []))
 const query = ref('')
 const rows = computed(() => {
   const term = query.value.trim().toLowerCase()
   return (data.value?.members ?? []).filter(item => `${item.code} ${item.name}`.toLowerCase().includes(term))
 })
-async function load() {
-  if (loading.value) return
-  loading.value = true
-  error.value = false
-  try { data.value = await getConstituents() } catch { error.value = true }
-  finally { loading.value = false }
-}
-onMounted(load)
+const load = () => dashboard.refresh(['constituents', 'constituentHistory'])
+onMounted(() => { dashboard.ensure('constituents'); dashboard.ensure('constituentHistory') })
 </script>
 
 <template>
@@ -30,12 +29,13 @@ onMounted(load)
     <p v-else-if="data && data.status !== 'ok'" class="status" role="status">{{ data.reason }}</p>
     <input v-model="query" class="search" type="search" aria-label="搜索成分股代码或名称" placeholder="搜索代码 / 名称" />
     <table v-if="rows.length">
-      <thead><tr><th scope="col">代码</th><th scope="col">名称</th><th scope="col">市场</th></tr></thead>
-      <tbody><tr v-for="item in rows" :key="item.code"><td class="code">{{ item.code }}</td><td>{{ item.name }}</td><td class="exchange">{{ item.exchange === 'SSE' ? '沪市' : '深市' }}</td></tr></tbody>
+      <thead><tr><th scope="col">代码</th><th scope="col">名称</th><th scope="col">市场</th><th scope="col">行业</th></tr></thead>
+      <tbody><tr v-for="item in rows" :key="item.code"><td class="code">{{ item.code }}</td><td>{{ item.name }}</td><td class="exchange">{{ item.exchange === 'SSE' ? '沪市' : '深市' }}</td><td class="exchange">{{ industries.get(item.code)?.industry ?? '未分类' }}{{ industries.get(item.code)?.industryStatus === 'stale' ? '（保留）' : '' }}</td></tr></tbody>
     </table>
     <p v-else class="empty">{{ loading ? '正在读取成分股…' : data?.count ? '没有匹配的成分股' : '暂无成分股数据' }}</p>
     <p class="caption">来源：<a :href="CONSTITUENTS_SOURCE" target="_blank" rel="noopener noreferrer">中证指数官方名单 ↗</a></p>
     <p class="caption">按证券代码排序。刷新读取最新已同步名单。</p>
+    <p class="caption">行业按中证一级行业指数样本归属匹配，未匹配项显示未分类；完整覆盖日期、行业数量及名单变化见首页“成分与行业结构”。{{ historyState.error ? '行业文件读取失败。' : historyState.data?.industryReason }}</p>
   </section>
 </template>
 

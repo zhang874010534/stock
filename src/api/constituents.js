@@ -1,9 +1,6 @@
 export const CONSTITUENTS_SOURCE = 'https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/H30269cons.xls'
 
-export async function getConstituents({ fetcher = fetch } = {}) {
-  const response = await fetcher(`/data/constituents-h30269.json?t=${Date.now()}`, { cache: 'no-store', signal: AbortSignal.timeout(15000) })
-  if (!response.ok) throw new Error('成分股读取失败')
-  const data = await response.json()
+export function validateConstituents(data) {
   const fail = () => { throw new Error('成分股数据格式异常') }
   if (data?.schemaVersion !== 1 || data.code !== 'H30269' || data.source !== CONSTITUENTS_SOURCE || !Array.isArray(data.members) || data.count !== data.members.length || !['ok', 'stale', 'unavailable'].includes(data.status)) fail()
   if (data.status === 'unavailable') {
@@ -19,4 +16,10 @@ export async function getConstituents({ fetcher = fetch } = {}) {
     }
   }
   return data
+}
+
+export async function getConstituents({ fetcher = fetch } = {}) {
+  const response = await fetcher(`/data/constituents-h30269.json?t=${Date.now()}`, { cache: 'no-store', signal: AbortSignal.timeout(15000) })
+  if (!response.ok) throw new Error('成分股读取失败')
+  return validateConstituents(await response.json())
 }

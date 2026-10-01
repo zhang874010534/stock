@@ -10,10 +10,11 @@ const navigation = [
   { label: 'ETF 分红与收益', icon: ChartNoAxesCombined, href: '#etf-income', etf: true },
   { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },
   { label: '低波特征分析', icon: ChartNoAxesCombined, href: '#low-volatility' },
+  { label: '成分与行业结构', icon: LayoutGrid, href: '#constituent-structure' },
   { label: '估值分析', icon: ChartNoAxesCombined, href: '#valuation-analysis' },
   { label: '数据说明', icon: Database, href: '#data-notes' },
 ]
-const planned = ['行业分析', '宏观环境', '回测工具', '组合配置']
+const planned = ['宏观环境', '回测工具', '组合配置']
 </script>
 <template>
   <aside id="app-navigation" class="app-sidebar" :class="{ 'is-open': open }" aria-label="主导航">

@@ -9,6 +9,7 @@ import DrawdownAnalysis from '../components/DrawdownAnalysis.vue'
 import EtfIncomeAnalysis from '../components/EtfIncomeAnalysis.vue'
 import IndexComparisonAnalysis from '../components/IndexComparisonAnalysis.vue'
 import LowVolatilityAnalysis from '../components/LowVolatilityAnalysis.vue'
+import ConstituentStructure from '../components/ConstituentStructure.vue'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -34,9 +35,10 @@ const performanceMetrics = ref(null)
 const indexChart = ref(null)
 const etfIncome = ref(null)
 const indexComparison = ref(null)
+const constituentStructure = ref(null)
 const collection = dashboard.states.collection
 const checkedAt = dashboard.checkedAt
-const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading || indexComparison.value?.loading)
+const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading || indexComparison.value?.loading || constituentStructure.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
 const priceSummary = computed(() => marketSummary(dailyHistory.value))
@@ -64,13 +66,14 @@ const statusLabel = computed(() => {
   if (collectionFailed.value) messages.push('部分后台更新失败')
   if (performanceMetrics.value?.hasWarning) messages.push('收益风险指标含保留值或不可用项')
   if (etfIncome.value?.hasWarning) messages.push('ETF 分红记录或收益范围待核验')
+  if (constituentStructure.value?.hasWarning) messages.push('成分股或行业分类覆盖待核验')
   if (oldData.value) messages.push('部分数据较旧')
   if (collectionUnknown.value) messages.push('部分后台采集状态未知')
   if (messages.length) return messages.join(' · ')
   if (!dailyHistory.value.length) return '暂无行情数据'
   return datesDiffer.value ? '各来源分别发布，数据日期可能不同' : '已读取保存的数据 · 非实时行情'
 })
-const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error || etfIncome.value?.hasWarning)
+const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error || etfIncome.value?.hasWarning || constituentStructure.value?.hasWarning)
 const period = kind => state[kind].loading ? '正在读取…' : dateOf(kind) ? `数据日期：${dateOf(kind)}` : '暂无数据'
 const formatYield = (kind, digits) => state[kind].data ? `${state[kind].data.value.toFixed(digits)}%` : '—'
 const metrics = computed(() => [
@@ -140,6 +143,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     <EtfIncomeAnalysis v-if="isEtf" id="etf-income" ref="etfIncome" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
     <DrawdownAnalysis id="drawdown-analysis" :instrument="instrument" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :backfill-completed="state.market.data?.backfill?.completed === true" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
     <LowVolatilityAnalysis id="low-volatility" :instrument="instrument" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
+    <ConstituentStructure id="constituent-structure" ref="constituentStructure" :instrument="instrument" />
     <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
     <section id="data-notes" class="bottom-grid" aria-label="收益率参考与数据说明">
       <MetricCard title="中国十年期国债收益率" :value="formatYield('treasury', 4)" description="中债国债到期收益率曲线 · 10年" :period="period('treasury')" source="中债" :source-url="sources.treasury" detail="国债到期收益率与指数股息率口径不同，不能直接等同。" :aria-busy="state.treasury.loading">
@@ -192,7 +196,7 @@ h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .
 .collection-details button { background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
 .source-row { display: grid; gap: 2px; padding: 10px 0; border-bottom: 1px solid #24334b; overflow-wrap: anywhere; }
 .load-error button { padding: 0; background: none; border: 0; color: #9bc5ff; text-decoration: underline; }
-#key-metrics, #performance-metrics, #index-comparison, #market-chart, #drawdown-analysis, #low-volatility, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
+#key-metrics, #performance-metrics, #index-comparison, #market-chart, #drawdown-analysis, #low-volatility, #constituent-structure, #valuation-analysis, #data-notes { scroll-margin-top: calc(var(--header-height) + 18px); }
 @media (max-width: 1100px) and (min-width: 901px), (max-width: 700px) { .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) {
   .dashboard { gap: 14px; }
