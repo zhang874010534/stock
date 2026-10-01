@@ -12,6 +12,7 @@ const navigation = [
   { label: '低波特征分析', icon: ChartNoAxesCombined, href: '#low-volatility' },
   { label: 'ETF 分红与收益', icon: ChartNoAxesCombined, href: '#etf-income', etf: true },
   { label: '定投模拟器', icon: Calculator, href: '#investment-simulator' },
+  { label: '滚动持有期', icon: ChartNoAxesCombined, href: '#holding-periods' },
   { label: '估值分析', icon: ChartNoAxesCombined, href: '#valuation-analysis' },
   { label: '成分与行业结构', icon: LayoutGrid, href: '#constituent-structure' },
   { label: '数据说明', icon: Database, href: '#data-notes' },
