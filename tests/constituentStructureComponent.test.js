@@ -47,6 +47,9 @@ test('行业筛选和搜索、历史选择及ETF标签正确；旧观察不使�
     assert.match(view.text(), /非 ETF 实际持仓/); assert.match(view.text(), /45 \/ 50/)
     assert.match(view.text(), /5 只未分类/); assert.match(view.text(), /名称更新：000001/)
     assert.match(view.text(), /调入 1 只/); assert.match(view.text(), /调出 1 只/)
+    assert.match(view.text(), /最大已分类行业数量占比/); assert.match(view.text(), /60.0%/)
+    assert.match(view.text(), /90.0%/); assert.match(view.text(), /实际 2 个行业/)
+    assert.match(view.text(), /不能完整反映行业集中程度/)
     view.nodes().find(n => n.props['aria-label']?.startsWith('金融，')).props.onClick(); await nextTick()
     assert.match(view.text(), /30 \/ 50 只/)
     const search = view.nodes().find(n => n.tag === 'input')
@@ -54,7 +57,29 @@ test('行业筛选和搜索、历史选择及ETF标签正确；旧观察不使�
     assert.match(view.text(), /1 \/ 50 只/)
     view.nodes().find(n => n.tag === 'select').props['onUpdate:modelValue']('2026-09-24T10:00:00Z'); await nextTick()
     assert.match(view.text(), /0 \/ 50/); assert.match(view.text(), /未保存行业分类，不用当前分类回填历史/)
+    assert.match(view.text(), /尚无已分类股票/)
+    view.button('查看变更后名单').props.onClick(); await nextTick()
+    assert.equal(view.nodes().find(n => n.tag === 'select').selectedIndex, 1)
+    assert.match(view.text(), /45 \/ 50/); assert.match(view.text(), /50 \/ 50 只/)
+    view.button('查看变更前名单').props.onClick(); await nextTick()
+    assert.equal(view.nodes().find(n => n.tag === 'select').selectedIndex, 2)
+    assert.match(view.text(), /0 \/ 50/)
     view.props.instrument = 'H30269'; await nextTick(); assert.ok(!view.text().includes('非 ETF 实际持仓'))
+  } finally { view.unmount() }
+})
+
+test('同源日期修订的变更前后入口按观察时间定位，不混用同日名单', async () => {
+  const data = inputs(2)
+  data.history.snapshots[0].date = data.history.snapshots[1].date
+  data.history.snapshots[0].observedAt = '2026-09-28T09:00:00Z'
+  const view = await mount('ConstituentStructure', { instrument: 'H30269' }, createDashboardData({ constituents: () => data.current, constituentHistory: () => data.history }))
+  try {
+    await flush(); assert.match(view.text(), /同源日期修订/)
+    view.button('查看变更前名单').props.onClick(); await nextTick()
+    assert.match(view.text(), /0 \/ 50/)
+    view.button('查看变更后名单').props.onClick(); await nextTick()
+    assert.match(view.text(), /45 \/ 50/)
+    assert.equal(view.nodes().find(n => n.tag === 'select').selectedIndex, 1)
   } finally { view.unmount() }
 })
 

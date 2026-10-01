@@ -58,7 +58,14 @@ export function industryDistribution(snapshot) {
     const group = groups.get(industry); group.count++; group.members.push(member)
   }
   const total = snapshot?.members.length ?? 0
+  const ranked = [...groups.values()].filter(group => group.industry !== null).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'zh-CN'))
+  const largest = ranked[0]
+  const topThree = ranked.slice(0, 3)
   return { total, classified, stale, unknown: total - classified, industryCount: [...groups.keys()].filter(key => key !== null).length,
+    concentration: largest ? {
+      largest: { count: largest.count, share: largest.count / total, industries: ranked.filter(group => group.count === largest.count).map(group => group.label) },
+      topThree: { count: topThree.reduce((sum, group) => sum + group.count, 0), share: topThree.reduce((sum, group) => sum + group.count, 0) / total, industries: topThree.map(group => group.label) },
+    } : null,
     groups: [...groups.values()].map(group => ({ ...group, share: total ? group.count / total : 0 })).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'zh-CN')) }
 }
 export function compareMembership(previous, current) {
@@ -70,7 +77,7 @@ export function compareMembership(previous, current) {
     .map(member => ({ code: member.code, before: before.get(keyOf(member)).name, after: member.name }))
   const industryChanges = current.members.filter(member => member.industry && before.get(keyOf(member))?.industry && before.get(keyOf(member)).industry !== member.industry)
     .map(member => ({ code: member.code, name: member.name, before: before.get(keyOf(member)).industry, after: member.industry }))
-  return { fromDate: previous.date, date: current.date, observedAt: current.observedAt, sameSourceDate: previous.date === current.date, added, removed, renamed, industryChanges }
+  return { fromDate: previous.date, fromObservedAt: previous.observedAt, date: current.date, observedAt: current.observedAt, sameSourceDate: previous.date === current.date, added, removed, renamed, industryChanges }
 }
 export function membershipTimeline(history) {
   return (history?.snapshots ?? []).slice(1).map((snapshot, index) => compareMembership(history.snapshots[index], snapshot))

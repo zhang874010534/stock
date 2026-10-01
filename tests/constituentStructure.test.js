@@ -32,6 +32,7 @@ test('按市场和代码识别调入调出，改名不算调样，首条观察�
   after.members[0].name = '新名称'
   after.members[1].code = '000099'; after.members[1].name = '新加入'
   const event = compareMembership(before, after)
+  assert.equal(event.fromObservedAt, before.observedAt)
   assert.deepEqual(event.added.map(m => m.code), ['000099'])
   assert.deepEqual(event.removed.map(m => m.code), ['000002'])
   assert.deepEqual(event.renamed, [{ code: '000001', before: '股票1', after: '新名称' }])
@@ -40,6 +41,23 @@ test('按市场和代码识别调入调出，改名不算调样，首条观察�
   assert.equal(membershipTimeline(data).length, 1)
   after.members[2].exchange = 'SSE'
   assert.equal(compareMembership(before, after).added.length, 2)
+})
+
+test('数量集中度排除未分类，使用全部名单分母，并列行业和不足三个行业明确保留', () => {
+  const snapshot = fixture().snapshots[0]
+  snapshot.members.forEach((member, i) => { member.industry = i < 10 ? '金融' : i < 20 ? '工业' : i < 25 ? '能源' : null })
+  const stats = industryDistribution(snapshot)
+  assert.equal(stats.groups[0].label, '未分类')
+  assert.equal(stats.concentration.largest.count, 10)
+  assert.equal(stats.concentration.largest.share, .2)
+  assert.deepEqual(new Set(stats.concentration.largest.industries), new Set(['金融', '工业']))
+  assert.equal(stats.concentration.topThree.count, 25)
+  assert.equal(stats.concentration.topThree.share, .5)
+  snapshot.members.forEach((member, i) => { member.industry = i < 10 ? '金融' : null })
+  assert.deepEqual(industryDistribution(snapshot).concentration.topThree, { count: 10, share: .2, industries: ['金融'] })
+  snapshot.members.forEach(member => { member.industry = null })
+  assert.equal(industryDistribution(snapshot).concentration, null)
+  assert.equal(industryDistribution(null).concentration, null)
 })
 
 test('日期更新与首次补充分类不伪造调入，同行业名称变更和同源日期修订独立记录', () => {
