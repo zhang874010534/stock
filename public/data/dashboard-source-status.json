@@ -3,14 +3,14 @@
   "sources": {
     "512890": {
       "status": "ok",
-      "lastAttemptAt": "2026-09-30T15:01:32.781Z",
-      "lastSuccessAt": "2026-09-30T15:01:32.781Z",
+      "lastAttemptAt": "2026-10-01T15:32:19.037Z",
+      "lastSuccessAt": "2026-10-01T15:32:19.037Z",
       "error": null
     },
     "H30269": {
       "status": "ok",
-      "lastAttemptAt": "2026-09-30T15:01:32.781Z",
-      "lastSuccessAt": "2026-09-30T15:01:32.781Z",
+      "lastAttemptAt": "2026-10-01T15:32:19.037Z",
+      "lastSuccessAt": "2026-10-01T15:32:19.037Z",
       "error": null
     },
     "valuation": {
@@ -39,8 +39,8 @@
     },
     "000300": {
       "status": "ok",
-      "lastAttemptAt": "2026-09-30T14:24:43.030Z",
-      "lastSuccessAt": "2026-09-30T14:24:43.030Z",
+      "lastAttemptAt": "2026-10-01T15:32:19.037Z",
+      "lastSuccessAt": "2026-10-01T15:32:19.037Z",
       "error": null
     }
   }
