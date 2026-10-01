@@ -134,17 +134,17 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
         <p v-if="state[metric.kind || metric.key].error" class="load-error" role="status">读取失败{{ state[metric.kind || metric.key].data ? '，保留上次数据' : '' }} <button :disabled="state[metric.kind || metric.key].loading" @click="load(metric.kind || metric.key)">重试</button></p>
       </MetricCard>
     </section>
-    <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
-    <IndexComparisonAnalysis id="index-comparison" ref="indexComparison" :instrument="instrument" />
     <section id="market-chart" class="chart-section" aria-label="行情走势">
       <IndexChart :key="instrument" ref="indexChart" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" @retry="load('market')" />
       <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
     </section>
-    <EtfIncomeAnalysis v-if="isEtf" id="etf-income" ref="etfIncome" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
     <DrawdownAnalysis id="drawdown-analysis" :instrument="instrument" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :backfill-completed="state.market.data?.backfill?.completed === true" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
+    <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
+    <IndexComparisonAnalysis id="index-comparison" ref="indexComparison" :instrument="instrument" />
     <LowVolatilityAnalysis id="low-volatility" :instrument="instrument" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
-    <ConstituentStructure id="constituent-structure" ref="constituentStructure" :instrument="instrument" />
+    <EtfIncomeAnalysis v-if="isEtf" id="etf-income" ref="etfIncome" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
     <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
+    <ConstituentStructure id="constituent-structure" ref="constituentStructure" :instrument="instrument" />
     <section id="data-notes" class="bottom-grid" aria-label="收益率参考与数据说明">
       <MetricCard title="中国十年期国债收益率" :value="formatYield('treasury', 4)" description="中债国债到期收益率曲线 · 10年" :period="period('treasury')" source="中债" :source-url="sources.treasury" detail="国债到期收益率与指数股息率口径不同，不能直接等同。" :aria-busy="state.treasury.loading">
         <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf('treasury').warning }">{{ noticeOf('treasury').text }}</p>

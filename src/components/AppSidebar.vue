@@ -4,14 +4,14 @@ defineProps({ open: Boolean, instrument: String })
 defineEmits(['close'])
 const navigation = [
   { label: '关键指标', icon: LayoutGrid, href: '#key-metrics' },
+  { label: '行情走势', icon: ChartNoAxesCombined, href: '#market-chart' },
+  { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },
   { label: '收益与风险', icon: ChartNoAxesCombined, href: '#performance-metrics' },
   { label: '收益风险对比', icon: ChartNoAxesCombined, href: '#index-comparison' },
-  { label: '行情走势', icon: ChartNoAxesCombined, href: '#market-chart' },
-  { label: 'ETF 分红与收益', icon: ChartNoAxesCombined, href: '#etf-income', etf: true },
-  { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },
   { label: '低波特征分析', icon: ChartNoAxesCombined, href: '#low-volatility' },
-  { label: '成分与行业结构', icon: LayoutGrid, href: '#constituent-structure' },
+  { label: 'ETF 分红与收益', icon: ChartNoAxesCombined, href: '#etf-income', etf: true },
   { label: '估值分析', icon: ChartNoAxesCombined, href: '#valuation-analysis' },
+  { label: '成分与行业结构', icon: LayoutGrid, href: '#constituent-structure' },
   { label: '数据说明', icon: Database, href: '#data-notes' },
 ]
 const planned = ['宏观环境', '回测工具', '组合配置']

@@ -54,7 +54,7 @@ const price = value => `${formatIndexValue(value, isEtf.value ? 3 : 2)} ${isEtf.
     <div class="drawdown-footer">
       <p v-if="stats?.count">已同步历史：{{ stats.startDate }} — {{ stats.endDate }} · {{ stats.count }} 个日线收盘样本。{{ backfillCompleted ? '' : '历史仍在补充。' }}</p>
       <p>回撤 = 收盘价 ÷ 截至当日最高收盘价 − 1；曲线低于 0 表示距高点的跌幅。最大回撤区间为高点至低点，恢复以已同步样本中首次收盘达到原高点为准。</p>
-      <p>仅依据已同步收盘样本，不填补缺失交易日，不代表成立以来或盘中最大回撤。上方收益风险摘要为 H30269 已保存指标，证券、范围或截止日期可能不同。</p>
+      <p>仅依据已同步收盘样本，不填补缺失交易日，不代表成立以来或盘中最大回撤。收益风险摘要为 H30269 已保存指标，证券、范围或截止日期可能不同。</p>
     </div>
   </section>
 </template>
