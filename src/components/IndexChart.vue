@@ -13,6 +13,7 @@ import KLineRangeSelection from './kline/KLineRangeSelection.vue'
 import KLineDrawingTools from './kline/KLineDrawingTools.vue'
 import KLineNotesPanel from './kline/KLineNotesPanel.vue'
 import KLineNotesOverlay from './kline/KLineNotesOverlay.vue'
+import KLineTradesOverlay from './kline/KLineTradesOverlay.vue'
 import YieldMetricCard from './YieldMetricCard.vue'
 import LatestIndexMetrics from './LatestIndexMetrics.vue'
 import ValuationAnalysis from './ValuationAnalysis.vue'
@@ -22,6 +23,8 @@ import { useKlineChart } from './kline/useKlineChart.js'
 import { useKlineFullscreen } from './kline/useKlineFullscreen.js'
 import { usePreferences } from '../composables/usePreferences.js'
 import { useObservationNotes } from '../composables/useObservationNotes.js'
+import { usePortfolioLedger } from '../composables/usePortfolioLedger.js'
+import { projectLedgerTrades } from '../utils/portfolioLedger.js'
 import { projectNotes } from '../utils/observationNotes.js'
 import { chartExportMetadata, createChartPng, downloadBlob } from '../utils/chartExport.js'
 
@@ -51,10 +54,13 @@ const sidebarView = ref('overview')
 const overviewView = ref('analysis')
 const indicatorSettings = preference('indicatorSettings')
 const noteStore = useObservationNotes()
+const ledger = usePortfolioLedger()
+const tradesOverlay = ref(null), showTrades = ref(true)
 const notesPanel = ref(null), notesOverlay = ref(null), drawingTools = ref(null)
 const pickingNote = ref(false), exporting = ref(false), exportStatus = ref('')
 
 const history = computed(() => aggregateKlines(props.history, period.value))
+const chartTrades = computed(() => props.instrument === '512890' ? projectLedgerTrades(ledger.entries.value, props.history, history.value) : [])
 const chartNotes = computed(() => projectNotes(noteStore.notes.value.filter(note => note.instrument === props.instrument)
   .sort((a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id)), props.history, history.value))
 const maData = computed(() => Object.fromEntries(maOptions.value.map(({ period }) => [period, calculateMA(history.value, period)])))
@@ -111,6 +117,15 @@ function beginNotePick() {
   chartElement.value?.scrollIntoView({ block: 'nearest' })
 }
 function acceptNotePoint(point) { pickingNote.value = false; notesPanel.value?.selectPoint(point) }
+async function openTransaction(id) {
+  if (expanded.value) await toggle()
+  // Selecting the same marker again must reopen its editor after cancellation.
+  ledger.select(null)
+  await nextTick()
+  ledger.select(id)
+  await nextTick()
+  document.getElementById('portfolio-ledger')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 function locateNote(note) {
   if (!note.point) return
   const index = history.value.findIndex(row => row.date === note.point.date)
@@ -129,8 +144,9 @@ async function exportChart() {
       indicators: [...maOptions.value.filter(line => line.enabled).map(line => `MA${line.period}`), ...mainIndicators.value.map(item => item.title), ...(!compact.value ? [subIndicator.value.title] : [])],
       warning: [props.error ? '行情重新读取失败，使用原数据' : '', props.sourceNotice,
         !compact.value && subIndicatorKey.value === 'wave' ? '波段信号含未来函数，历史信号可能重绘' : ''].filter(Boolean).join('；') })
+    if (showTrades.value && chartTrades.value.length) metadata.lines.push('含本机账本真实买卖标记：买入为红色上三角，卖出为绿色下三角；按所在 K 线低／高点定位，标记高度不代表成交价。')
     const blob = await createChartPng({ image: exportImage(), metadata,
-      overlays: [drawingTools.value?.exportOverlay(), notesOverlay.value?.exportOverlay()], notes: notesOverlay.value?.visibleNotes() ?? [] })
+      overlays: [drawingTools.value?.exportOverlay(), notesOverlay.value?.exportOverlay(), showTrades.value ? tradesOverlay.value?.exportOverlay() : null], notes: notesOverlay.value?.visibleNotes() ?? [] })
     downloadBlob(blob, metadata.filename)
     exportStatus.value = 'PNG 已导出，含证券、查看区间、行情日期及可见画线／笔记。'
   } catch (error) { exportStatus.value = `导出失败：${error.message}` }
@@ -179,9 +195,10 @@ function setIndicatorSettings(key, settings) {
           @indicator-change="subIndicatorKey = $event"
           @settings-change="setIndicatorSettings"
         >
-          <template #actions><button type="button" class="chart-action" :disabled="isBusy" @click="openNotes()">观察笔记{{ chartNotes.length ? ` (${chartNotes.length})` : '' }}</button><button type="button" class="chart-action" :disabled="isBusy || !showChart || exporting" @click="exportChart">{{ exporting ? '导出中…' : '导出 PNG' }}</button></template>
+          <template #actions><button v-if="instrument === '512890'" type="button" class="chart-action" :aria-pressed="showTrades" @click="showTrades = !showTrades">{{ showTrades ? '隐藏' : '显示' }}真实交易</button><button type="button" class="chart-action" :disabled="isBusy" @click="openNotes()">观察笔记{{ chartNotes.length ? ` (${chartNotes.length})` : '' }}</button><button type="button" class="chart-action" :disabled="isBusy || !showChart || exporting" @click="exportChart">{{ exporting ? '导出中…' : '导出 PNG' }}</button></template>
         </KLineToolbar>
         <p v-if="exportStatus" class="wave-note" role="status">{{ exportStatus }}</p>
+        <p v-if="showTrades && chartTrades.length" class="wave-note">真实交易：红色 ▲ 买入，绿色 ▼ 卖出；悬停查看实际成交价，点击打开账本。标记位于 K 线低／高点，{{ periodLabel }}同侧多笔交易合并显示。</p>
         </div>
         <KLineQuote hide-details :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :main-indicators="mainIndicators" :active-index="showChart ? activeIndex : -1" :is-latest="activeIndex === history.length - 1" />
 
@@ -192,6 +209,7 @@ function setIndicatorSettings(key, settings) {
           <template v-if="showChart">
             <KLineDrawingTools v-if="expanded" ref="drawingTools" :instrument="instrument" :period="period" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" :price-to-pixel="priceToPixel" @begin="pickingNote = false" />
             <KLineNotesOverlay ref="notesOverlay" :notes="chartNotes" :layout="layout" :revision="chartRevision" :point-at-pixel="pointAtPixel" :point-to-pixel="pointToPixel" :picking="pickingNote" @select="openNotes" @point="acceptNotePoint" @cancel="pickingNote = false" />
+            <KLineTradesOverlay v-if="instrument === '512890' && showTrades" ref="tradesOverlay" :trades="chartTrades" :layout="layout" :revision="chartRevision" :point-to-pixel="pointToPixel" @select="openTransaction" />
             <KLineQuote v-if="isHovering" floating hide-ma :side="quoteSide" :overlay-offset="layout.priceTop + 6" :decimals="instrument === '512890' ? 3 : 2" :quote="quote" :moving-averages="movingAverages" :active-index="activeIndex" :is-latest="activeIndex === history.length - 1" />
             <div v-if="expanded" class="sub-readout" :style="{ top: `${layout.volumeLabel}px` }" aria-label="当前成交量"><span>成交量</span><b :class="quote && quote.close >= quote.open ? 'up' : 'down'">{{ formatVolume(quote?.volume) }}</b></div>
             <div v-if="expanded" class="sub-readout" :style="{ top: `${layout.indicatorLabel}px` }" aria-label="当前副图指标数值"><span>{{ subIndicator.title }}</span><b v-for="line in subIndicator.lines" :key="line.id" :style="{ color: line.type === 'bar' ? (line.data[activeIndex] >= 0 ? '#ff454f' : '#00bec7') : line.color }">{{ line.name }}: {{ formatIndexValue(line.data[activeIndex], subIndicatorKey === 'wave' ? 3 : 2) }}</b></div>

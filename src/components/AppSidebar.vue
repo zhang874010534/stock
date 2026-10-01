@@ -11,6 +11,7 @@ const navigation = [
   { label: '收益风险对比', icon: ChartNoAxesCombined, href: '#index-comparison' },
   { label: '低波特征分析', icon: ChartNoAxesCombined, href: '#low-volatility' },
   { label: 'ETF 分红与收益', icon: ChartNoAxesCombined, href: '#etf-income', etf: true },
+  { label: '个人持仓与交易账本', icon: Calculator, href: '#portfolio-ledger', etf: true },
   { label: '定投模拟器', icon: Calculator, href: '#investment-simulator' },
   { label: '滚动持有期', icon: ChartNoAxesCombined, href: '#holding-periods' },
   { label: '估值分析', icon: ChartNoAxesCombined, href: '#valuation-analysis' },

@@ -14,6 +14,7 @@ import ObservationAlerts from '../components/ObservationAlerts.vue'
 import InvestmentSimulator from '../components/InvestmentSimulator.vue'
 import HoldingPeriodAnalysis from '../components/HoldingPeriodAnalysis.vue'
 import YieldSpreadAnalysis from '../components/YieldSpreadAnalysis.vue'
+import PortfolioLedger from '../components/PortfolioLedger.vue'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -152,6 +153,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     <IndexComparisonAnalysis id="index-comparison" ref="indexComparison" :instrument="instrument" />
     <LowVolatilityAnalysis id="low-volatility" :instrument="instrument" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
     <EtfIncomeAnalysis v-if="isEtf" id="etf-income" ref="etfIncome" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
+    <PortfolioLedger v-if="isEtf" id="portfolio-ledger" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :source-notice="[noticeOf('market').warning ? noticeOf('market').text : '', freshnessOf('market').level === 'old' ? freshnessOf('market').text : ''].filter(Boolean).join('；')" />
     <InvestmentSimulator id="investment-simulator" :instrument="instrument" />
     <HoldingPeriodAnalysis id="holding-periods" :instrument="instrument" />
     <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
