@@ -1,6 +1,6 @@
 import { tradingCalendar } from '../data/tradingCalendar.js'
 
-export const SOURCE_KEYS = ['H30269', '512890', '000300', 'valuation', 'dividend', 'bond', 'csiValuation']
+export const SOURCE_KEYS = ['H30269', '512890', '000300', 'valuation', 'dividend', 'bond', 'csiValuation', 'yieldHistory']
 const timestamp = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value) && Number.isFinite(Date.parse(value))
 export function validateSourceStatus(data) {
   if (!data || data.schemaVersion !== 1 || !data.sources || typeof data.sources !== 'object' || Array.isArray(data.sources)) throw new Error('采集状态格式异常')

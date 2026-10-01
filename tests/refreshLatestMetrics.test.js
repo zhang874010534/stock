@@ -7,6 +7,7 @@ import { refreshLatestMetrics } from '../scripts/update-latest-metrics.mjs'
 import { generateLatestMetrics } from '../scripts/build-latest-metrics.mjs'
 import { DIVIDEND_SOURCE } from '../src/utils/latestMetrics.js'
 import { VALUATION_SOURCE } from '../src/api/valuations.js'
+import { YIELD_SERIES } from '../src/utils/yieldSpread.js'
 
 const now = new Date('2026-09-26T08:00:00Z')
 async function fixture(run) {
@@ -18,6 +19,7 @@ async function fixture(run) {
       h30269: market,
       'valuation-h30269': { code: 'H30269', source: VALUATION_SOURCE, provider: 'Eastmoney', basis: 'provider_unspecified', unit: 'multiple', date: '2026-09-18', pe: 8, pb: 0.8 },
       'dividend-h30269': { code: 'H30269', source: DIVIDEND_SOURCE, basis: 'total_share_capital', unit: 'percent', date: '2026-09-18', value: 4.3 },
+      'china-bond-10y': { ...YIELD_SERIES.treasury, unit: 'percent', date: '2026-09-18', value: 1.7 },
     })) await writeFile(join(directory, `${name}.json`), JSON.stringify(data))
     const initial = await generateLatestMetrics({ directory, now })
     await run({ directory, initial, market, refresh: options => refreshLatestMetrics({ directory, now, ...options }) })
@@ -108,4 +110,20 @@ test('missing reports mark every attempted source failed; legacy errors migrate 
   await refresh({ mode: 'indicators', indicatorUpdater: async () => { throw new Error('missing python') } })
   const missing = JSON.parse(await readFile(join(directory, 'dashboard-source-status.json'), 'utf8'))
   for (const key of ['valuation', 'dividend', 'bond', 'csiValuation']) assert.equal(missing.sources[key].status, 'error')
+}))
+
+test('yield history corruption fails independently, preserves the file and reports recovery', async () => fixture(async ({ refresh, directory }) => {
+  const run = () => refresh({ mode: 'indicators', indicatorUpdater: async () => ({ failed: false, sources: { valuation: null, dividend: null, bond: null, csiValuation: null } }) })
+  await run()
+  const path = join(directory, 'yield-history-h30269-cn10y.json')
+  const saved = await readFile(path, 'utf8')
+  await writeFile(path, '{broken')
+  const failed = await run(); assert.equal(failed.failed, true)
+  assert.equal(failed.data.metrics.dividendYield.status, 'ok')
+  assert.equal(await readFile(path, 'utf8'), '{broken')
+  const status = JSON.parse(await readFile(join(directory, 'dashboard-source-status.json'), 'utf8'))
+  assert.equal(status.sources.yieldHistory.status, 'error'); assert.match(status.sources.yieldHistory.error, /停止覆盖/)
+  await writeFile(path, saved)
+  const recovered = await run(); assert.equal(recovered.failed, false)
+  assert.equal(JSON.parse(await readFile(join(directory, 'dashboard-source-status.json'), 'utf8')).sources.yieldHistory.status, 'ok')
 }))

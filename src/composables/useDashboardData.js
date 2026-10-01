@@ -8,6 +8,7 @@ import { getCsiValuationHistory, getCsiValuationStatus } from '../api/csiValuati
 import { getEtfDistributions } from '../api/etfDistributions.js'
 import { getConstituents } from '../api/constituents.js'
 import { getConstituentHistory } from '../api/constituentHistory.js'
+import { getYieldHistory } from '../api/yieldHistory.js'
 
 const dashboardKey = Symbol('dashboard-data')
 const metricKeys = ['latestMetrics', 'valuation', 'dividend']
@@ -22,6 +23,7 @@ export function createDashboardData(overrides = {}) {
     eastmoneyHistory: getValuationHistory, csiHistory: getCsiValuationHistory, csiStatus: getCsiValuationStatus,
     etfDistributions: getEtfDistributions,
     constituents: getConstituents, constituentHistory: getConstituentHistory,
+    yieldHistory: getYieldHistory,
     ...overrides,
   }
   const states = reactive(Object.fromEntries(Object.keys(loaders).map(key => [key, {
@@ -66,6 +68,9 @@ export function createDashboardData(overrides = {}) {
     // once used on this page. Each retains its own date and failure state.
     if (keys.some(key => metricKeys.includes(key))) {
       for (const key of metricKeys) if (states[key].attempted) selected.add(key)
+    }
+    if (states.yieldHistory.attempted && [...selected].some(key => ['dividend', 'treasury', 'yieldHistory'].includes(key))) {
+      for (const key of ['dividend', 'treasury', 'yieldHistory']) selected.add(key)
     }
     return Promise.all([...selected].map(key => load(key, true)))
   }

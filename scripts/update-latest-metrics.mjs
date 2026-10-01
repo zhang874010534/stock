@@ -7,6 +7,7 @@ import { randomUUID } from 'node:crypto'
 import { updateMarket } from './fetch-market.mjs'
 import { generateLatestMetrics } from './build-latest-metrics.mjs'
 import { validateSourceStatus } from '../src/utils/sourceStatus.js'
+import { generateYieldHistory } from './build-yield-history.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -66,6 +67,22 @@ export async function refreshLatestMetrics({ mode, directory = join(root, 'publi
     if (outcome === null) delete status.errors[key]
     else status.errors[key] = typeof outcome === 'string' && outcome ? outcome : '上游更新未返回有效状态'
   }
+  let yieldHistoryFailed = false
+  if (mode === 'indicators') {
+    let error = null
+    try {
+      const history = await generateYieldHistory({ directory, now, inputErrors: {
+        dividend: result?.sources?.dividend !== null,
+        treasury: result?.sources?.bond !== null,
+      } })
+      if (history.failed) error = '收益率历史更新失败：' + Object.values(history.errors).join('；')
+    } catch (cause) { error = cause.message }
+    yieldHistoryFailed = Boolean(error)
+    dashboard.sources.yieldHistory = {
+      status: error ? 'error' : 'ok', lastAttemptAt: now.toISOString(),
+      lastSuccessAt: error ? dashboard.sources.yieldHistory?.lastSuccessAt ?? null : now.toISOString(), error,
+    }
+  }
   const temporary = `${statusPath}.${randomUUID()}.tmp`
   try {
     await writeFile(temporary, `${JSON.stringify(status, null, 2)}\n`, { flag: 'wx' })
@@ -77,7 +94,7 @@ export async function refreshLatestMetrics({ mode, directory = join(root, 'publi
     await rename(dashboardTemporary, dashboardPath)
   } finally { await unlink(dashboardTemporary).catch(error => { if (error.code !== 'ENOENT') throw error }) }
   const generated = await generateLatestMetrics({ directory, now })
-  return { ...generated, failed: Boolean(result?.failed) || generated.failed || attemptedKeys.some(key => dashboard.sources[key].status === 'error') }
+  return { ...generated, failed: Boolean(result?.failed) || generated.failed || yieldHistoryFailed || attemptedKeys.some(key => dashboard.sources[key].status === 'error') }
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {

@@ -9,6 +9,7 @@
     "data": "node scripts/fetch-market.mjs",
     "data:update": "node scripts/fetch-market.mjs --verbose",
     "data:metrics": "node scripts/build-latest-metrics.mjs",
+    "data:yield-history": "node scripts/build-yield-history.mjs",
     "data:constituents": "python scripts/fetch-constituents.py",
     "data:etf-distributions": "node scripts/fetch-etf-distributions.mjs",
     "data:refresh-market": "node scripts/update-latest-metrics.mjs market",
