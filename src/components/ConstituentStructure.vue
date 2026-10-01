@@ -2,7 +2,7 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { useDashboardData } from '../composables/useDashboardData.js'
 import { CONSTITUENTS_SOURCE } from '../api/constituents.js'
-import { INDUSTRY_SOURCE, industryDistribution, matchingSnapshot, membershipTimeline } from '../utils/constituentStructure.js'
+import { INDUSTRY_SOURCE, industryDistribution, matchingSnapshot, membershipTimeline, compareConstituentObservations } from '../utils/constituentStructure.js'
 
 defineProps({ instrument: { type: String, default: 'H30269' } })
 const dashboard = useDashboardData()
@@ -22,6 +22,35 @@ function selectObservation(observedAt) {
 }
 const history = computed(() => inputs.history)
 const snapshots = computed(() => [...(history.value?.snapshots ?? [])].reverse())
+const comparisonFrom = ref(''), comparisonTo = ref(''), comparisonPinned = ref(false), eventMode = ref('all')
+watch(snapshots, values => {
+  const valid = id => values.some(item => item.observedAt === id)
+  if (!comparisonPinned.value || !valid(comparisonFrom.value) || !valid(comparisonTo.value)) {
+    comparisonTo.value = values[0]?.observedAt ?? ''
+    comparisonFrom.value = values[1]?.observedAt ?? ''
+    comparisonPinned.value = false
+  }
+}, { immediate: true })
+const comparisonError = computed(() => {
+  const chronological = history.value?.snapshots ?? []
+  const from = chronological.findIndex(item => item.observedAt === comparisonFrom.value)
+  const to = chronological.findIndex(item => item.observedAt === comparisonTo.value)
+  return from < 0 || to < 0 ? '至少积累两次观察后才能比较。' : from >= to ? '变更前观察必须早于变更后观察；同一来源日期的不同修订也按观察顺序比较。' : ''
+})
+const comparison = computed(() => comparisonError.value ? null : compareConstituentObservations(
+  snapshots.value.find(item => item.observedAt === comparisonFrom.value), snapshots.value.find(item => item.observedAt === comparisonTo.value)))
+function compareLatest() {
+  comparisonPinned.value = false
+  comparisonTo.value = snapshots.value[0]?.observedAt ?? ''
+  comparisonFrom.value = snapshots.value[1]?.observedAt ?? ''
+}
+const signedCount = value => `${value > 0 ? '+' : ''}${value}`
+const shareText = value => value === null ? '—' : `${(value * 100).toFixed(1)}%`
+const shareChangeText = value => {
+  if (value === null) return '—'
+  const rounded = Number(value.toFixed(1))
+  return `${rounded > 0 ? '+' : ''}${(Object.is(rounded, -0) ? 0 : rounded).toFixed(1)} 个百分点`
+}
 const current = computed(() => matchingSnapshot(inputs.current, history.value) ?? inputs.current ?? snapshots.value[0] ?? null)
 const snapshot = computed(() => selected.value === 'current' ? current.value : snapshots.value.find(item => item.observedAt === selected.value) ?? null)
 watch(snapshots, values => { if (selected.value !== 'current' && !values.some(item => item.observedAt === selected.value)) selected.value = 'current' })
@@ -32,6 +61,7 @@ const rows = computed(() => (snapshot.value?.members ?? []).filter(item => {
   return matchesIndustry && `${item.code} ${item.name}`.toLowerCase().includes(query.value.trim().toLowerCase())
 }))
 const events = computed(() => membershipTimeline(history.value))
+const visibleEvents = computed(() => eventMode.value === 'all' ? events.value : events.value.filter(item => item.added.length || item.removed.length))
 const membershipEventCount = computed(() => events.value.filter(item => item.added.length || item.removed.length).length)
 const mismatch = computed(() => Boolean(inputs.current?.members.length && history.value?.snapshots.length && !matchingSnapshot(inputs.current, history.value)))
 const industryDates = computed(() => [...new Set(snapshot.value?.members.map(item => item.industryDate).filter(Boolean) ?? [])].sort())
@@ -47,7 +77,7 @@ for (const key of ['constituents', 'constituentHistory']) dashboard.ensure(key)
 
 <template>
   <section class="constituent-structure panel" aria-label="H30269成分股变化与行业结构" :aria-busy="loading">
-    <header class="structure-heading"><div><h2>成分股变化与行业结构</h2><p>H30269 · 中证红利低波动指数{{ instrument === '512890' ? ' · ETF 标的指数' : '' }}</p></div><button type="button" :disabled="loading" @click="refresh">{{ loading ? '读取中…' : '重新读取成分股' }}</button></header>
+    <header class="structure-heading"><div><h2>成分股变化与行业结构</h2><p>H30269 · 中证红利低波动指数{{ instrument === '512890' ? ' · ETF 标的指数' : '' }}</p></div><div class="structure-actions"><a href="#constituent-comparison" class="comparison-shortcut">查看名单对比</a><button type="button" :disabled="loading" @click="refresh">{{ loading ? '读取中…' : '重新读取成分股' }}</button></div></header>
     <p class="structure-note">{{ instrument === '512890' ? '展示标的指数样本，非 ETF 实际持仓。' : '展示指数样本名单。' }}行业占比按股票数量计算，不代表指数权重或资金配置比例。</p>
     <p v-if="error" class="structure-warning" role="status">读取失败{{ inputs.current || inputs.history ? '，保留上次分析及原日期。' : '，暂无可用分析。' }}{{ error }}</p>
     <p v-if="inputs.current?.status && inputs.current.status !== 'ok'" class="structure-warning">{{ inputs.current.reason }}</p>
@@ -72,9 +102,25 @@ for (const key of ['constituents', 'constituentHistory']) dashboard.ensure(key)
         </section>
       </div>
     </template>
+    <section id="constituent-comparison" class="membership-comparison" aria-label="名单区间对比">
+      <div class="structure-subheading"><h3>名单区间对比</h3><button type="button" :disabled="snapshots.length < 2" @click="compareLatest">最近两次观察</button></div>
+      <p class="structure-note">选择两次已保存观察，查看期末相较期初新增、移除的股票及行业数量变化。跨多次观察只显示净变化；逐次记录见下方时间线。</p>
+      <div v-if="snapshots.length > 1" class="comparison-controls"><label>变更前观察<select v-model="comparisonFrom" aria-label="区间对比变更前观察" @change="comparisonPinned = true"><option v-for="item in snapshots" :key="item.observedAt" :value="item.observedAt">{{ item.date }} · {{ formatTime(item.observedAt) }}</option></select></label><label>变更后观察<select v-model="comparisonTo" aria-label="区间对比变更后观察" @change="comparisonPinned = true"><option v-for="item in snapshots" :key="item.observedAt" :value="item.observedAt">{{ item.date }} · {{ formatTime(item.observedAt) }}</option></select></label></div>
+      <p v-if="loading && !comparison" class="structure-note">正在读取已保存名单观察…</p>
+      <p v-else-if="comparisonError" class="structure-warning" role="status">{{ comparisonError }}</p>
+      <template v-if="comparison">
+        <dl class="comparison-summary"><div><dt>区间新增</dt><dd>{{ comparison.added.length }} 只</dd></div><div><dt>区间移除</dt><dd>{{ comparison.removed.length }} 只</dd></div><div><dt>两端均在名单</dt><dd>{{ comparison.retainedCount }} 只</dd></div><div><dt>行业分类覆盖</dt><dd><span class="coverage-end">{{ comparison.before.classified }} / {{ comparison.before.total }}</span> → <span class="coverage-end">{{ comparison.after.classified }} / {{ comparison.after.total }}</span></dd></div></dl>
+        <p v-if="!comparison.added.length && !comparison.removed.length" class="structure-note">这两次观察之间名单无增减；不代表区间内没有发生又撤销的调整。</p>
+        <div class="comparison-members"><section><h4>新增股票（{{ comparison.added.length }} 只）</h4><p v-if="!comparison.added.length" class="structure-note">无</p><ul v-else><li v-for="member in comparison.added" :key="`${member.exchange}:${member.code}`"><strong>{{ member.name }}</strong><span>{{ member.code }} · {{ member.exchange === 'SSE' ? '沪市' : '深市' }} · {{ member.industry ?? '未分类' }}{{ member.industryStatus === 'stale' ? '（保留分类）' : '' }}</span></li></ul></section><section><h4>移除股票（{{ comparison.removed.length }} 只）</h4><p v-if="!comparison.removed.length" class="structure-note">无</p><ul v-else><li v-for="member in comparison.removed" :key="`${member.exchange}:${member.code}`"><strong>{{ member.name }}</strong><span>{{ member.code }} · {{ member.exchange === 'SSE' ? '沪市' : '深市' }} · {{ member.industry ?? '未分类' }}{{ member.industryStatus === 'stale' ? '（保留分类）' : '' }}</span></li></ul></section></div>
+        <p v-if="comparison.before.unknown || comparison.after.unknown || comparison.before.stale || comparison.after.stale" class="structure-warning">两端分类覆盖不足或含保留分类；下方变化包含分类补充／来源观察变化，不能全部归因于调样。</p>
+        <details class="industry-comparison"><summary>查看行业数量与占比变化</summary><p class="structure-note">各自以该次完整名单为分母；未分类单列。新增股票显示变更后保存的行业，移除股票显示变更前保存的行业，不用今天的分类回填。</p><div class="industry-comparison-scroll" tabindex="0" role="region" aria-label="行业数量与占比变化，可横向滚动"><table><thead><tr><th scope="col">行业</th><th scope="col">变更前数量</th><th scope="col">变更后数量</th><th scope="col">数量变化</th><th scope="col">变更前占比</th><th scope="col">变更后占比</th><th scope="col">占比变化</th></tr></thead><tbody><tr v-for="group in comparison.groups" :key="group.industry ?? 'unknown'"><td>{{ group.label }}</td><td>{{ group.beforeCount }} 只</td><td>{{ group.afterCount }} 只</td><td>{{ signedCount(group.change) }} 只</td><td>{{ shareText(group.beforeShare) }}</td><td>{{ shareText(group.afterShare) }}</td><td>{{ shareChangeText(group.shareChange) }}</td></tr></tbody></table></div></details>
+        <div class="event-observations"><button type="button" @click="selectObservation(comparison.fromObservedAt)">打开区间变更前名单</button><button type="button" @click="selectObservation(comparison.observedAt)">打开区间变更后名单</button></div>
+      </template>
+    </section>
     <section class="membership-timeline" aria-label="名单变化时间线"><div class="structure-subheading"><h3>名单变化时间线</h3><span>{{ membershipEventCount }} 次调入调出观察</span></div><p class="structure-note">{{ history?.snapshots.length ? `已保存 ${history.snapshots[0].date} — ${history.snapshots.at(-1).date} 的 ${history.snapshots.length} 次名单观察。` : '历史尚未积累。' }}首次记录是基线，之后比较相邻观察；不能据此确认官方调样生效日，也不能发现两次采集之间发生又撤销的变化。</p>
-      <p v-if="!events.length" class="structure-empty">{{ history?.snapshots.length > 1 ? '已保存观察中尚未发现调入调出或名称、行业归属变化。' : '至少积累两次观察后才能比较名单变化。' }}</p>
-      <ol v-else class="timeline-events"><li v-for="event in events" :key="event.observedAt"><header><strong>{{ event.fromDate }} → {{ event.date }}</strong><span>{{ event.sameSourceDate ? '同源日期修订' : '相邻名单变化' }} · 观察 {{ formatTime(event.observedAt) }}</span></header><div class="event-observations"><button type="button" :aria-label="`查看变更前名单，观察于${formatTime(event.fromObservedAt)}`" @click="selectObservation(event.fromObservedAt)">查看变更前名单</button><button type="button" :aria-label="`查看变更后名单，观察于${formatTime(event.observedAt)}`" @click="selectObservation(event.observedAt)">查看变更后名单</button></div><div class="event-changes"><div><h4>调入 {{ event.added.length }} 只</h4><p v-if="!event.added.length">无</p><p v-for="member in event.added" :key="member.code" class="member-added">{{ member.code }} {{ member.name }}</p></div><div><h4>调出 {{ event.removed.length }} 只</h4><p v-if="!event.removed.length">无</p><p v-for="member in event.removed" :key="member.code" class="member-removed">{{ member.code }} {{ member.name }}</p></div></div><p v-for="item in event.renamed" :key="`name:${item.code}`" class="structure-note">名称更新：{{ item.code }} {{ item.before }} → {{ item.after }}，不计为调入调出。</p><p v-for="item in event.industryChanges" :key="`industry:${item.code}`" class="structure-note">行业归属观察变化：{{ item.code }} {{ item.name }} {{ item.before }} → {{ item.after }}。</p></li></ol>
+      <div class="event-filter" role="group" aria-label="筛选名单变化记录"><button type="button" :aria-pressed="eventMode === 'all'" @click="eventMode = 'all'">全部变化</button><button type="button" :aria-pressed="eventMode === 'membership'" @click="eventMode = 'membership'">仅看调入调出</button></div>
+      <p v-if="!visibleEvents.length" class="structure-empty">{{ eventMode === 'membership' && history?.snapshots.length > 1 ? '已保存观察中尚未发现调入调出。' : history?.snapshots.length > 1 ? '已保存观察中尚未发现调入调出或名称、行业归属变化。' : '至少积累两次观察后才能比较名单变化。' }}</p>
+      <ol v-else class="timeline-events"><li v-for="event in visibleEvents" :key="event.observedAt"><header><strong>{{ event.fromDate }} → {{ event.date }}</strong><span>{{ event.sameSourceDate ? '同源日期修订' : '相邻名单变化' }} · 观察 {{ formatTime(event.observedAt) }}</span></header><div class="event-observations"><button type="button" :aria-label="`查看变更前名单，观察于${formatTime(event.fromObservedAt)}`" @click="selectObservation(event.fromObservedAt)">查看变更前名单</button><button type="button" :aria-label="`查看变更后名单，观察于${formatTime(event.observedAt)}`" @click="selectObservation(event.observedAt)">查看变更后名单</button></div><div class="event-changes"><div><h4>调入 {{ event.added.length }} 只</h4><p v-if="!event.added.length">无</p><p v-for="member in event.added" :key="`${member.exchange}:${member.code}`" class="member-added">{{ member.code }} {{ member.name }}</p></div><div><h4>调出 {{ event.removed.length }} 只</h4><p v-if="!event.removed.length">无</p><p v-for="member in event.removed" :key="`${member.exchange}:${member.code}`" class="member-removed">{{ member.code }} {{ member.name }}</p></div></div><p v-for="item in event.renamed" :key="`name:${item.code}`" class="structure-note">名称更新：{{ item.code }} {{ item.before }} → {{ item.after }}，不计为调入调出。</p><p v-for="item in event.industryChanges" :key="`industry:${item.code}`" class="structure-note">行业归属观察变化：{{ item.code }} {{ item.name }} {{ item.before }} → {{ item.after }}。</p></li></ol>
       <details v-if="snapshots.length" class="observation-list"><summary>查看已保存观察日期</summary><ul><li v-for="item in snapshots" :key="item.observedAt"><button type="button" @click="selectObservation(item.observedAt)">{{ item.date }} · 观察 {{ formatTime(item.observedAt) }}</button><span>{{ item.members.length }} 只 · {{ item.members.filter(member => member.industry).length }} 只已分类</span></li></ul></details>
     </section>
     <details class="structure-method"><summary>来源与历史口径</summary><p>名单来自<a :href="CONSTITUENTS_SOURCE" target="_blank" rel="noopener noreferrer">中证官方 H30269 样本文件</a>；行业匹配依据为<a :href="INDUSTRY_SOURCE" target="_blank" rel="noopener noreferrer">中证全指行业指数编制方案</a>及其 11 个一级行业指数样本文件。</p><p>行业指数经过自身选样筛选，未覆盖全部上市公司；未匹配股票计入未分类，不代表从 H30269 调出。各份行业文件可能日期不同，分类仅代表所保存来源的观察结果；采集失败保留值单独标注。历史观察只用当时已保存分类，不用今天的行业分类回填旧名单。</p><p>时间线按市场和股票代码比较，名称更新不计为调入调出。同一天的名单内容修订保留独立观察。初始旧名单来自项目中真实保存的 Git 快照，之前的官方历次调样不推断、不补造。</p><p>“重新读取”只读取已部署文件；后续后台采集会继续积累历史和行业分类。</p></details>
@@ -117,6 +163,17 @@ table { width: 100%; border-collapse: collapse; font-size: 11px; } th, td { padd
 .event-changes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 12px; } .event-changes h4 { color: #acbcd3; } .event-changes p { margin-top: 6px; font-size: 11px; color: #93a4bf; } .event-changes .member-added { color: #ff8790; } .event-changes .member-removed { color: #63d0a7; }
 .observation-list { margin-top: 14px; color: #acbcd3; font-size: 11px; } summary { cursor: pointer; } .observation-list ul { padding: 0; list-style: none; } .observation-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; } .observation-list span { color: #93a4bf; }
 .structure-method { border-top: 1px solid #223049; padding-top: 12px; margin-top: 20px; } .structure-method p { margin-top: 7px; } a { color: #9bc5ff; text-decoration: underline; }
+.membership-comparison { border-top: 1px solid #223049; padding-top: 18px; margin-top: 22px; scroll-margin-top: calc(var(--header-height) + 18px); }
+.structure-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }.comparison-shortcut { border: 1px solid #33435b; border-radius: 5px; padding: 6px 9px; color: #c7d8f2; background: #111d30; text-decoration: none; font-size: 11px; }
+.comparison-controls, .comparison-members { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.comparison-controls label { min-width: 0; color: #acbcd3; font-size: 11px; }.comparison-controls select { width: 100%; min-width: 0; }
+.comparison-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }.comparison-summary > div, .comparison-members > section { min-width: 0; padding: 12px; border: 1px solid #223049; background: #0a1220; border-radius: 7px; }.comparison-summary dt { font-size: 11px; color: #93a4bf; }.comparison-summary dd { margin: 8px 0 0; font: 500 17px var(--font-mono); color: #c7d8f2; overflow-wrap: anywhere; }
+.comparison-members h4 { color: #acbcd3; }.comparison-members ul { padding: 0; margin: 9px 0 0; list-style: none; }.comparison-members li { padding: 7px 0; display: grid; gap: 5px; font-size: 11px; }.comparison-members strong { color: #c7d8f2; font-weight: 500; }.comparison-members span { color: #93a4bf; overflow-wrap: anywhere; }
+.industry-comparison { min-width: 0; margin-top: 15px; color: #acbcd3; font-size: 11px; }.industry-comparison-scroll { overflow-x: auto; max-width: 100%; margin-top: 10px; border: 1px solid #223049; border-radius: 7px; }.industry-comparison table { min-width: 680px; }.industry-comparison td, .industry-comparison th { white-space: nowrap; }
+.event-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.coverage-end { display: inline-block; white-space: nowrap; }
 @media (max-width: 1050px) { .structure-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .constituent-structure { padding: 15px 12px; } .structure-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; } .structure-summary dd { font-size: 20px; } th, td { padding: 8px 5px; } }
+@media (max-width: 1050px) { .comparison-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .comparison-controls { grid-template-columns: minmax(0, 1fr); } }
 </style>

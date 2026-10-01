@@ -38,6 +38,48 @@ function inputs(version = 1) {
   return { current, history }
 }
 
+test('区间选择按观察顺序校验，显示净新增移除及覆盖变化，并可定位两端名单', async () => {
+  const data = inputs(2)
+  const view = await mount('ConstituentStructure', { instrument: '512890' }, createDashboardData({ constituents: () => data.current, constituentHistory: () => data.history }))
+  try {
+    await flush(); assert.match(view.text(), /新增股票（1 只）/); assert.match(view.text(), /移除股票（1 只）/)
+    assert.match(view.text(), /49 只/); assert.match(view.text(), /不能全部归因于调样/)
+    const field = label => view.nodes().find(node => node.props['aria-label'] === label)
+    const from = field('区间对比变更前观察'), to = field('区间对比变更后观察')
+    from.props['onUpdate:modelValue'](data.history.snapshots[1].observedAt); from.props.onChange(); await nextTick()
+    assert.match(view.text(), /变更前观察必须早于变更后观察/); assert.ok(!view.text().includes('新增股票（'))
+    to.props['onUpdate:modelValue'](data.history.snapshots[0].observedAt); to.props.onChange(); await nextTick()
+    assert.match(view.text(), /变更前观察必须早于变更后观察/)
+    view.button('最近两次观察').props.onClick(); await nextTick(); assert.match(view.text(), /新增股票（1 只）/)
+    view.button('打开区间变更前名单').props.onClick(); await nextTick(); assert.match(view.text(), /未保存行业分类/)
+    view.button('打开区间变更后名单').props.onClick(); await nextTick(); assert.match(view.text(), /45 \/ 50/)
+  } finally { view.unmount() }
+})
+
+test('仅看调入调出排除改名和行业观察变化，固定对比在新增观察后保留选择', async () => {
+  const data = inputs(2)
+  const next = structuredClone(data.history.snapshots[1]); next.date = '2026-09-29'; next.observedAt = '2026-09-29T10:00:00Z'
+  next.members[1].name = '再次改名'; data.history.snapshots.push(next)
+  const dashboard = createDashboardData({ constituents: () => data.current, constituentHistory: () => data.history })
+  const view = await mount('ConstituentStructure', { instrument: 'H30269' }, dashboard)
+  try {
+    await flush(); assert.match(view.text(), /新增股票（0 只）/)
+    const timeline = () => view.nodes().find(node => node.props['aria-label'] === '名单变化时间线')
+    const texts = node => [node.text, ...node.children.map(texts)].join(' ')
+    assert.match(texts(timeline()), /再次改名/)
+    view.button('仅看调入调出').props.onClick(); await nextTick()
+    assert.ok(!texts(timeline()).includes('再次改名')); assert.match(texts(timeline()), /调入 1 只/)
+    const from = view.nodes().find(node => node.props['aria-label'] === '区间对比变更前观察')
+    from.props['onUpdate:modelValue'](data.history.snapshots[0].observedAt); from.props.onChange(); await nextTick()
+    const later = structuredClone(next); later.date = '2026-09-30'; later.observedAt = '2026-09-30T10:00:00Z'
+    dashboard.states.constituentHistory.data = { ...data.history, snapshots: [...data.history.snapshots, later] }; await flush()
+    const beforeSelect = view.nodes().find(node => node.props['aria-label'] === '区间对比变更前观察')
+    const afterSelect = view.nodes().find(node => node.props['aria-label'] === '区间对比变更后观察')
+    assert.equal(beforeSelect.options[beforeSelect.selectedIndex].value, data.history.snapshots[0].observedAt)
+    assert.equal(afterSelect.options[afterSelect.selectedIndex].value, next.observedAt)
+  } finally { view.unmount() }
+})
+
 test('行业筛选和搜索、历史选择及ETF标签正确；旧观察不使用当前分类，改名不算调入', async () => {
   const data = inputs(2)
   const dashboard = createDashboardData({ constituents: () => data.current, constituentHistory: () => data.history })

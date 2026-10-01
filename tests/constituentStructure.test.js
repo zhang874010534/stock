@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { CONSTITUENTS_SOURCE } from '../src/api/constituents.js'
 import { getConstituentHistory } from '../src/api/constituentHistory.js'
-import { INDUSTRY_SOURCE, INDUSTRY_BASIS, validateConstituentHistory, industryDistribution, compareMembership, matchingSnapshot, membershipTimeline } from '../src/utils/constituentStructure.js'
+import { INDUSTRY_SOURCE, INDUSTRY_BASIS, validateConstituentHistory, industryDistribution, compareMembership, matchingSnapshot, membershipTimeline, compareConstituentObservations } from '../src/utils/constituentStructure.js'
 
 export function fixture() {
   const observedAt = '2026-09-24T10:00:00Z'
@@ -11,6 +11,36 @@ export function fixture() {
     industryStatus: i < 30 ? 'ok' : 'unavailable', industryDate: i < 30 ? '2026-09-24' : null, industrySourceIndex: i < 30 ? '932083' : null, industryObservedAt: i < 30 ? observedAt : null }))
   return { schemaVersion: 1, code: 'H30269', source: CONSTITUENTS_SOURCE, industrySource: INDUSTRY_SOURCE, industryBasis: INDUSTRY_BASIS, membershipStatus: 'ok', membershipReason: null, industryStatus: 'partial', industryReason: '20只未分类', lastAttemptAt: observedAt, snapshots: [{ date: '2026-09-24', observedAt, members }] }
 }
+
+test('区间对比保留两端分类，数量占比各用完整名单分母；行业消失、未分类和分类补充不算调样', () => {
+  const member = (code, industry, name = code) => ({ code, name, exchange: 'SZSE', industry })
+  const before = { date: '2026-09-24', observedAt: '2026-09-24T10:00:00Z', members: [member('000001', '金融'), member('000002', '工业'), member('000003', null)] }
+  const after = { date: '2026-09-28', observedAt: '2026-09-28T10:00:00Z', members: [member('000001', '金融', '新名称'), member('000003', '能源'), member('000004', null), member('000005', '金融')] }
+  const result = compareConstituentObservations(before, after)
+  assert.equal(result.added.length, 2); assert.equal(result.removed.length, 1); assert.equal(result.retainedCount, 2)
+  assert.equal(result.removed[0].industry, '工业'); assert.equal(result.added[0].industry, null)
+  const finance = result.groups.find(group => group.industry === '金融')
+  assert.equal(finance.beforeCount, 1); assert.equal(finance.afterCount, 2); assert.equal(finance.change, 1)
+  assert.equal(finance.beforeShare, 1 / 3); assert.equal(finance.afterShare, .5)
+  assert.ok(Math.abs(finance.shareChange - 100 / 6) < 1e-12)
+  const industrial = result.groups.find(group => group.industry === '工业')
+  assert.equal(industrial.afterCount, 0); assert.equal(industrial.change, -1)
+  assert.equal(result.groups.reduce((sum, group) => sum + group.beforeCount, 0), 3)
+  assert.equal(result.groups.reduce((sum, group) => sum + group.afterCount, 0), 4)
+  assert.equal(result.renamed.length, 1); assert.equal(result.industryChanges.length, 0)
+  assert.equal(before.members[2].industry, null)
+})
+
+test('跨多次观察净变化可为零，逐次调入调出仍保留；空分类占比不冒充零', () => {
+  const original = fixture().snapshots[0], middle = structuredClone(original), last = structuredClone(original)
+  middle.observedAt = '2026-09-25T10:00:00Z'; middle.members[0].code = '000099'
+  last.observedAt = '2026-09-26T10:00:00Z'
+  const net = compareConstituentObservations(original, last)
+  assert.equal(net.added.length, 0); assert.equal(net.removed.length, 0); assert.equal(net.retainedCount, 50)
+  assert.equal(membershipTimeline({ snapshots: [original, middle, last] }).length, 2)
+  const empty = compareConstituentObservations({ ...original, members: [] }, original)
+  assert.ok(empty.groups.every(group => group.beforeShare === null && group.shareChange === null))
+})
 
 test('行业数量占比使用全部样本分母，未分类与保留分类明确计数；历史不被当前分类回填', () => {
   const data = fixture(), snapshot = data.snapshots[0]

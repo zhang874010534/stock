@@ -83,3 +83,20 @@ export function membershipTimeline(history) {
   return (history?.snapshots ?? []).slice(1).map((snapshot, index) => compareMembership(history.snapshots[index], snapshot))
     .filter(event => event.added.length || event.removed.length || event.renamed.length || event.industryChanges.length).reverse()
 }
+
+export function compareConstituentObservations(previous, current) {
+  const before = industryDistribution(previous), after = industryDistribution(current)
+  const beforeGroups = new Map(before.groups.map(group => [group.industry, group]))
+  const afterGroups = new Map(after.groups.map(group => [group.industry, group]))
+  const industries = [...new Set([...beforeGroups.keys(), ...afterGroups.keys()])]
+  const groups = industries.map(industry => {
+    const old = beforeGroups.get(industry), next = afterGroups.get(industry)
+    const beforeCount = old?.count ?? 0, afterCount = next?.count ?? 0
+    const beforeShare = before.total ? beforeCount / before.total : null
+    const afterShare = after.total ? afterCount / after.total : null
+    return { industry, label: industry ?? '未分类', beforeCount, afterCount, change: afterCount - beforeCount,
+      beforeShare, afterShare, shareChange: beforeShare === null || afterShare === null ? null : (afterShare - beforeShare) * 100 }
+  }).sort((a, b) => b.afterCount - a.afterCount || a.label.localeCompare(b.label, 'zh-CN'))
+  const event = compareMembership(previous, current)
+  return { ...event, before, after, retainedCount: current.members.length - event.added.length, groups }
+}
