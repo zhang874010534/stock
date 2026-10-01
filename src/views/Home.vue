@@ -10,6 +10,7 @@ import EtfIncomeAnalysis from '../components/EtfIncomeAnalysis.vue'
 import IndexComparisonAnalysis from '../components/IndexComparisonAnalysis.vue'
 import LowVolatilityAnalysis from '../components/LowVolatilityAnalysis.vue'
 import ConstituentStructure from '../components/ConstituentStructure.vue'
+import ObservationAlerts from '../components/ObservationAlerts.vue'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -36,6 +37,7 @@ const indexChart = ref(null)
 const etfIncome = ref(null)
 const indexComparison = ref(null)
 const constituentStructure = ref(null)
+const observationAlerts = ref(null)
 const collection = dashboard.states.collection
 const checkedAt = dashboard.checkedAt
 const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading || indexComparison.value?.loading || constituentStructure.value?.loading)
@@ -105,6 +107,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
       </div>
     </section>
     <div class="data-status" :class="{ warning: hasWarning }" role="status"><Database :size="14" /><span>{{ statusLabel }}</span><span class="status-caption">各项日期见卡片</span></div>
+    <a v-if="observationAlerts?.activeCount" class="observation-notice" href="#observation-alerts" role="status">{{ instrument }} · {{ observationAlerts.activeCount }} 条观察条件满足 · 查看观察提醒 →</a>
     <details class="collection-details panel">
       <summary>查看后台采集状态与时间</summary>
       <p>重新读取只获取站点已保存的文件，不触发后台采集。来源日期不同本身不表示更新失败。</p>
@@ -139,6 +142,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
       <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
     </section>
     <DrawdownAnalysis id="drawdown-analysis" :instrument="instrument" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :backfill-completed="state.market.data?.backfill?.completed === true" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
+    <ObservationAlerts id="observation-alerts" ref="observationAlerts" :instrument="instrument" />
     <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
     <IndexComparisonAnalysis id="index-comparison" ref="indexComparison" :instrument="instrument" />
     <LowVolatilityAnalysis id="low-volatility" :instrument="instrument" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
@@ -180,6 +184,8 @@ h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .
 .refresh-button:disabled { opacity: .6; }
 .data-status { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; color: #98abc7; font-size: 11px; }
 .data-status.warning { color: #d5b57f; }
+.observation-notice { padding: 10px 14px; border: 1px solid #477874; border-radius: 8px; background: #0c242b; color: #89e3e9; font-size: 12px; }
+.observation-notice:focus-visible { outline: 2px solid #67d5df; outline-offset: 2px; }
 .status-caption { color: #8495ae; margin-left: auto; }
 .metrics-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 .chart-section { min-width: 0; }

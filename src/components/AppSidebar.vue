@@ -1,11 +1,12 @@
 <script setup>
-import { House, ChartNoAxesCombined, Database, LayoutGrid, ChevronDown, X } from 'lucide-vue-next'
+import { House, ChartNoAxesCombined, Database, LayoutGrid, ChevronDown, X, Bell } from 'lucide-vue-next'
 defineProps({ open: Boolean, instrument: String })
 defineEmits(['close'])
 const navigation = [
   { label: '关键指标', icon: LayoutGrid, href: '#key-metrics' },
   { label: '行情走势', icon: ChartNoAxesCombined, href: '#market-chart' },
   { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },
+  { label: '观察提醒', icon: Bell, href: '#observation-alerts' },
   { label: '收益与风险', icon: ChartNoAxesCombined, href: '#performance-metrics' },
   { label: '收益风险对比', icon: ChartNoAxesCombined, href: '#index-comparison' },
   { label: '低波特征分析', icon: ChartNoAxesCombined, href: '#low-volatility' },
