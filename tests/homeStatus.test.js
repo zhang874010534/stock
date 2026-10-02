@@ -52,6 +52,7 @@ test('homepage separates readable snapshots, source failure, unknown status and 
     mounted = await mountHome()
     await flush()
     assert.ok(mounted.nodes().some(n => n.props['data-component'] === 'EtfNavAnalysis'))
+    assert.ok(mounted.nodes().some(n => n.props['data-component'] === 'DividendQualityAnalysis'))
     assert.match(mounted.text(), /部分后台更新失败/)
     assert.match(mounted.text(), /后台更新失败，显示已保存数据/)
     assert.match(mounted.text(), /ETF 来源失败/)
@@ -59,6 +60,7 @@ test('homepage separates readable snapshots, source failure, unknown status and 
     mounted.props.instrument = 'H30269'
     await flush()
     assert.ok(!mounted.nodes().some(n => n.props['data-component'] === 'EtfNavAnalysis'))
+    assert.ok(mounted.nodes().some(n => n.props['data-component'] === 'DividendQualityAnalysis'))
     assert.ok(!mounted.text().includes('部分后台更新失败'))
     assert.ok(!mounted.text().includes('ETF 来源失败'))
     mounted.props.instrument = '512890'

@@ -1,0 +1,5267 @@
+{
+  "schemaVersion": 1,
+  "code": "H30269",
+  "provider": "Eastmoney",
+  "source": "https://datacenter-web.eastmoney.com/api/data/v1/get",
+  "dividendReport": "RPT_F10_DIVIDEND_HISTOGRAM",
+  "financialReport": "RPT_F10_FINANCE_MAINFINADATA",
+  "basis": "fiscal_year_implemented_company_cash",
+  "currency": "CNY",
+  "unit": "CNY",
+  "years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "membershipSource": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/H30269cons.xls",
+  "industrySource": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/H30199_Index_Methodology_cn.pdf",
+  "industryBasis": "csi_level1_membership_match",
+  "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+  "status": "ok",
+  "reason": null,
+  "membershipDate": "2026-09-30",
+  "membershipStatus": "ok",
+  "membershipReason": null,
+  "members": [
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "exchange": "SZSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 4424549349,
+            "plannedDividend": 4424549349
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 5530686686.43,
+            "plannedDividend": 5530686686.43
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 13952855184,
+            "plannedDividend": 13952855184
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 11798798264.68,
+            "plannedDividend": 11798798264.68
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 11565927246.01,
+            "plannedDividend": 11565927246.01
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-10",
+            "updatedDate": "2023-03-09",
+            "parentProfit": 36336000000,
+            "operatingCashFlow": -192733000000,
+            "roe": 10.85,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-09",
+            "updatedDate": "2024-03-15",
+            "parentProfit": 45516000000,
+            "operatingCashFlow": 134572000000,
+            "roe": 12.36,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-15",
+            "updatedDate": "2025-03-15",
+            "parentProfit": 46455000000,
+            "operatingCashFlow": 92461000000,
+            "roe": 11.38,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-15",
+            "updatedDate": "2026-03-21",
+            "parentProfit": 44508000000,
+            "operatingCashFlow": 63336000000,
+            "roe": 10.08,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-21",
+            "updatedDate": "2026-03-21",
+            "parentProfit": 42633000000,
+            "operatingCashFlow": 315858000000,
+            "roe": 9.15,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "000333",
+      "name": "美的集团",
+      "exchange": "SZSE",
+      "industry": "可选消费",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932080",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 11677508761.21,
+            "plannedDividend": 11677508761.21
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 17188858157.5,
+            "plannedDividend": 17188858157.5
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 20780277723,
+            "plannedDividend": 20780277723
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 26870356884,
+            "plannedDividend": 26870356884
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 32773601967.6,
+            "plannedDividend": 32773601967.6
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-30",
+            "updatedDate": "2023-04-29",
+            "parentProfit": 28573650000,
+            "operatingCashFlow": 35091704000,
+            "roe": 24.09,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-29",
+            "updatedDate": "2024-03-28",
+            "parentProfit": 29553507000,
+            "operatingCashFlow": 34657828000,
+            "roe": 22.21,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-28",
+            "updatedDate": "2025-03-29",
+            "parentProfit": 33719935000,
+            "operatingCashFlow": 57902611000,
+            "roe": 22.23,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-29",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 38537237000,
+            "operatingCashFlow": 60511572000,
+            "roe": 21.29,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-31",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 43945411000,
+            "operatingCashFlow": 53345930000,
+            "roe": 19.7,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "000429",
+      "name": "粤高速A",
+      "exchange": "SZSE",
+      "industry": "工业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932079",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 1191759491.82,
+            "plannedDividend": 1191759491.82
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 894865021.93,
+            "plannedDividend": 894865021.93
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1143670950.92,
+            "plannedDividend": 1143670950.92
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1093491603.9,
+            "plannedDividend": 1093491603.9
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1262846900.1,
+            "plannedDividend": 1262846900.1
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-16",
+            "updatedDate": "2023-03-21",
+            "parentProfit": 1700406981.99,
+            "operatingCashFlow": 3669744721.16,
+            "roe": 20.12,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-21",
+            "updatedDate": "2024-03-16",
+            "parentProfit": 1276341322.98,
+            "operatingCashFlow": 2752026558.38,
+            "roe": 14.3,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-16",
+            "updatedDate": "2025-03-04",
+            "parentProfit": 1633811033.68,
+            "operatingCashFlow": 3831785563.47,
+            "roe": 17.3,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-04",
+            "updatedDate": "2026-03-14",
+            "parentProfit": 1562122219.95,
+            "operatingCashFlow": 3256363593.91,
+            "roe": 15.52,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-14",
+            "updatedDate": "2026-03-14",
+            "parentProfit": 1801337614.93,
+            "operatingCashFlow": 3559494395.28,
+            "roe": 16.83,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "000651",
+      "name": "格力电器",
+      "exchange": "SZSE",
+      "industry": "可选消费",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932080",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 16610033199,
+            "plannedDividend": 16610033199
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 11227683226,
+            "plannedDividend": 11227683226
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 13142225877.48,
+            "plannedDividend": 13142225877.48
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 16755416223,
+            "plannedDividend": 16755416223
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 16786959023,
+            "plannedDividend": 16786959023
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-30",
+            "updatedDate": "2023-04-29",
+            "parentProfit": 23063732372.62,
+            "operatingCashFlow": 1894363258.72,
+            "roe": 21.34,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-29",
+            "updatedDate": "2024-04-30",
+            "parentProfit": 24506623782.46,
+            "operatingCashFlow": 28668435921.27,
+            "roe": 24.19,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-30",
+            "updatedDate": "2025-04-28",
+            "parentProfit": 29017387604.18,
+            "operatingCashFlow": 56398426354.17,
+            "roe": 26.53,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-28",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 32184570372.28,
+            "operatingCashFlow": 29369250570.66,
+            "roe": 25.42,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-29",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 29003103411.66,
+            "operatingCashFlow": 46383114754.02,
+            "roe": 20.3,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "000708",
+      "name": "中信特钢",
+      "exchange": "SZSE",
+      "industry": "原材料",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932078",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 4037714746.4,
+            "plannedDividend": 4037714746.4
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 3533008686.2,
+            "plannedDividend": 3533008686.2
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 2850000000,
+            "plannedDividend": 2850000000
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 2559999901.37,
+            "plannedDividend": 2559999901.37
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 3259431565.8,
+            "plannedDividend": 3259431565.8
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-11",
+            "updatedDate": "2023-03-18",
+            "parentProfit": 7777737680.11,
+            "operatingCashFlow": 12738959093.46,
+            "roe": 26.27,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-18",
+            "updatedDate": "2024-03-13",
+            "parentProfit": 7105360274.44,
+            "operatingCashFlow": 13434365873.01,
+            "roe": 20.96,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-13",
+            "updatedDate": "2025-03-20",
+            "parentProfit": 5721189483.5,
+            "operatingCashFlow": 10658114222.55,
+            "roe": 15.54,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-20",
+            "updatedDate": "2026-03-17",
+            "parentProfit": 5125627037.63,
+            "operatingCashFlow": 10741487220.01,
+            "roe": 13.05,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-17",
+            "updatedDate": "2026-03-17",
+            "parentProfit": 5928668055.97,
+            "operatingCashFlow": 14635590727.17,
+            "roe": 14.08,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "002233",
+      "name": "塔牌集团",
+      "exchange": "SZSE",
+      "industry": "原材料",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932078",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 738284887.74,
+            "plannedDividend": 738284887.74
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 139995357.24,
+            "plannedDividend": 139995357.24
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 585390018,
+            "plannedDividend": 585390018
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 528367728.6,
+            "plannedDividend": 528367728.6
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 562236195.84,
+            "plannedDividend": 562236195.84
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-15",
+            "updatedDate": "2023-03-18",
+            "parentProfit": 1836324699.86,
+            "operatingCashFlow": 2197288934.03,
+            "roe": 16.69,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-18",
+            "updatedDate": "2024-03-15",
+            "parentProfit": 266206967.73,
+            "operatingCashFlow": 533460933.73,
+            "roe": 2.32,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-15",
+            "updatedDate": "2025-03-18",
+            "parentProfit": 741514434.17,
+            "operatingCashFlow": 1191380827.67,
+            "roe": 6.39,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-18",
+            "updatedDate": "2026-03-19",
+            "parentProfit": 537915513.98,
+            "operatingCashFlow": 849768125.51,
+            "roe": 4.53,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-19",
+            "updatedDate": "2026-03-19",
+            "parentProfit": 634042181.17,
+            "operatingCashFlow": 778436676.1,
+            "roe": 5.32,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "002469",
+      "name": "三维化学",
+      "exchange": "SZSE",
+      "industry": "原材料",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932078",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 162215657.5,
+            "plannedDividend": 162215657.5
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 162215657.5,
+            "plannedDividend": 162215657.5
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 194658789,
+            "plannedDividend": 194658789
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 259545052,
+            "plannedDividend": 259545052
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 194658789,
+            "plannedDividend": 194658789
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-22",
+            "updatedDate": "2023-04-07",
+            "parentProfit": 377488119.48,
+            "operatingCashFlow": 333885434.84,
+            "roe": 16.3,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-07",
+            "updatedDate": "2024-03-22",
+            "parentProfit": 273711290.88,
+            "operatingCashFlow": 510612435.8,
+            "roe": 10.91,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-22",
+            "updatedDate": "2025-03-27",
+            "parentProfit": 282184045.82,
+            "operatingCashFlow": 505849519.85,
+            "roe": 10.74,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-27",
+            "updatedDate": "2026-04-03",
+            "parentProfit": 262648513.74,
+            "operatingCashFlow": 284565843.93,
+            "roe": 9.73,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-03",
+            "updatedDate": "2026-04-03",
+            "parentProfit": 186472215.5,
+            "operatingCashFlow": 77446759.8,
+            "roe": 6.99,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "002807",
+      "name": "江阴银行",
+      "exchange": "SZSE",
+      "industry": null,
+      "industryStatus": "unavailable",
+      "industryDate": null,
+      "industrySourceIndex": null,
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 390962231.28,
+            "plannedDividend": 390962231.28
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 390969351.36,
+            "plannedDividend": 390969351.36
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 467664629.91,
+            "plannedDividend": 467664629.91
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 492278557.8,
+            "plannedDividend": 492278557.8
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 541506413.58,
+            "plannedDividend": 541506413.58
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-30",
+            "updatedDate": "2023-03-28",
+            "parentProfit": 1273690000,
+            "operatingCashFlow": 4074399000,
+            "roe": 10.15,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-28",
+            "updatedDate": "2024-03-30",
+            "parentProfit": 1616057000,
+            "operatingCashFlow": 391601000,
+            "roe": 11.87,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-30",
+            "updatedDate": "2025-03-29",
+            "parentProfit": 1888085000,
+            "operatingCashFlow": -400103000,
+            "roe": 12.55,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-29",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 2036812000,
+            "operatingCashFlow": 3685198000,
+            "roe": 11.55,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-29",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 2049461000,
+            "operatingCashFlow": -2378655000,
+            "roe": 10.71,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "002839",
+      "name": "张家港行",
+      "exchange": "SZSE",
+      "industry": null,
+      "industryStatus": "unavailable",
+      "industryDate": null,
+      "industrySourceIndex": null,
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 289276509.6,
+            "plannedDividend": 289276509.6
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 433929952.8,
+            "plannedDividend": 433929952.8
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 433931014.6,
+            "plannedDividend": 433931014.6
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 488868994.8,
+            "plannedDividend": 488868994.8
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 537755894.28,
+            "plannedDividend": 537755894.28
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-29",
+            "updatedDate": "2023-03-28",
+            "parentProfit": 1303849618.24,
+            "operatingCashFlow": 158217198.33,
+            "roe": 11.08,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-28",
+            "updatedDate": "2024-04-30",
+            "parentProfit": 1682023495.03,
+            "operatingCashFlow": 7633098988.91,
+            "roe": 12.21,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-30",
+            "updatedDate": "2025-03-29",
+            "parentProfit": 1786919111.87,
+            "operatingCashFlow": 1795487875.54,
+            "roe": 11.65,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-29",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 1878563242.92,
+            "operatingCashFlow": -419783941.81,
+            "roe": 11.05,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-31",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 1978974061.72,
+            "operatingCashFlow": -3240353790.42,
+            "roe": 10.36,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "002966",
+      "name": "苏州银行",
+      "exchange": "SZSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 933347983.68,
+            "plannedDividend": 933347983.68
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 1210022449.02,
+            "plannedDividend": 1210022449.02
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1430030021.55,
+            "plannedDividend": 1430030021.55
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1647095279.6,
+            "plannedDividend": 1647095279.6
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1609438323.96,
+            "plannedDividend": 1609438323.96
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-29",
+            "updatedDate": "2023-04-25",
+            "parentProfit": 3106689163,
+            "operatingCashFlow": -7630232896,
+            "roe": 9.96,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-25",
+            "updatedDate": "2024-04-27",
+            "parentProfit": 3918436074,
+            "operatingCashFlow": 580741327,
+            "roe": 11.52,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-27",
+            "updatedDate": "2025-04-29",
+            "parentProfit": 4600648945,
+            "operatingCashFlow": 16465464182,
+            "roe": 12,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-29",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 5068207399,
+            "operatingCashFlow": 10968597147,
+            "roe": 11.68,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-29",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 5348303234,
+            "operatingCashFlow": 11091062865,
+            "roe": 10.66,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600007",
+      "name": "中国国贸",
+      "exchange": "SSE",
+      "industry": null,
+      "industryStatus": "unavailable",
+      "industryDate": null,
+      "industrySourceIndex": null,
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 604369520,
+            "plannedDividend": 604369520
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 705097774,
+            "plannedDividend": 705097774
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1309467294.2,
+            "plannedDividend": 1309467294.2
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1108010787,
+            "plannedDividend": 1108010787
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1077792311,
+            "plannedDividend": 1077792311
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-31",
+            "updatedDate": "2023-03-29",
+            "parentProfit": 1023793717,
+            "operatingCashFlow": 1780173946,
+            "roe": 12.4,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-29",
+            "updatedDate": "2024-03-29",
+            "parentProfit": 1115870811,
+            "operatingCashFlow": 1824331237,
+            "roe": 12.7,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-29",
+            "updatedDate": "2025-04-01",
+            "parentProfit": 1259201327,
+            "operatingCashFlow": 1918660921,
+            "roe": 13.53,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-01",
+            "updatedDate": "2026-04-02",
+            "parentProfit": 1262389074,
+            "operatingCashFlow": 1796295378,
+            "roe": 13.35,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-02",
+            "updatedDate": "2026-04-02",
+            "parentProfit": 1202295738,
+            "operatingCashFlow": 1575080047,
+            "roe": 12.64,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600015",
+      "name": "华夏银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 5200881706.25,
+            "plannedDividend": 5200881706.25
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 6095417603.24,
+            "plannedDividend": 6095417603.24
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 6111332531.71,
+            "plannedDividend": 6111332531.71
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 6445546029.54,
+            "plannedDividend": 6445546029.54
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 6684269956.56,
+            "plannedDividend": 6684269956.56
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-30",
+            "updatedDate": "2023-04-28",
+            "parentProfit": 23535000000,
+            "operatingCashFlow": 71015000000,
+            "roe": 9.04,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-28",
+            "updatedDate": "2024-04-30",
+            "parentProfit": 25035000000,
+            "operatingCashFlow": 78975000000,
+            "roe": 9,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-30",
+            "updatedDate": "2025-04-18",
+            "parentProfit": 26363000000,
+            "operatingCashFlow": 253177000000,
+            "roe": 8.71,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-18",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 27676000000,
+            "operatingCashFlow": 42495000000,
+            "roe": 8.84,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-31",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 27200000000,
+            "operatingCashFlow": 69063000000,
+            "roe": 8.32,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600016",
+      "name": "民生银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 9325655140.93,
+            "plannedDividend": 9325655140.93
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 9369437559.43,
+            "plannedDividend": 9369437559.43
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 9457002396.43,
+            "plannedDividend": 9457002396.43
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 8406224352.38,
+            "plannedDividend": 8406224352.38
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 8274877096.88,
+            "plannedDividend": 8274877096.88
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-30",
+            "updatedDate": "2023-03-28",
+            "parentProfit": 34381000000,
+            "operatingCashFlow": 155417000000,
+            "roe": 6.59,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-28",
+            "updatedDate": "2024-03-29",
+            "parentProfit": 35269000000,
+            "operatingCashFlow": 166273000000,
+            "roe": 6.31,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-29",
+            "updatedDate": "2025-03-29",
+            "parentProfit": 35823000000,
+            "operatingCashFlow": 73676000000,
+            "roe": 6.1,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-29",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 32296000000,
+            "operatingCashFlow": -231638000000,
+            "roe": 5.18,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-31",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 30563000000,
+            "operatingCashFlow": -157476000000,
+            "roe": 4.93,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600036",
+      "name": "招商银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 38385000000,
+            "plannedDividend": 38385000000
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 43832000000,
+            "plannedDividend": 43832000000
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 49734000000,
+            "plannedDividend": 49734000000
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 50440000000,
+            "plannedDividend": 50440000000
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 50843000000,
+            "plannedDividend": 50843000000
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-19",
+            "updatedDate": "2023-03-25",
+            "parentProfit": 119922000000,
+            "operatingCashFlow": 182048000000,
+            "roe": 16.96,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-25",
+            "updatedDate": "2024-03-26",
+            "parentProfit": 138012000000,
+            "operatingCashFlow": 570143000000,
+            "roe": 17.06,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-26",
+            "updatedDate": "2025-03-26",
+            "parentProfit": 146602000000,
+            "operatingCashFlow": 357753000000,
+            "roe": 16.22,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-26",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 148391000000,
+            "operatingCashFlow": 447023000000,
+            "roe": 14.49,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-28",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 150181000000,
+            "operatingCashFlow": 451457000000,
+            "roe": 13.44,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600350",
+      "name": "山东高速",
+      "exchange": "SSE",
+      "industry": "工业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932079",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 1924466342.8,
+            "plannedDividend": 1924466342.8
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 1930884973.2,
+            "plannedDividend": 1930884973.2
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 2032967003.34,
+            "plannedDividend": 2032967003.34
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 2030519746.5,
+            "plannedDividend": 2030519746.5
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 2030519746.5,
+            "plannedDividend": 2030519746.5
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-31",
+            "updatedDate": "2023-03-31",
+            "parentProfit": 3052287782.41,
+            "operatingCashFlow": 9794487069.68,
+            "roe": 9.92,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-31",
+            "updatedDate": "2024-04-19",
+            "parentProfit": 3039648157.43,
+            "operatingCashFlow": 5222722015.29,
+            "roe": 8.47,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-19",
+            "updatedDate": "2025-04-04",
+            "parentProfit": 3297231623.96,
+            "operatingCashFlow": 6010294172.21,
+            "roe": 9.3,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-04",
+            "updatedDate": "2026-04-04",
+            "parentProfit": 3196128356.19,
+            "operatingCashFlow": 6840707803.62,
+            "roe": 8.95,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-04",
+            "updatedDate": "2026-04-04",
+            "parentProfit": 3205569300.59,
+            "operatingCashFlow": 6998105989.55,
+            "roe": 8.2,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600461",
+      "name": "洪城环境",
+      "exchange": "SSE",
+      "industry": "公用事业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932086",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 519656335.17,
+            "plannedDividend": 519656335.17
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 474533814.96,
+            "plannedDividend": 474533814.96
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 541676563,
+            "plannedDividend": 541676563
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 595848002.59,
+            "plannedDividend": 595848002.59
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 599701231.2,
+            "plannedDividend": 599701231.2
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-22",
+            "updatedDate": "2023-04-11",
+            "parentProfit": 1021415402.48,
+            "operatingCashFlow": 1872027330.29,
+            "roe": 15.52,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-11",
+            "updatedDate": "2024-04-11",
+            "parentProfit": 961764393.36,
+            "operatingCashFlow": 2193862335.67,
+            "roe": 13.64,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-11",
+            "updatedDate": "2025-04-15",
+            "parentProfit": 1082874185.39,
+            "operatingCashFlow": 1728828540.45,
+            "roe": 14.44,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-15",
+            "updatedDate": "2026-04-16",
+            "parentProfit": 1189979284.26,
+            "operatingCashFlow": 1974147662.11,
+            "roe": 13.63,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-16",
+            "updatedDate": "2026-04-16",
+            "parentProfit": 1193215598.06,
+            "operatingCashFlow": 1910179414.92,
+            "roe": 12.44,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600502",
+      "name": "安徽建工",
+      "exchange": "SSE",
+      "industry": "工业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932079",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 430290068,
+            "plannedDividend": 430290068
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 429133484.5,
+            "plannedDividend": 429133484.5
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 446298823.88,
+            "plannedDividend": 446298823.88
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 463464163.26,
+            "plannedDividend": 463464163.26
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 463464163.26,
+            "plannedDividend": 463464163.26
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-31",
+            "updatedDate": "2023-03-30",
+            "parentProfit": 1095791110.82,
+            "operatingCashFlow": -5491885424.45,
+            "roe": 10.41,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-30",
+            "updatedDate": "2024-03-27",
+            "parentProfit": 1380008670.33,
+            "operatingCashFlow": -782754972.89,
+            "roe": 11.76,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-27",
+            "updatedDate": "2025-03-29",
+            "parentProfit": 1553468710.5,
+            "operatingCashFlow": 3670789077.21,
+            "roe": 11.41,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-29",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 1344871166.75,
+            "operatingCashFlow": 1214636231.3,
+            "roe": 10.41,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-28",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 1525783433.2,
+            "operatingCashFlow": 1288344697.37,
+            "roe": 9.05,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600566",
+      "name": "济川药业",
+      "exchange": "SSE",
+      "industry": "医药卫生",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932082",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 604029771,
+            "plannedDividend": 604029771
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 811727980.8,
+            "plannedDividend": 811727980.8
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1197590695.6,
+            "plannedDividend": 1197590695.6
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1921440820.75,
+            "plannedDividend": 1921440820.75
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1599968266.08,
+            "plannedDividend": 1599968266.08
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-16",
+            "updatedDate": "2023-04-10",
+            "parentProfit": 1719175931.11,
+            "operatingCashFlow": 1894329392.98,
+            "roe": 20.46,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-10",
+            "updatedDate": "2024-04-10",
+            "parentProfit": 2170749923.87,
+            "operatingCashFlow": 2620832879.02,
+            "roe": 21.91,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-10",
+            "updatedDate": "2025-04-26",
+            "parentProfit": 2822781164.62,
+            "operatingCashFlow": 3463958635.83,
+            "roe": 22.99,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-26",
+            "updatedDate": "2026-04-24",
+            "parentProfit": 2531554060.02,
+            "operatingCashFlow": 2176437015.78,
+            "roe": 18.18,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-24",
+            "updatedDate": "2026-04-24",
+            "parentProfit": 1777852640.46,
+            "operatingCashFlow": 1198294243.9,
+            "roe": 12.28,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600737",
+      "name": "中粮糖业",
+      "exchange": "SSE",
+      "industry": "主要消费",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932081",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 235273305.08,
+            "plannedDividend": 235273305.08
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 556100539.28,
+            "plannedDividend": 556100539.28
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1860797958.36,
+            "plannedDividend": 1860797958.36
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1304697419.08,
+            "plannedDividend": 1304697419.08
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 727208397.52,
+            "plannedDividend": 727208397.52
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-19",
+            "updatedDate": "2023-04-22",
+            "parentProfit": 519524549.52,
+            "operatingCashFlow": 59071737.5,
+            "roe": 5.39,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-22",
+            "updatedDate": "2024-04-26",
+            "parentProfit": 748372843.44,
+            "operatingCashFlow": -67105153.47,
+            "roe": 7.26,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-26",
+            "updatedDate": "2025-04-25",
+            "parentProfit": 2073321415.27,
+            "operatingCashFlow": 887334625.75,
+            "roe": 19.42,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-25",
+            "updatedDate": "2026-04-28",
+            "parentProfit": 1713347191.26,
+            "operatingCashFlow": 2634181570.86,
+            "roe": 14.44,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-28",
+            "updatedDate": "2026-04-28",
+            "parentProfit": 951225734.55,
+            "operatingCashFlow": 1287693122.07,
+            "roe": 8.24,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600750",
+      "name": "华润江中",
+      "exchange": "SSE",
+      "industry": "医药卫生",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932082",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 547828272.7,
+            "plannedDividend": 547828272.7
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 723997801.7,
+            "plannedDividend": 723997801.7
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 818200838.5,
+            "plannedDividend": 818200838.5
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 759061593.9,
+            "plannedDividend": 759061593.9
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 876837705.32,
+            "plannedDividend": 876837705.32
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-25",
+            "updatedDate": "2023-03-25",
+            "parentProfit": 505687248.49,
+            "operatingCashFlow": 917037660.75,
+            "roe": 12.52,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-25",
+            "updatedDate": "2024-03-23",
+            "parentProfit": 598241179.21,
+            "operatingCashFlow": 1021747356.37,
+            "roe": 14.51,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-23",
+            "updatedDate": "2025-03-20",
+            "parentProfit": 718666447.99,
+            "operatingCashFlow": 1039462470.66,
+            "roe": 17.68,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-20",
+            "updatedDate": "2026-03-20",
+            "parentProfit": 788192557.44,
+            "operatingCashFlow": 786252548.91,
+            "roe": 19.58,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-20",
+            "updatedDate": "2026-03-20",
+            "parentProfit": 906685963.56,
+            "operatingCashFlow": 970867419.63,
+            "roe": 22.75,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600757",
+      "name": "长江传媒",
+      "exchange": "SSE",
+      "industry": "通信服务",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932085",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 449050601.01,
+            "plannedDividend": 449050601.01
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 388368087.36,
+            "plannedDividend": 388368087.36
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 485460109.2,
+            "plannedDividend": 485460109.2
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 497596611.93,
+            "plannedDividend": 497596611.93
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 497596611.93,
+            "plannedDividend": 497596611.93
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-27",
+            "updatedDate": "2026-04-16",
+            "parentProfit": 687463316.97,
+            "operatingCashFlow": 994028072.42,
+            "roe": 8.7,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-21",
+            "updatedDate": "2026-04-16",
+            "parentProfit": 722249948.35,
+            "operatingCashFlow": 1067032877.9,
+            "roe": 8.75,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-16",
+            "updatedDate": "2026-04-16",
+            "parentProfit": 1015022183.91,
+            "operatingCashFlow": 1185831606.3,
+            "roe": 11.64,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-11",
+            "updatedDate": "2026-04-16",
+            "parentProfit": 944164041.99,
+            "operatingCashFlow": 568565628.45,
+            "roe": 10.19,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-16",
+            "updatedDate": "2026-04-16",
+            "parentProfit": 1013952836.3,
+            "operatingCashFlow": 619867391.38,
+            "roe": 10.44,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600803",
+      "name": "新奥股份",
+      "exchange": "SSE",
+      "industry": "公用事业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932086",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 873267714.04,
+            "plannedDividend": 873267714.04
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 1577220386.43,
+            "plannedDividend": 1577220386.43
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 2804554200.63,
+            "plannedDividend": 2804554200.63
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 3183784205.81,
+            "plannedDividend": 3183784205.81
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 3526397208.78,
+            "plannedDividend": 3526397208.78
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-19",
+            "updatedDate": "2023-03-25",
+            "parentProfit": 4631780000,
+            "operatingCashFlow": 14165040000,
+            "roe": 31.09,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-25",
+            "updatedDate": "2024-03-23",
+            "parentProfit": 5843910000,
+            "operatingCashFlow": 15005780000,
+            "roe": 33.43,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-23",
+            "updatedDate": "2025-03-27",
+            "parentProfit": 7091110000,
+            "operatingCashFlow": 13759450000,
+            "roe": 34.39,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-27",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 4493180000,
+            "operatingCashFlow": 14162160000,
+            "roe": 19.06,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-28",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 4681320000,
+            "operatingCashFlow": 14266510000,
+            "roe": 19.35,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600820",
+      "name": "隧道股份",
+      "exchange": "SSE",
+      "industry": "工业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932079",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 723142101.62,
+            "plannedDividend": 723142101.62
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 848905945.38,
+            "plannedDividend": 848905945.38
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1037551711.02,
+            "plannedDividend": 1037551711.02
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1006110750.08,
+            "plannedDividend": 1006110750.08
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 628819218.8,
+            "plannedDividend": 628819218.8
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-26",
+            "updatedDate": "2023-04-22",
+            "parentProfit": 2393031216.1,
+            "operatingCashFlow": 3133812797.31,
+            "roe": 9.91,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-22",
+            "updatedDate": "2024-04-20",
+            "parentProfit": 2855360453.67,
+            "operatingCashFlow": 4046534445.55,
+            "roe": 10.82,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-20",
+            "updatedDate": "2025-04-26",
+            "parentProfit": 2945135638.56,
+            "operatingCashFlow": 3180625672.95,
+            "roe": 10.33,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-26",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 2841024204.22,
+            "operatingCashFlow": 4587096957.1,
+            "roe": 9.4,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-23",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 2213961158.55,
+            "operatingCashFlow": 2192089410.51,
+            "roe": 6.6,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600863",
+      "name": "华能蒙电",
+      "exchange": "SSE",
+      "industry": "公用事业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932086",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 652688781.1,
+            "plannedDividend": 652688781.1
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 1070409601,
+            "plannedDividend": 1070409601
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1207474245.03,
+            "plannedDividend": 1207474245.03
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1435915318.42,
+            "plannedDividend": 1435915318.42
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1723741703.2,
+            "plannedDividend": 1723741703.2
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-27",
+            "updatedDate": "2024-04-26",
+            "parentProfit": 496977166.66,
+            "operatingCashFlow": 3140810711.02,
+            "roe": 3.03,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-28",
+            "updatedDate": "2024-04-26",
+            "parentProfit": 1767389632.45,
+            "operatingCashFlow": 5154268548.73,
+            "roe": 11.84,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-26",
+            "updatedDate": "2025-04-25",
+            "parentProfit": 2004868314.05,
+            "operatingCashFlow": 5332270367.84,
+            "roe": 14.67,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-25",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 3039562211.98,
+            "operatingCashFlow": 6668139285.65,
+            "roe": 16,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-23",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 2493439065.89,
+            "operatingCashFlow": 6731988052.2,
+            "roe": 12.25,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600873",
+      "name": "梅花生物",
+      "exchange": "SSE",
+      "industry": "主要消费",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932081",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 1216986178.8,
+            "plannedDividend": 1216986178.8
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 1177370440.8,
+            "plannedDividend": 1177370440.8
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1198171275,
+            "plannedDividend": 1198171275
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1699225261.53,
+            "plannedDividend": 1699225261.53
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1199903932.68,
+            "plannedDividend": 1199903932.68
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-14",
+            "updatedDate": "2023-03-07",
+            "parentProfit": 2402247556.46,
+            "operatingCashFlow": 3734331862.05,
+            "roe": 26.77,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-07",
+            "updatedDate": "2024-03-19",
+            "parentProfit": 4406241981.92,
+            "operatingCashFlow": 5654954446.36,
+            "roe": 35.95,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-19",
+            "updatedDate": "2025-03-18",
+            "parentProfit": 3180949695.48,
+            "operatingCashFlow": 5228937084.88,
+            "roe": 23.48,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-18",
+            "updatedDate": "2026-04-22",
+            "parentProfit": 2740427215.56,
+            "operatingCashFlow": 4626714790.47,
+            "roe": 19.04,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-22",
+            "updatedDate": "2026-04-22",
+            "parentProfit": 3280879912.1,
+            "operatingCashFlow": 4009259646.23,
+            "roe": 21.48,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600919",
+      "name": "江苏银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 5907855650,
+            "plannedDividend": 5907855650
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 7615221334.62,
+            "plannedDividend": 7615221334.62
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 8625000000,
+            "plannedDividend": 8625000000
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 9554000000,
+            "plannedDividend": 9554000000
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 10352000000,
+            "plannedDividend": 10352000000
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-13",
+            "updatedDate": "2023-04-26",
+            "parentProfit": 19694365000,
+            "operatingCashFlow": 64984527000,
+            "roe": 12.6,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-26",
+            "updatedDate": "2024-04-26",
+            "parentProfit": 25385993000,
+            "operatingCashFlow": -3812962000,
+            "roe": 14.79,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-26",
+            "updatedDate": "2025-04-19",
+            "parentProfit": 28750352000,
+            "operatingCashFlow": 213598870000,
+            "roe": 14.52,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-19",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 31843213000,
+            "operatingCashFlow": 36845641000,
+            "roe": 13.59,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-29",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 34501004000,
+            "operatingCashFlow": 560651108000,
+            "roe": 13.14,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600938",
+      "name": "中国海油",
+      "exchange": "SSE",
+      "industry": "能源",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932077",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 61138076467.88,
+            "plannedDividend": 61138076467.88
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 54295558417.1766,
+            "plannedDividend": 54295558417.1766
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 60913913726.3546,
+            "plannedDividend": 60913913726.3546
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 54418470214.9011,
+            "plannedDividend": 54418470214.9011
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-31",
+            "updatedDate": "2023-03-30",
+            "parentProfit": 70320000000,
+            "operatingCashFlow": 147893000000,
+            "roe": 15.36,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-30",
+            "updatedDate": "2024-03-22",
+            "parentProfit": 141700000000,
+            "operatingCashFlow": 205574000000,
+            "roe": 26,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-22",
+            "updatedDate": "2025-03-28",
+            "parentProfit": 123843000000,
+            "operatingCashFlow": 209743000000,
+            "roe": 19.55,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-28",
+            "updatedDate": "2026-03-27",
+            "parentProfit": 137936000000,
+            "operatingCashFlow": 220891000000,
+            "roe": 19.36,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-27",
+            "updatedDate": "2026-03-27",
+            "parentProfit": 122082000000,
+            "operatingCashFlow": 209042000000,
+            "roe": 15.64,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "600941",
+      "name": "中国移动",
+      "exchange": "SSE",
+      "industry": "通信服务",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932085",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 82775242430.18,
+            "plannedDividend": 82775242430.18
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 94389351035.3444,
+            "plannedDividend": 94389351035.3444
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 100539884869.636,
+            "plannedDividend": 100539884869.636
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 101808148787.359,
+            "plannedDividend": 101808148787.359
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-24",
+            "updatedDate": "2023-03-24",
+            "parentProfit": 115937000000,
+            "operatingCashFlow": 314764000000,
+            "roe": 10.1,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-24",
+            "updatedDate": "2024-03-22",
+            "parentProfit": 125459000000,
+            "operatingCashFlow": 280750000000,
+            "roe": 10.1,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-22",
+            "updatedDate": "2025-03-21",
+            "parentProfit": 131766000000,
+            "operatingCashFlow": 303780000000,
+            "roe": 10.2,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-21",
+            "updatedDate": "2026-03-27",
+            "parentProfit": 138373000000,
+            "operatingCashFlow": 315741000000,
+            "roe": 10.4,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-27",
+            "updatedDate": "2026-03-27",
+            "parentProfit": 137095000000,
+            "operatingCashFlow": 232919000000,
+            "roe": 9.9,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601009",
+      "name": "南京银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 4757328671.56,
+            "plannedDividend": 4757328671.56
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 5522519010.26,
+            "plannedDividend": 5522519010.26
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 5551488997.19,
+            "plannedDividend": 5551488997.19
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 6054473922.06,
+            "plannedDividend": 6054473922.06
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 6542181607.69,
+            "plannedDividend": 6542181607.69
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-16",
+            "updatedDate": "2023-04-29",
+            "parentProfit": 15856757000,
+            "operatingCashFlow": 120648546000,
+            "roe": 14.85,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-29",
+            "updatedDate": "2024-04-27",
+            "parentProfit": 18408039000,
+            "operatingCashFlow": 97820568000,
+            "roe": 15.12,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-27",
+            "updatedDate": "2025-04-22",
+            "parentProfit": 18502084000,
+            "operatingCashFlow": 37058939000,
+            "roe": 13.12,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-22",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 20176728000,
+            "operatingCashFlow": -65795334000,
+            "roe": 12.97,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-23",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 21807089000,
+            "operatingCashFlow": 210207864000,
+            "roe": 12.05,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601077",
+      "name": "渝农商行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 2867642500,
+            "plannedDividend": 2867642500
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 3082289800,
+            "plannedDividend": 3082289800
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 3276494500,
+            "plannedDividend": 3276494500
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 3459342200,
+            "plannedDividend": 3459342200
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 3644574870,
+            "plannedDividend": 3644574870
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-31",
+            "updatedDate": "2023-03-31",
+            "parentProfit": 9559709000,
+            "operatingCashFlow": 41228845000,
+            "roe": 9.87,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-31",
+            "updatedDate": "2024-03-29",
+            "parentProfit": 10275574000,
+            "operatingCashFlow": 70901171000,
+            "roe": 9.76,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-29",
+            "updatedDate": "2025-03-26",
+            "parentProfit": 10902355000,
+            "operatingCashFlow": 39459381000,
+            "roe": 9.58,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-26",
+            "updatedDate": "2026-03-26",
+            "parentProfit": 11512747000,
+            "operatingCashFlow": 4597485000,
+            "roe": 9.28,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-26",
+            "updatedDate": "2026-03-26",
+            "parentProfit": 12128421000,
+            "operatingCashFlow": 372335000,
+            "roe": 9.18,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601169",
+      "name": "北京银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 6448610202.96,
+            "plannedDividend": 6448610202.96
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 6554325124.32,
+            "plannedDividend": 6554325124.32
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 6765754967.04,
+            "plannedDividend": 6765754967.04
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 6765754967.04,
+            "plannedDividend": 6765754967.04
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 5877749627.62,
+            "plannedDividend": 5877749627.62
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-30",
+            "updatedDate": "2023-04-08",
+            "parentProfit": 22226000000,
+            "operatingCashFlow": -39561000000,
+            "roe": 10.29,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-08",
+            "updatedDate": "2024-04-12",
+            "parentProfit": 24760000000,
+            "operatingCashFlow": 126042000000,
+            "roe": 9.6,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-12",
+            "updatedDate": "2025-04-15",
+            "parentProfit": 25624000000,
+            "operatingCashFlow": 41978000000,
+            "roe": 9.32,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-15",
+            "updatedDate": "2026-04-28",
+            "parentProfit": 26334000000,
+            "operatingCashFlow": 129547000000,
+            "roe": 8.65,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-28",
+            "updatedDate": "2026-04-28",
+            "parentProfit": 20086000000,
+            "operatingCashFlow": 378955000000,
+            "roe": 6.11,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601187",
+      "name": "厦门银行",
+      "exchange": "SSE",
+      "industry": null,
+      "industryStatus": "unavailable",
+      "industryDate": null,
+      "industrySourceIndex": null,
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 659781972,
+            "plannedDividend": 659781972
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 765347087.52,
+            "plannedDividend": 765347087.52
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 818129645.28,
+            "plannedDividend": 818129645.28
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 818129645.28,
+            "plannedDividend": 818129645.28
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 659781972,
+            "plannedDividend": 659781972
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-30",
+            "updatedDate": "2023-04-28",
+            "parentProfit": 2168597917.89,
+            "operatingCashFlow": -21957145927.85,
+            "roe": 10.98,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-28",
+            "updatedDate": "2024-04-30",
+            "parentProfit": 2506083052.14,
+            "operatingCashFlow": 26295655862.89,
+            "roe": 11.38,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-30",
+            "updatedDate": "2025-04-29",
+            "parentProfit": 2663871493.7,
+            "operatingCashFlow": -4372544499.17,
+            "roe": 11.2,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-29",
+            "updatedDate": "2026-04-30",
+            "parentProfit": 2594646000,
+            "operatingCashFlow": -4315594000,
+            "roe": 9.36,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-30",
+            "updatedDate": "2026-04-30",
+            "parentProfit": 2634763000,
+            "operatingCashFlow": -1111189000,
+            "roe": 9.05,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601229",
+      "name": "上海银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 5682662395.2,
+            "plannedDividend": 5682662395.2
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 5682666634.4,
+            "plannedDividend": 5682666634.4
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 6535069330.22,
+            "plannedDividend": 6535069330.22
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 7103346789.7,
+            "plannedDividend": 7103346789.7
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 7388687058.12,
+            "plannedDividend": 7388687058.12
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-22",
+            "updatedDate": "2023-04-28",
+            "parentProfit": 22042452000,
+            "operatingCashFlow": -11058759000,
+            "roe": 11.8,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-28",
+            "updatedDate": "2024-04-26",
+            "parentProfit": 22280215000,
+            "operatingCashFlow": 25190851000,
+            "roe": 11,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-26",
+            "updatedDate": "2025-04-25",
+            "parentProfit": 22544789000,
+            "operatingCashFlow": 4040247000,
+            "roe": 10.36,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-25",
+            "updatedDate": "2026-04-24",
+            "parentProfit": 23559890000,
+            "operatingCashFlow": 4081548000,
+            "roe": 10.01,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-24",
+            "updatedDate": "2026-04-24",
+            "parentProfit": 24193414000,
+            "operatingCashFlow": -67761537000,
+            "roe": 9.69,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601288",
+      "name": "农业银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 72376000000,
+            "plannedDividend": 72376000000
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 77766000000,
+            "plannedDividend": 77766000000
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 80811000000,
+            "plannedDividend": 80811000000
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 84661000000,
+            "plannedDividend": 84661000000
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 87321000000,
+            "plannedDividend": 87321000000
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-31",
+            "updatedDate": "2023-03-31",
+            "parentProfit": 241183000000,
+            "operatingCashFlow": 239615000000,
+            "roe": 11.57,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-31",
+            "updatedDate": "2024-03-29",
+            "parentProfit": 259232000000,
+            "operatingCashFlow": 1322003000000,
+            "roe": 11.29,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-29",
+            "updatedDate": "2025-03-29",
+            "parentProfit": 269356000000,
+            "operatingCashFlow": 1825282000000,
+            "roe": 10.91,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-29",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 282083000000,
+            "operatingCashFlow": 1353042000000,
+            "roe": 10.46,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-31",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 291041000000,
+            "operatingCashFlow": 2112907000000,
+            "roe": 10.16,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601318",
+      "name": "中国平安",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 43136416565.54,
+            "plannedDividend": 43136416565.54
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 44238184212.2,
+            "plannedDividend": 44238184212.2
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 44250870095.01,
+            "plannedDividend": 44250870095.01
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 46436098247.85,
+            "plannedDividend": 46436098247.85
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 48890633386.5,
+            "plannedDividend": 48890633386.5
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-18",
+            "updatedDate": "2023-03-16",
+            "parentProfit": 101618000000,
+            "operatingCashFlow": 90116000000,
+            "roe": 13,
+            "orgType": "保险"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-16",
+            "updatedDate": "2024-03-22",
+            "parentProfit": 111008000000,
+            "operatingCashFlow": 476776000000,
+            "roe": 13.2,
+            "orgType": "保险"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-22",
+            "updatedDate": "2025-03-20",
+            "parentProfit": 85665000000,
+            "operatingCashFlow": 360403000000,
+            "roe": 9.7,
+            "orgType": "保险"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-20",
+            "updatedDate": "2026-03-27",
+            "parentProfit": 126607000000,
+            "operatingCashFlow": 382474000000,
+            "roe": 13.8,
+            "orgType": "保险"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-27",
+            "updatedDate": "2026-03-27",
+            "parentProfit": 134778000000,
+            "operatingCashFlow": 658632000000,
+            "roe": 14,
+            "orgType": "保险"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601328",
+      "name": "交通银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 26363267958.98,
+            "plannedDividend": 26363267958.98
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 27699997038.59,
+            "plannedDividend": 27699997038.59
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 27848522491.88,
+            "plannedDividend": 27848522491.88
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 28145757149.07,
+            "plannedDividend": 28145757149.07
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 28691461263.15,
+            "plannedDividend": 28691461263.15
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-26",
+            "updatedDate": "2023-03-31",
+            "parentProfit": 87581000000,
+            "operatingCashFlow": -34775000000,
+            "roe": 10.76,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-31",
+            "updatedDate": "2024-03-28",
+            "parentProfit": 92102000000,
+            "operatingCashFlow": 368221000000,
+            "roe": 10.34,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-28",
+            "updatedDate": "2025-03-22",
+            "parentProfit": 92728000000,
+            "operatingCashFlow": 137323000000,
+            "roe": 9.68,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-22",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 93586000000,
+            "operatingCashFlow": -57348000000,
+            "roe": 9.08,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-28",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 95622000000,
+            "operatingCashFlow": 132441000000,
+            "roe": 8.38,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601369",
+      "name": "陕鼓动力",
+      "exchange": "SSE",
+      "industry": "工业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932079",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 535254006.99,
+            "plannedDividend": 535254006.99
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 604658172.65,
+            "plannedDividend": 604658172.65
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 672983622.87,
+            "plannedDividend": 672983622.87
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 775945938.78,
+            "plannedDividend": 775945938.78
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 534277092.52,
+            "plannedDividend": 534277092.52
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-28",
+            "updatedDate": "2023-07-04",
+            "parentProfit": 857268400.94,
+            "operatingCashFlow": 1250472417.45,
+            "roe": 11.98,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-20",
+            "updatedDate": "2024-04-18",
+            "parentProfit": 968362398.67,
+            "operatingCashFlow": 910791942.06,
+            "roe": 12.51,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-18",
+            "updatedDate": "2025-04-18",
+            "parentProfit": 1020280603.15,
+            "operatingCashFlow": 1351711550.49,
+            "roe": 12.15,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-18",
+            "updatedDate": "2026-04-18",
+            "parentProfit": 1041588362.13,
+            "operatingCashFlow": 1148131030.86,
+            "roe": 11.83,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-18",
+            "updatedDate": "2026-04-18",
+            "parentProfit": 747958687.04,
+            "operatingCashFlow": 941484672,
+            "roe": 8.35,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601398",
+      "name": "工商银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 104534000000,
+            "plannedDividend": 104534000000
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 108169000000,
+            "plannedDividend": 108169000000
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 109203000000,
+            "plannedDividend": 109203000000
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 109773000000,
+            "plannedDividend": 109773000000
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 110593000000,
+            "plannedDividend": 110593000000
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-31",
+            "updatedDate": "2023-03-31",
+            "parentProfit": 348338000000,
+            "operatingCashFlow": 360882000000,
+            "roe": 12.15,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-31",
+            "updatedDate": "2024-03-28",
+            "parentProfit": 361132000000,
+            "operatingCashFlow": 1404657000000,
+            "roe": 11.45,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-28",
+            "updatedDate": "2025-03-29",
+            "parentProfit": 363993000000,
+            "operatingCashFlow": 1417002000000,
+            "roe": 10.66,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-29",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 365863000000,
+            "operatingCashFlow": 579194000000,
+            "roe": 9.88,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-28",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 368562000000,
+            "operatingCashFlow": 1890530000000,
+            "roe": 9.45,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601577",
+      "name": "长沙银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 1407543813.9,
+            "plannedDividend": 1407543813.9
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 1407543813.9,
+            "plannedDividend": 1407543813.9
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1528190426.52,
+            "plannedDividend": 1528190426.52
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1689052576.68,
+            "plannedDividend": 1689052576.68
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1729268114.22,
+            "plannedDividend": 1729268114.22
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-29",
+            "updatedDate": "2023-04-29",
+            "parentProfit": 6304376000,
+            "operatingCashFlow": 3610500000,
+            "roe": 13.26,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-29",
+            "updatedDate": "2024-04-27",
+            "parentProfit": 6811255000,
+            "operatingCashFlow": 19724754000,
+            "roe": 12.57,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-27",
+            "updatedDate": "2025-04-26",
+            "parentProfit": 7462951000,
+            "operatingCashFlow": 42341447000,
+            "roe": 12.5,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-26",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 7826575000,
+            "operatingCashFlow": 23312152000,
+            "roe": 11.81,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-29",
+            "updatedDate": "2026-04-29",
+            "parentProfit": 8107567000,
+            "operatingCashFlow": 37206204000,
+            "roe": 11.24,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601658",
+      "name": "邮储银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 22856000000,
+            "plannedDividend": 22856000000
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 25573641510.2,
+            "plannedDividend": 25573641510.2
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 25881040845.92,
+            "plannedDividend": 25881040845.92
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 25940537491.54,
+            "plannedDividend": 25940537491.54
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 26216750177.31,
+            "plannedDividend": 26216750177.31
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-31",
+            "updatedDate": "2023-03-31",
+            "parentProfit": 76170000000,
+            "operatingCashFlow": 109557000000,
+            "roe": 11.86,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-31",
+            "updatedDate": "2024-03-29",
+            "parentProfit": 85224000000,
+            "operatingCashFlow": 474914000000,
+            "roe": 11.89,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-29",
+            "updatedDate": "2025-03-28",
+            "parentProfit": 86270000000,
+            "operatingCashFlow": 263337000000,
+            "roe": 10.85,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-28",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 86479000000,
+            "operatingCashFlow": 397276000000,
+            "roe": 9.84,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-28",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 87404000000,
+            "operatingCashFlow": 412059000000,
+            "roe": 8.67,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601665",
+      "name": "齐鲁银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 842873333.46,
+            "plannedDividend": 842873333.46
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 852056410.21,
+            "plannedDividend": 852056410.21
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1063694379,
+            "plannedDividend": 1063694379
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1289203251.8,
+            "plannedDividend": 1289203251.8
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1533537557.24,
+            "plannedDividend": 1533537557.24
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-29",
+            "updatedDate": "2023-04-28",
+            "parentProfit": 3035644000,
+            "operatingCashFlow": 28531016000,
+            "roe": 11.4,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-28",
+            "updatedDate": "2024-04-27",
+            "parentProfit": 3587370000,
+            "operatingCashFlow": 27816168000,
+            "roe": 11.92,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-27",
+            "updatedDate": "2025-04-26",
+            "parentProfit": 4233751000,
+            "operatingCashFlow": 28973549000,
+            "roe": 12.9,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-26",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 4986289000,
+            "operatingCashFlow": 18710798000,
+            "roe": 12.52,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-23",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 5713492000,
+            "operatingCashFlow": 44103814000,
+            "roe": 12.17,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601668",
+      "name": "中国建筑",
+      "exchange": "SSE",
+      "industry": "工业",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932079",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 10485214711,
+            "plannedDividend": 10485214711
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 10596831179.68,
+            "plannedDividend": 10596831179.68
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 11297736090.92,
+            "plannedDividend": 11297736090.92
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 11218486005.55,
+            "plannedDividend": 11218486005.55
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 11230882122.68,
+            "plannedDividend": 11230882122.68
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-16",
+            "updatedDate": "2023-04-18",
+            "parentProfit": 51548576000,
+            "operatingCashFlow": 13989638000,
+            "roe": 15.9,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-18",
+            "updatedDate": "2024-04-19",
+            "parentProfit": 50950301000,
+            "operatingCashFlow": 3828927000,
+            "roe": 13.94,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-19",
+            "updatedDate": "2025-04-16",
+            "parentProfit": 54264173000,
+            "operatingCashFlow": 11030123000,
+            "roe": 13.36,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-16",
+            "updatedDate": "2026-04-18",
+            "parentProfit": 46193694000,
+            "operatingCashFlow": 15825793000,
+            "roe": 10.36,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-18",
+            "updatedDate": "2026-04-18",
+            "parentProfit": 39069002000,
+            "operatingCashFlow": 20537132000,
+            "roe": 8.15,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601825",
+      "name": "沪农商行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 5400888889.2,
+            "plannedDividend": 5400888889.2
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 3298400000.19,
+            "plannedDividend": 3298400000.19
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 3655244444.66,
+            "plannedDividend": 3655244444.66
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 4166400000.25,
+            "plannedDividend": 4166400000.25
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 4195333333.58,
+            "plannedDividend": 4195333333.58
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-30",
+            "updatedDate": "2023-04-28",
+            "parentProfit": 9697866000,
+            "operatingCashFlow": -1147481000,
+            "roe": 11.39,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-28",
+            "updatedDate": "2024-04-26",
+            "parentProfit": 10974378000,
+            "operatingCashFlow": 125030843000,
+            "roe": 11.22,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-26",
+            "updatedDate": "2025-04-25",
+            "parentProfit": 12141958000,
+            "operatingCashFlow": 39166570000,
+            "roe": 11.34,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-25",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 12288156000,
+            "operatingCashFlow": 51202997000,
+            "roe": 10.35,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-23",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 12312825000,
+            "operatingCashFlow": -11371368000,
+            "roe": 9.74,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601838",
+      "name": "成都银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 2275718340.42,
+            "plannedDividend": 2275718340.42
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 2928816726.45,
+            "plannedDividend": 2928816726.45
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 3420349989.62,
+            "plannedDividend": 3420349989.62
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 3776445902.2,
+            "plannedDividend": 3776445902.2
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 3903598962.88,
+            "plannedDividend": 3903598962.88
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-28",
+            "updatedDate": "2023-04-26",
+            "parentProfit": 7830736000,
+            "operatingCashFlow": -3521263000,
+            "roe": 17.6,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-26",
+            "updatedDate": "2024-04-25",
+            "parentProfit": 10042377000,
+            "operatingCashFlow": 9692134000,
+            "roe": 19.48,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-25",
+            "updatedDate": "2025-04-29",
+            "parentProfit": 11671118000,
+            "operatingCashFlow": -23753784000,
+            "roe": 18.78,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-29",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 12858380000,
+            "operatingCashFlow": -94226009000,
+            "roe": 17.81,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-23",
+            "updatedDate": "2026-04-23",
+            "parentProfit": 13283492000,
+            "operatingCashFlow": 74859801000,
+            "roe": 15.39,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601857",
+      "name": "中国石油",
+      "exchange": "SSE",
+      "industry": "能源",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932077",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 41476213993.12,
+            "plannedDividend": 41476213993.12
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 77341004806.33,
+            "plannedDividend": 77341004806.33
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 80529230239.92,
+            "plannedDividend": 80529230239.92
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 86019859574.46,
+            "plannedDividend": 86019859574.46
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 86019859574.46,
+            "plannedDividend": 86019859574.46
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-01",
+            "updatedDate": "2023-03-30",
+            "parentProfit": 92161000000,
+            "operatingCashFlow": 341469000000,
+            "roe": 7.4,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-30",
+            "updatedDate": "2024-03-26",
+            "parentProfit": 148738000000,
+            "operatingCashFlow": 393768000000,
+            "roe": 11.3,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-26",
+            "updatedDate": "2025-03-31",
+            "parentProfit": 161414000000,
+            "operatingCashFlow": 456847000000,
+            "roe": 11.4,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-31",
+            "updatedDate": "2026-03-30",
+            "parentProfit": 164676000000,
+            "operatingCashFlow": 406532000000,
+            "roe": 11.1,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-30",
+            "updatedDate": "2026-03-30",
+            "parentProfit": 157302000000,
+            "operatingCashFlow": 412510000000,
+            "roe": 10.1,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601928",
+      "name": "凤凰传媒",
+      "exchange": "SSE",
+      "industry": "通信服务",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932085",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 1272450000,
+            "plannedDividend": 1272450000
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 1272450000,
+            "plannedDividend": 1272450000
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1272450000,
+            "plannedDividend": 1272450000
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1272450000,
+            "plannedDividend": 1272450000
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1272450000,
+            "plannedDividend": 1272450000
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-23",
+            "updatedDate": "2023-04-22",
+            "parentProfit": 2456754308.9,
+            "operatingCashFlow": 3321016150.58,
+            "roe": 16.02,
+            "orgType": "通用"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-04-22",
+            "updatedDate": "2024-04-23",
+            "parentProfit": 2081792933.19,
+            "operatingCashFlow": 2506841773.17,
+            "roe": 12.65,
+            "orgType": "通用"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-04-23",
+            "updatedDate": "2025-04-22",
+            "parentProfit": 2951938135.73,
+            "operatingCashFlow": 2603125168.88,
+            "roe": 16.34,
+            "orgType": "通用"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-04-22",
+            "updatedDate": "2026-04-21",
+            "parentProfit": 1597505168.2,
+            "operatingCashFlow": 1839329518.33,
+            "roe": 8.32,
+            "orgType": "通用"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-04-21",
+            "updatedDate": "2026-04-21",
+            "parentProfit": 1795138915.12,
+            "operatingCashFlow": 1536468206.1,
+            "roe": 9.12,
+            "orgType": "通用"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601939",
+      "name": "建设银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 91004000000,
+            "plannedDividend": 91004000000
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 97254000000,
+            "plannedDividend": 97254000000
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 100004000000,
+            "plannedDividend": 100004000000
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 100754000000,
+            "plannedDividend": 100754000000
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 101684000000,
+            "plannedDividend": 101684000000
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-30",
+            "updatedDate": "2023-03-30",
+            "parentProfit": 302513000000,
+            "operatingCashFlow": 436718000000,
+            "roe": 12.55,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-30",
+            "updatedDate": "2024-03-29",
+            "parentProfit": 324727000000,
+            "operatingCashFlow": 978419000000,
+            "roe": 12.3,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-29",
+            "updatedDate": "2025-03-29",
+            "parentProfit": 332653000000,
+            "operatingCashFlow": 642850000000,
+            "roe": 11.56,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-29",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 335577000000,
+            "operatingCashFlow": 338023000000,
+            "roe": 10.69,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-28",
+            "updatedDate": "2026-03-28",
+            "parentProfit": 338906000000,
+            "operatingCashFlow": 2101242000000,
+            "roe": 10.04,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601963",
+      "name": "重庆银行",
+      "exchange": "SSE",
+      "industry": null,
+      "industryStatus": "unavailable",
+      "industryDate": null,
+      "industrySourceIndex": null,
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 1355057082.21,
+            "plannedDividend": 1355057082.21
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 1372449369.57,
+            "plannedDividend": 1372449369.57
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 1417622934.94,
+            "plannedDividend": 1417622934.94
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 1438474651.29,
+            "plannedDividend": 1438474651.29
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 1599250434.74,
+            "plannedDividend": 1599250434.74
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-04-01",
+            "updatedDate": "2023-03-31",
+            "parentProfit": 4663743000,
+            "operatingCashFlow": 5085209000,
+            "roe": 10.99,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-31",
+            "updatedDate": "2024-03-28",
+            "parentProfit": 4867857000,
+            "operatingCashFlow": 5311657000,
+            "roe": 10.2,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-28",
+            "updatedDate": "2025-03-22",
+            "parentProfit": 4929787000,
+            "operatingCashFlow": 4449352000,
+            "roe": 10.14,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-22",
+            "updatedDate": "2026-03-25",
+            "parentProfit": 5117290000,
+            "operatingCashFlow": -20746886000,
+            "roe": 9.29,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-25",
+            "updatedDate": "2026-03-25",
+            "parentProfit": 5654218000,
+            "operatingCashFlow": 49435593000,
+            "roe": 9.5,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601988",
+      "name": "中国银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 65059701864.26,
+            "plannedDividend": 65059701864.26
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 68297967567.91,
+            "plannedDividend": 68297967567.91
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 69593273849.37,
+            "plannedDividend": 69593273849.37
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 71359600596.82,
+            "plannedDividend": 71359600596.82
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 72916668793.51,
+            "plannedDividend": 72916668793.51
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-30",
+            "updatedDate": "2023-03-31",
+            "parentProfit": 216559000000,
+            "operatingCashFlow": 843258000000,
+            "roe": 11.28,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-31",
+            "updatedDate": "2024-03-29",
+            "parentProfit": 226522000000,
+            "operatingCashFlow": -21855000000,
+            "roe": 10.77,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-29",
+            "updatedDate": "2025-03-27",
+            "parentProfit": 231904000000,
+            "operatingCashFlow": 816446000000,
+            "roe": 10.12,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-27",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 237841000000,
+            "operatingCashFlow": 550966000000,
+            "roe": 9.5,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-31",
+            "updatedDate": "2026-03-31",
+            "parentProfit": 243021000000,
+            "operatingCashFlow": 812030000000,
+            "roe": 8.94,
+            "orgType": "银行"
+          }
+        ]
+      }
+    },
+    {
+      "code": "601998",
+      "name": "中信银行",
+      "exchange": "SSE",
+      "industry": "金融",
+      "industryStatus": "ok",
+      "industryDate": "2026-09-30",
+      "industrySourceIndex": "932083",
+      "dividends": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "cashDividend": 14778322784.41,
+            "plannedDividend": 14778322784.41
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "cashDividend": 16110098737.66,
+            "plannedDividend": 16110098737.66
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "cashDividend": 17432177559.65,
+            "plannedDividend": 17432177559.65
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "cashDividend": 19454983351.49,
+            "plannedDividend": 19454983351.49
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "cashDividend": 21200806822.6,
+            "plannedDividend": 21200806822.6
+          }
+        ]
+      },
+      "financials": {
+        "status": "ok",
+        "reason": null,
+        "lastAttemptAt": "2026-10-02T07:33:15.706Z",
+        "lastSuccessAt": "2026-10-02T07:33:15.706Z",
+        "history": [
+          {
+            "year": 2021,
+            "reportDate": "2021-12-31",
+            "noticeDate": "2022-03-25",
+            "updatedDate": "2023-03-24",
+            "parentProfit": 55641000000,
+            "operatingCashFlow": -75394000000,
+            "roe": 10.73,
+            "orgType": "银行"
+          },
+          {
+            "year": 2022,
+            "reportDate": "2022-12-31",
+            "noticeDate": "2023-03-24",
+            "updatedDate": "2024-03-22",
+            "parentProfit": 62103000000,
+            "operatingCashFlow": 195066000000,
+            "roe": 10.8,
+            "orgType": "银行"
+          },
+          {
+            "year": 2023,
+            "reportDate": "2023-12-31",
+            "noticeDate": "2024-03-22",
+            "updatedDate": "2025-03-27",
+            "parentProfit": 67016000000,
+            "operatingCashFlow": -918000000,
+            "roe": 10.8,
+            "orgType": "银行"
+          },
+          {
+            "year": 2024,
+            "reportDate": "2024-12-31",
+            "noticeDate": "2025-03-27",
+            "updatedDate": "2026-03-21",
+            "parentProfit": 68576000000,
+            "operatingCashFlow": -181032000000,
+            "roe": 9.79,
+            "orgType": "银行"
+          },
+          {
+            "year": 2025,
+            "reportDate": "2025-12-31",
+            "noticeDate": "2026-03-21",
+            "updatedDate": "2026-03-21",
+            "parentProfit": 70618000000,
+            "operatingCashFlow": 443082000000,
+            "roe": 9.39,
+            "orgType": "银行"
+          }
+        ]
+      }
+    }
+  ]
+}

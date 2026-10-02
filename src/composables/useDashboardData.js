@@ -10,6 +10,7 @@ import { getConstituents } from '../api/constituents.js'
 import { getConstituentHistory } from '../api/constituentHistory.js'
 import { getYieldHistory } from '../api/yieldHistory.js'
 import { getEtfNav } from '../api/etfNav.js'
+import { getFundamentals } from '../api/fundamentals.js'
 
 const dashboardKey = Symbol('dashboard-data')
 const metricKeys = ['latestMetrics', 'valuation', 'dividend']
@@ -24,6 +25,7 @@ export function createDashboardData(overrides = {}) {
     eastmoneyHistory: getValuationHistory, csiHistory: getCsiValuationHistory, csiStatus: getCsiValuationStatus,
     etfDistributions: getEtfDistributions,
     etfNav: getEtfNav,
+    fundamentals: getFundamentals,
     constituents: getConstituents, constituentHistory: getConstituentHistory,
     yieldHistory: getYieldHistory,
     ...overrides,
@@ -57,6 +59,10 @@ export function createDashboardData(overrides = {}) {
 
   function refresh(keys) {
     const selected = new Set(keys)
+    if (states.fundamentals.attempted && keys.some(key => ['fundamentals', 'constituents', 'constituentHistory'].includes(key))) {
+      selected.add('fundamentals'); selected.add('constituents')
+      if (states.constituentHistory.attempted) selected.add('constituentHistory')
+    }
     if (states.etfNav.attempted && keys.some(key => ['512890', 'etfNav', 'H30269', 'etfDistributions'].includes(key))) {
       for (const key of ['512890', 'etfNav', 'H30269', 'etfDistributions']) selected.add(key)
     }

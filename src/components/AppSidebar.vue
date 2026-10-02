@@ -18,6 +18,7 @@ const navigation = [
   { label: '估值分析', icon: ChartNoAxesCombined, href: '#valuation-analysis' },
   { label: '股息与国债差值', icon: ChartNoAxesCombined, href: '#yield-spread' },
   { label: '成分与行业结构', icon: LayoutGrid, href: '#constituent-structure' },
+  { label: '分红质量与基本面', icon: ChartNoAxesCombined, href: '#dividend-quality' },
   { label: '每周／每月复盘', icon: Calculator, href: '#review-summary' },
   { label: '数据说明', icon: Database, href: '#data-notes' },
 ]
