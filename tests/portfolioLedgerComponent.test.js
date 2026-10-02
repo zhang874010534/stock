@@ -4,16 +4,19 @@ import { readFile } from 'node:fs/promises'
 import { createRenderer, h, nextTick, reactive, ref } from 'vue'
 import { parse, compileScript } from '@vue/compiler-sfc'
 import { createPortfolioLedger, providePortfolioLedger } from '../src/composables/usePortfolioLedger.js'
+import { calculatePortfolioHistory } from '../src/utils/portfolioHistory.js'
 
-async function mount(relative, initial, store) {
+async function mount(relative, initial, store, chart) {
   const file = new URL(`../src/components/${relative}.vue`, import.meta.url)
   const { descriptor } = parse(await readFile(file, 'utf8'))
   const source = compileScript(descriptor, { id: 'ledger-test', inlineTemplate: true, templateOptions: { compilerOptions: { hoistStatic: false } } }).content
+    .replace(/const PortfolioHistoryTrend = defineAsyncComponent\(\(\) => import\([^\n]+/, "const PortfolioHistoryTrend = { props: ['stats', 'range'], setup(props) { return () => testH('div', { historyStats: props.stats, historyRange: props.range }) } }")
+    .replace(/import \{ initPortfolioHistory \} from ['"][^'"]+['"]/, 'const initPortfolioHistory = element => element.chart')
     .replace(/from (['"])([^'"]+)\1/g, (_, quote, path) => `from '${path.startsWith('.') ? new URL(path, file).href : import.meta.resolve(path)}'`)
-  const component = (await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`)).default
+  const component = (await import(`data:text/javascript;base64,${Buffer.from(`import { h as testH } from '${import.meta.resolve('vue')}';\n${source}`).toString('base64')}`)).default
   const previousDocument = globalThis.Document, previousShadow = globalThis.ShadowRoot
   globalThis.Document = class {}; globalThis.ShadowRoot = class {}
-  const node = tag => ({ tag, tagName: tag.toUpperCase(), children: [], props: {}, text: '', value: '', clientWidth: 600,
+  const node = tag => ({ tag, tagName: tag.toUpperCase(), children: [], props: {}, text: '', value: '', clientWidth: 600, clientHeight: 470, chart,
     get options() { return this.children.filter(child => child.tag === 'option') },
     addEventListener() {}, getRootNode: () => ({}), focus() { this.focused = true } })
   const renderer = createRenderer({
@@ -86,6 +89,40 @@ test('文件导入损坏或超限不改变账本，成功合并可重试，表�
   } finally { view.unmount() }
 })
 
+test('历史曲线随买卖编辑删除与撤销重算，区间不重置累计金额，缺日与读取失败保留记账和原行情', async () => {
+  const store = ledgerStore()
+  const rows = [{ date: '2025-09-30', close: 1 }, { date: '2026-09-28', close: 1.1 }, { date: '2026-09-29', close: 1.2 }, { date: '2026-09-30', close: 1.3 }]
+  const market = { code: '512890', source: 'eastmoney', interval: '1d', history: rows, latest: rows.at(-1) }
+  const view = await mount('PortfolioLedger', { market }, store)
+  const field = (name, value) => view.field(name).props['onUpdate:modelValue'](value)
+  const stats = () => view.nodes().find(node => node.props.historyStats)?.props.historyStats
+  try {
+    assert.match(view.text(), /录入第一笔实际记录后/); assert.equal(stats(), undefined)
+    await view.api.newEntry('buy'); field('账本日期', '2025-09-30'); field('账本成交份额', 100); field('账本成交价', 1); field('账本费用', 1)
+    view.submit(); await nextTick()
+    assert.equal(stats().points.at(-1).totalProfit, 29); assert.match(view.text(), /保留断点/)
+    view.button('年初至今').props.onClick(); await nextTick()
+    assert.ok(stats().points[0].date >= '2026-01-01'); assert.equal(stats().points[0].invested, 101)
+    assert.equal(view.button('年初至今').props['aria-pressed'], true)
+    store.select('ui-1'); await nextTick(); field('账本成交价', 1.1); view.submit(); await nextTick()
+    assert.equal(stats().points.at(-1).totalProfit, 19); assert.equal(stats().points[0].invested, 111)
+    await view.api.newEntry('dividend'); field('账本现金金额', 10); field('账本费用', 1); view.submit(); await nextTick()
+    assert.equal(stats().points.at(-1).dividends, 9); assert.equal(stats().points.at(-1).totalProfit, 28)
+    view.field('删除交易 ui-2').props.onClick(); await nextTick(); assert.equal(stats().points.at(-1).totalProfit, 19)
+    view.button('撤销最近一次删除').props.onClick(); await nextTick(); assert.equal(stats().points.at(-1).totalProfit, 28)
+    const original = stats()
+    view.props.error = 'offline'; await nextTick(); assert.deepEqual(stats(), original); assert.match(view.text(), /暂按原行情估值/)
+    view.props.market = null; view.props.loading = true; await nextTick()
+    assert.match(view.text(), /正在读取历史行情/); assert.equal(stats(), undefined)
+    view.props.market = market; view.props.loading = false; await nextTick(); assert.deepEqual(stats(), original)
+    const details = view.nodes().find(node => node.tag === 'details' && node.props.class === 'ledger-history-details')
+    details.props.onToggle({ target: { open: true } }); await nextTick(); assert.match(view.text(), /当日全部记录按同日顺序/)
+    view.field('删除交易 ui-2').props.onClick(); await nextTick()
+    view.field('删除交易 ui-1').props.onClick(); await nextTick()
+    assert.equal(stats(), undefined); assert.equal(view.button('导出收益历史 CSV').props.disabled, true)
+  } finally { view.unmount() }
+})
+
 test('交易 SVG 标记按可视网格裁剪、缩放后重投影，并支持键盘打开实际记录', async () => {
   const previousObserver = globalThis.ResizeObserver
   let disconnected = false, selected = null
@@ -101,4 +138,31 @@ test('交易 SVG 标记按可视网格裁剪、缩放后重投影，并支持键
     assert.equal(view.api.visibleTrades().length, 0)
   } finally { view.unmount(); globalThis.ResizeObserver = previousObserver }
   assert.equal(disconnected, true)
+})
+
+test('历史图隐藏更新后绘制最新输入，保留日期缩放与图例选择，切换区间重置缩放，卸载释放资源', async () => {
+  const previousObserver = globalThis.ResizeObserver
+  let notify, option, disconnected = false, disposed = false
+  const options = []
+  const chart = { getOption: () => option, setOption(value) { option = value; options.push(value) }, resize() {}, dispose() { disposed = true } }
+  globalThis.ResizeObserver = class { constructor(callback) { notify = callback } observe() {} disconnect() { disconnected = true } }
+  const store = ledgerStore()
+  store.upsert({ type: 'buy', date: '2026-09-28', sequence: 1, quantity: 100, price: 1, fee: 1, amount: null, ratio: null, note: '' })
+  const rows = [{ date: '2026-09-28', close: 1 }, { date: '2026-09-29', close: 1.1 }, { date: '2026-09-30', close: 1.2 }]
+  const stats = quotes => calculatePortfolioHistory(store.entries.value, { code: '512890', source: 'eastmoney', interval: '1d', history: quotes, latest: quotes.at(-1) })
+  let view
+  try {
+    view = await mount('PortfolioHistoryTrend', { stats: stats(rows.slice(0, 2)), range: 'all' }, null, chart)
+    assert.equal(options.length, 1)
+    option = { dataZoom: [{ start: 100, end: 100 }], legend: [{ selected: { '持仓市值': false } }, { selected: { '费用影响（已计入盈亏）': false } }] }
+    const canvas = view.nodes().find(node => node.props.class === 'portfolio-history-canvas')
+    canvas.clientWidth = 0
+    view.props.stats = stats(rows); await nextTick(); assert.equal(options.length, 1)
+    canvas.clientWidth = 600; notify()
+    assert.equal(options.length, 2); assert.equal(option.dataZoom[0].startValue, 1)
+    assert.equal(option.legend[0].selected['持仓市值'], false); assert.equal(option.legend[1].selected['费用影响（已计入盈亏）'], false)
+    view.props.range = 'ytd'; await nextTick(); assert.equal(option.dataZoom[0].startValue, 0)
+    assert.equal(options.length, 3); notify(); assert.equal(options.length, 3)
+  } finally { view?.unmount(); globalThis.ResizeObserver = previousObserver }
+  assert.equal(disconnected, true); assert.equal(disposed, true); notify(); assert.equal(options.length, 3)
 })

@@ -1,8 +1,11 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { usePortfolioLedger } from '../composables/usePortfolioLedger.js'
 import { LEDGER_TYPES, MAX_LEDGER_BACKUP_BYTES, localDate, portfolioSummary } from '../utils/portfolioLedger.js'
 import { downloadBlob } from '../utils/chartExport.js'
+import { calculatePortfolioHistory, portfolioHistoryCsv, selectPortfolioHistory } from '../utils/portfolioHistory.js'
+
+const PortfolioHistoryTrend = defineAsyncComponent(() => import('./PortfolioHistoryTrend.vue'))
 
 const props = defineProps({ market: Object, loading: Boolean, error: String, sourceNotice: String })
 const ledger = usePortfolioLedger()
@@ -16,6 +19,14 @@ const draft = reactive({ id: null, type: 'buy', date: '', sequence: 1, quantity:
 const isTrade = computed(() => ['buy', 'sell'].includes(draft.type))
 const isCash = computed(() => ['dividend', 'fee'].includes(draft.type))
 const summary = computed(() => portfolioSummary(ledger.entries.value, props.market?.latest, { now: clock.value }))
+const historyRange = ref('all'), historyDetailsOpen = ref(false)
+const historyRanges = { all: '全部历史', year: '近1年', ytd: '年初至今' }
+const historyResult = computed(() => {
+  try { return { stats: calculatePortfolioHistory(ledger.entries.value, props.market, { now: clock.value }), error: '' } }
+  catch (error) { return { stats: null, error: error.message } }
+})
+const historyStats = computed(() => historyResult.value.stats ? selectPortfolioHistory(historyResult.value.stats, historyRange.value) : null)
+const historyRows = computed(() => [...(historyStats.value?.points ?? [])].reverse())
 const money = value => value == null ? '—' : new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
 const quantity = value => new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 6 }).format(value)
 const percent = value => value == null ? '—' : `${(value * 100).toFixed(2)}%`
@@ -71,6 +82,14 @@ function exportBackup() {
     actionError.value = ''
   } catch (error) { actionError.value = `导出失败：${error.message}` }
 }
+function exportHistory() {
+  try {
+    const stats = historyStats.value
+    if (!stats?.points.length) return
+    downloadBlob(new Blob([portfolioHistoryCsv(stats)], { type: 'text/csv;charset=utf-8' }), `512890_个人收益历史_${stats.startDate}_${stats.endDate}.csv`)
+    actionError.value = ''
+  } catch (error) { actionError.value = `收益历史导出失败：${error.message}` }
+}
 async function importBackup(event) {
   const input = event.target, file = input.files?.[0]
   if (!file) return
@@ -98,6 +117,21 @@ defineExpose({ newEntry, editEntry })
     <p v-if="summary.valuationReason" class="ledger-warning" role="status">{{ summary.valuationReason }}</p>
     <p v-else class="ledger-note">{{ summary.shares > 0 ? `按 ${summary.asOf} 已同步收盘价 ${market.latest.close} 元估值，非实时持仓市值。` : `已清仓，收益截至最后一笔记录 ${summary.asOf}。` }} 累计买入支出 {{ money(summary.invested) }} 元 · 全部已录入费用 {{ money(summary.fees) }} 元 · 其他费用 {{ money(summary.otherFees) }} 元。</p>
     <p v-if="summary.xirr.reason && ledger.entries.value.length" class="ledger-note">XIRR 暂不展示：{{ summary.xirr.reason }}。</p>
+    <section class="ledger-history" aria-label="个人收益历史曲线">
+      <header class="ledger-history-heading"><div><h3>个人收益历史曲线</h3><p class="ledger-note">上图看持仓与买入支出，下图看累计盈亏、到账分红和费用影响。</p></div><div class="ledger-actions"><button v-for="(label, key) in historyRanges" :key="key" type="button" :aria-pressed="historyRange === key" @click="historyRange = key">{{ label }}</button><button type="button" :disabled="!historyStats?.points.length" @click="exportHistory">导出收益历史 CSV</button></div></header>
+      <p v-if="historyResult.error" class="ledger-warning" role="alert">收益历史暂不能计算：{{ historyResult.error }}</p>
+      <p v-else-if="!historyStats?.points.length" class="ledger-note">录入第一笔实际记录后展示每日持仓与收益变化。</p>
+      <p v-else-if="loading && !market?.history?.length" class="ledger-note" role="status">正在读取历史行情，账本记录可以继续编辑。</p>
+      <template v-else>
+        <p class="ledger-note">{{ historyStats.startDate }} — {{ historyStats.endDate }} · {{ historyStats.points.length }} 个交易日／记账日 · 金额单位：元。切换区间只改变展示，累计值从第一笔记录起算。</p>
+        <p v-for="warning in historyStats.warnings" :key="warning" class="ledger-warning" role="status">{{ warning }}</p>
+        <PortfolioHistoryTrend :stats="historyStats" :range="historyRange" />
+        <p class="ledger-note">累计买入支出包含买入费用，重复买卖会重复累计；卖出回款不在持仓市值中。分红为实际录入的扣费后到账金额。费用影响显示为负数，已计入成本／盈亏，不再次扣除。</p>
+        <details class="ledger-history-details" @toggle="historyDetailsOpen = $event.target.open"><summary>每日明细（{{ historyStats.points.length }} 个日期）</summary>
+          <div v-if="historyDetailsOpen" class="ledger-table-wrap"><table><caption>当前展示区间 · 当日全部记录按同日顺序核算后的收盘状态 · 最近日期在前</caption><thead><tr><th>日期</th><th>持有份额</th><th>收盘价</th><th>持仓市值</th><th>累计买入支出</th><th>已实现交易盈亏</th><th>浮动盈亏</th><th>累计盈亏</th><th>到账分红（扣费后）</th><th>累计费用</th><th>估值说明</th></tr></thead><tbody><tr v-for="point in historyRows" :key="point.date"><td>{{ point.date }}</td><td>{{ quantity(point.shares) }}</td><td>{{ point.close === null ? '—' : point.close.toFixed(4) }}</td><td>{{ money(point.marketValue) }}</td><td>{{ money(point.invested) }}</td><td>{{ money(point.realized) }}</td><td>{{ money(point.unrealized) }}</td><td>{{ money(point.totalProfit) }}</td><td>{{ money(point.dividends) }}</td><td>{{ money(point.fees) }}</td><td>{{ point.valuationReason || (point.shares === 0 ? '无持仓，无需价格估值' : '当日收盘估值') }}</td></tr></tbody></table></div>
+        </details>
+      </template>
+    </section>
     <div class="ledger-actions add-actions"><button v-for="(label, type) in LEDGER_TYPES" :key="type" type="button" @click="newEntry(type)">记录{{ label }}</button><button v-if="ledger.removed.value" type="button" @click="undo">撤销最近一次删除</button></div>
     <form v-if="formOpen" class="ledger-form" aria-label="交易账本录入" @submit.prevent="save">
       <p class="form-title">{{ draft.id ? '编辑记录' : '新增记录' }}</p>
@@ -127,6 +161,7 @@ button, select, input, textarea, .import-button { padding: 7px 9px; border: 1px 
 .import-button { position: relative; overflow: hidden; }.import-button input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; }
 .ledger-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }.ledger-card { min-width: 0; padding: 12px; border: 1px solid #223049; background: #0a1220; border-radius: 6px; }.ledger-card span { display: block; color: #93a4bf; font-size: 11px; line-height: 1.6; }.ledger-card strong { display: block; margin-top: 8px; color: #d8e6f5; font-size: 15px; font-family: var(--font-mono); overflow-wrap: anywhere; }
 .add-actions { margin-top: 16px; }.ledger-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 14px; margin-top: 14px; border: 1px solid #33435b; border-radius: 8px; }.form-title, .note-field, .form-caption { grid-column: 1 / -1; }.form-title { color: #d8e6f5; font-size: 13px; }
+.ledger-history { margin-top: 20px; padding-top: 16px; border-top: 1px solid #223049; min-width: 0; }.ledger-history-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }.ledger-history h3 { font-size: 14px; color: #d8e6f5; }.ledger-history button[aria-pressed="true"] { background: #1c3657; border-color: #69a9ff; color: #e1eeff; }.ledger-history button:disabled { opacity: .5; cursor: default; }.ledger-history-details { margin-top: 8px; color: #a6b8d2; font-size: 12px; }.ledger-history-details summary { cursor: pointer; padding: 6px 0; }
 .ledger-form label { font-size: 12px; color: #acbcd3; min-width: 0; }.ledger-form input, select, textarea { display: block; width: 100%; min-width: 0; box-sizing: border-box; margin-top: 6px; color-scheme: dark; }
 .empty-ledger { padding: 24px 0; color: #93a4bf; font-size: 12px; }.ledger-table-wrap { overflow: auto; max-height: 480px; margin-top: 14px; }table { width: 100%; border-collapse: collapse; font-size: 11px; }caption { text-align: left; color: #b8ceec; padding-bottom: 8px; }th, td { padding: 9px 8px; border-bottom: 1px solid #223049; text-align: right; white-space: nowrap; }th { color: #93a4bf; font-weight: 500; }td { color: #d8e6f5; font-family: var(--font-mono); }th:first-child, td:first-child { text-align: left; }.row-note { min-width: 120px; max-width: 230px; white-space: normal; overflow-wrap: anywhere; text-align: left; }.ledger-table-wrap .ledger-actions { flex-wrap: nowrap; }
 .ledger-method { margin-top: 14px; border-top: 1px solid #223049; padding-top: 12px; }.ledger-method summary { cursor: pointer; color: #b9c9df; font-size: 12px; }.ledger-method p { color: #93a4bf; font-size: 11px; line-height: 1.8; margin-top: 8px; }

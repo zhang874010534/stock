@@ -134,7 +134,10 @@ test('real snapshots have complete one/three-year samples matching independent d
   for (const name of ['h30269', '512890']) {
     const m = JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url)))
     const events = JSON.parse(await readFile(new URL('../public/data/distributions-512890.json', import.meta.url)))
-    const result = analyze(m, { distribution: events })
+    // Real snapshots advance independently of the fixed formula-test clock.
+    // Validate them at their recorded observation time and after market close.
+    const snapshotNow = new Date(Math.max(now.getTime(), Date.parse(events.checkedAt), Date.parse(`${m.latest.date}T08:00:00Z`)))
+    const result = analyze(m, { distribution: events, now: snapshotNow })
     assert.ok(result.series.every(series => series.count > 100 && series.missingCount === 0))
     for (const series of result.series) for (const point of series.windows) {
       const target = new Date(`${point.buyDate}T00:00:00Z`); target.setUTCFullYear(target.getUTCFullYear() + series.years)

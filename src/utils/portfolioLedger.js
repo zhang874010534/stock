@@ -74,7 +74,8 @@ export function ledgerAccounting(entries) {
     fees += entry.fee + (entry.type === 'fee' ? entry.amount : 0)
     requireValue([shares, cost, realized, dividends, otherFees, invested, proceeds].every(Number.isFinite), '账本结果超出数值范围')
     if (cashFlow !== 0) flows.push({ date: entry.date, amount: cashFlow })
-    rows.push({ ...entry, grossAmount, cashFlow, profit, shares, cost })
+    rows.push({ ...entry, grossAmount, cashFlow, profit, shares, cost,
+      realized, dividends, otherFees, fees, invested, proceeds })
   }
   return { shares, cost, averageCost: shares > 0 ? cost / shares : null, realized, dividends, otherFees,
     fees, invested, proceeds, bookedProfit: realized + dividends - otherFees, rows, flows }
