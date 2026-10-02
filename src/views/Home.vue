@@ -19,6 +19,10 @@ import YieldSpreadAnalysis from '../components/YieldSpreadAnalysis.vue'
 import PortfolioLedger from '../components/PortfolioLedger.vue'
 import ReviewSummary from '../components/ReviewSummary.vue'
 import TodayOverview from '../components/TodayOverview.vue'
+import HomeLayoutSettings from '../components/HomeLayoutSettings.vue'
+import HomepageModule from '../components/HomepageModule.vue'
+import { useHomeLayout } from '../composables/useHomeLayout.js'
+import { availableHomeModules, homeModuleForAnchor } from '../utils/homeLayout.js'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -26,6 +30,8 @@ import { collectionNotice, dataFreshness } from '../utils/sourceStatus.js'
 import { marketSummary, signedValue } from '../utils/marketSummary.js'
 
 const props = defineProps({ instrument: { type: String, default: '512890' } })
+const layouts = useHomeLayout()
+const layoutModules = computed(() => availableHomeModules(layouts.current(props.instrument).modules, props.instrument))
 const isEtf = computed(() => props.instrument === '512890')
 const instrumentName = computed(() => isEtf.value ? '华泰柏瑞红利低波ETF' : '中证红利低波动指数')
 const prefix = computed(() => isEtf.value ? '标的指数' : '指数')
@@ -62,6 +68,8 @@ const overviewWarnings = computed(() => [
   { active: Boolean(observationAlerts.value?.storageMessage), label: '观察提醒', target: '#observation-alerts', message: observationAlerts.value?.storageMessage },
 ])
 async function navigateOverview(target) {
+  const moduleId = homeModuleForAnchor(target)
+  if (moduleId) layouts.reveal(props.instrument, moduleId)
   if (target === '#constituent-comparison') constituentStructure.value?.compareLatest?.()
   await nextTick()
   const element = document.getElementById(target.slice(1))
@@ -69,6 +77,11 @@ async function navigateOverview(target) {
   if (element.tagName === 'DETAILS') element.open = true
   element.setAttribute('tabindex', '-1')
   element.focus({ preventScroll: true })
+}
+async function openConstituents() {
+  layouts.reveal(props.instrument, 'market-chart')
+  await nextTick()
+  indexChart.value?.openConstituents()
 }
 const yieldSpread = ref(null)
 const collection = dashboard.states.collection
@@ -138,75 +151,118 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     <section class="page-heading" aria-labelledby="index-title">
       <div><p class="eyebrow">首页 / 红利低波观察</p><h1 id="index-title">{{ instrumentName }} <span class="mono">{{ instrument }}</span></h1><p class="intro">以长期视角，观察红利与低波动的价值。</p></div>
       <div class="page-actions">
-        <button class="refresh-button constituents-button" @click="indexChart?.openConstituents()">{{ isEtf ? '标的指数成分股' : '查看成分股' }} <ArrowRight :size="14" /></button>
+        <button class="refresh-button constituents-button" @click="openConstituents">{{ isEtf ? '标的指数成分股' : '查看成分股' }} <ArrowRight :size="14" /></button>
         <button class="refresh-button" :disabled="loading" @click="refresh"><RefreshCw :size="14" />{{ loading ? '读取中' : '重新读取' }}</button>
       </div>
     </section>
     <div class="data-status" :class="{ warning: hasWarning }" role="status"><Database :size="14" /><span>{{ statusLabel }}</span><span class="status-caption">各项日期见卡片</span></div>
     <a v-if="observationAlerts?.activeCount" class="observation-notice" href="#observation-alerts" role="status">{{ instrument }} · {{ observationAlerts.activeCount }} 条观察条件满足 · 查看观察提醒 →</a>
-    <TodayOverview :instrument="instrument" :alerts="alertOverview" :constituent-inputs="constituentStructure?.inputs" :module-warnings="overviewWarnings" @navigate="navigateOverview" />
-    <details id="data-source-status" class="collection-details panel">
-      <summary>查看后台采集状态与时间</summary>
-      <p>重新读取只获取站点已保存的文件，不触发后台采集。来源日期不同本身不表示更新失败。</p>
-      <p v-if="collection.error" role="status">采集状态文件暂不可用；已有记录仅供参考，不能确认当前状态。<button :disabled="collection.loading" @click="loadCollection">重试读取状态</button></p>
-      <div v-for="row in sourceRows" :key="row.kind" class="source-row">
-        <strong>{{ row.name }}</strong>
-        <span :class="{ 'load-error': row.notice.warning }">{{ row.notice.text }}</span>
-        <span v-if="row.entry?.error">原因：{{ row.entry.error }}</span>
-        <span>最近尝试：{{ formatTime(row.entry?.lastAttemptAt) }} · 最近成功：{{ formatTime(row.entry?.lastSuccessAt) }}（北京时间）</span>
-      </div>
-      <p>成功时间是采集时间，不是数据日期。数据较旧按已覆盖的 A 股交易日历作时效参考：行情在 17:30、指标在 19:15 后计入当日，落后至少 2 个交易日才提示；国债也仅使用此参考，不代表其官方发布日历。</p>
-    </details>
-    <section id="key-metrics" class="metrics-grid" aria-label="关键指标">
-      <MetricCard v-for="metric in metrics" :key="metric.key" v-bind="metric" :period="period(metric.kind || metric.key)" :aria-busy="state[metric.kind || metric.key].loading">
-        <template #value-detail>
-          <div v-if="metric.key === 'market'" class="price-summary" aria-label="行情涨跌摘要">
-            <p :class="priceTone(priceSummary.change)"><span>日涨跌</span> <strong>{{ signedValue(priceSummary.change, isEtf ? 3 : 2) }}{{ priceSummary.change == null ? '' : isEtf ? ' 元' : ' 点' }}</strong> <strong>{{ signedValue(priceSummary.changePercent, 2, '%') }}</strong></p>
-            <p v-if="priceSummary.dailyReason" class="price-note">{{ priceSummary.dailyReason }}</p>
-            <p :class="priceTone(priceSummary.ytdPercent)"><span>{{ priceSummary.year ? `${priceSummary.year} 年初至今` : '年初至今' }}</span> <strong>{{ signedValue(priceSummary.ytdPercent, 2, '%') }}</strong></p>
-            <p v-if="priceSummary.ytdReason" class="price-note">{{ priceSummary.ytdReason }}</p>
-            <p v-else class="price-note">基准：{{ priceSummary.baseDate }} 收盘；截至 {{ priceSummary.date }}</p>
-            <p class="price-note">{{ isEtf ? 'ETF 未复权价格涨跌，不含现金分红。' : '价格指数涨跌，不含分红再投资。' }}</p>
+    <HomeLayoutSettings :instrument="instrument" />
+    <HomepageModule v-for="module in layoutModules" :key="module.id" :module="module" @collapse="layouts.configure(instrument, module.id, 'collapsed', !module.collapsed)" @hide="layouts.configure(instrument, module.id, 'hidden', true)">
+      <template v-if="module.id === 'today-overview'">
+        <TodayOverview :instrument="instrument" :alerts="alertOverview" :constituent-inputs="constituentStructure?.inputs" :module-warnings="overviewWarnings" @navigate="navigateOverview" />
+      </template>
+      <template v-else-if="module.id === 'data-source-status'">
+        <details id="data-source-status" class="collection-details panel">
+          <summary>查看后台采集状态与时间</summary>
+          <p>重新读取只获取站点已保存的文件，不触发后台采集。来源日期不同本身不表示更新失败。</p>
+          <p v-if="collection.error" role="status">采集状态文件暂不可用；已有记录仅供参考，不能确认当前状态。<button :disabled="collection.loading" @click="loadCollection">重试读取状态</button></p>
+          <div v-for="row in sourceRows" :key="row.kind" class="source-row">
+            <strong>{{ row.name }}</strong>
+            <span :class="{ 'load-error': row.notice.warning }">{{ row.notice.text }}</span>
+            <span v-if="row.entry?.error">原因：{{ row.entry.error }}</span>
+            <span>最近尝试：{{ formatTime(row.entry?.lastAttemptAt) }} · 最近成功：{{ formatTime(row.entry?.lastSuccessAt) }}（北京时间）</span>
           </div>
-        </template>
-        <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf(metric.kind || metric.key).warning }">{{ noticeOf(metric.kind || metric.key).text }}</p>
-        <p v-if="!state[metric.kind || metric.key].loading && freshnessOf(metric.kind || metric.key).text" class="source-notice" :class="{ 'load-error': freshnessOf(metric.kind || metric.key).level === 'old' }">{{ freshnessOf(metric.kind || metric.key).text }}</p>
-        <p v-if="state[metric.kind || metric.key].error" class="load-error" role="status">读取失败{{ state[metric.kind || metric.key].data ? '，保留上次数据' : '' }} <button :disabled="state[metric.kind || metric.key].loading" @click="load(metric.kind || metric.key)">重试</button></p>
-      </MetricCard>
-    </section>
-    <section id="market-chart" class="chart-section" aria-label="行情走势">
-      <IndexChart :key="instrument" ref="indexChart" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" @retry="load('market')" />
-      <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
-    </section>
-    <DrawdownAnalysis id="drawdown-analysis" :instrument="instrument" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :backfill-completed="state.market.data?.backfill?.completed === true" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
-    <ObservationAlerts id="observation-alerts" ref="observationAlerts" :instrument="instrument" />
-    <LatestIndexMetrics id="performance-metrics" ref="performanceMetrics" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
-    <IndexComparisonAnalysis id="index-comparison" ref="indexComparison" :instrument="instrument" />
-    <LowVolatilityAnalysis id="low-volatility" :instrument="instrument" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
-    <EtfIncomeAnalysis v-if="isEtf" id="etf-income" ref="etfIncome" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
-    <EtfNavAnalysis v-if="isEtf" id="etf-nav-analysis" ref="etfNav" />
-    <PortfolioLedger v-if="isEtf" id="portfolio-ledger" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :source-notice="[noticeOf('market').warning ? noticeOf('market').text : '', freshnessOf('market').level === 'old' ? freshnessOf('market').text : ''].filter(Boolean).join('；')" />
-    <InvestmentSimulator id="investment-simulator" :instrument="instrument" />
-    <HoldingPeriodAnalysis id="holding-periods" :instrument="instrument" />
-    <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
-    <YieldSpreadAnalysis id="yield-spread" ref="yieldSpread" :instrument="instrument" />
-    <ConstituentStructure id="constituent-structure" ref="constituentStructure" :instrument="instrument" />
-    <DividendQualityAnalysis id="dividend-quality" ref="dividendQuality" :instrument="instrument" />
-    <ReviewSummary id="review-summary" :instrument="instrument" />
-    <section id="data-notes" class="bottom-grid" aria-label="收益率参考与数据说明">
-      <MetricCard title="中国十年期国债收益率" :value="formatYield('treasury', 4)" description="中债国债到期收益率曲线 · 10年" :period="period('treasury')" source="中债" :source-url="sources.treasury" detail="国债到期收益率与指数股息率口径不同，不能直接等同。" :aria-busy="state.treasury.loading">
-        <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf('treasury').warning }">{{ noticeOf('treasury').text }}</p>
-        <p v-if="!state.treasury.loading && freshnessOf('treasury').text" class="source-notice" :class="{ 'load-error': freshnessOf('treasury').level === 'old' }">{{ freshnessOf('treasury').text }}</p>
-        <p v-if="state.treasury.error" class="load-error" role="status">读取失败{{ state.treasury.data ? '，保留上次数据' : '' }} <button :disabled="state.treasury.loading" @click="load('treasury')">重试</button></p>
-      </MetricCard>
-      <article class="data-notes panel">
-        <h2 class="panel-heading">数据说明</h2>
-        <p v-if="isEtf">价格对应 512890 ETF；股息率、PE 和 PB 对应其跟踪指数 H30269。</p>
-        <p>行情与指标分别更新，数据日期可能不同；页面展示最近一次已同步数据，不是实时行情。</p>
-        <p v-if="dailyHistory.length">行情范围：<span class="mono">{{ dailyHistory[0].date }} — {{ latest?.date }}</span>，共 {{ dailyHistory.length }} 条日 K。{{ state.market.data?.backfill?.completed ? '历史数据已完成同步。' : '历史数据仍在补充。' }}</p>
-        <p>点击指标卡右上角的信息按钮，可查看来源与口径说明。</p>
-      </article>
-    </section>
+          <p>成功时间是采集时间，不是数据日期。数据较旧按已覆盖的 A 股交易日历作时效参考：行情在 17:30、指标在 19:15 后计入当日，落后至少 2 个交易日才提示；国债也仅使用此参考，不代表其官方发布日历。</p>
+        </details>
+      </template>
+      <template v-else-if="module.id === 'key-metrics'">
+        <section id="key-metrics" class="metrics-grid" aria-label="关键指标">
+          <MetricCard v-for="metric in metrics" :key="metric.key" v-bind="metric" :period="period(metric.kind || metric.key)" :aria-busy="state[metric.kind || metric.key].loading">
+            <template #value-detail>
+              <div v-if="metric.key === 'market'" class="price-summary" aria-label="行情涨跌摘要">
+                <p :class="priceTone(priceSummary.change)"><span>日涨跌</span> <strong>{{ signedValue(priceSummary.change, isEtf ? 3 : 2) }}{{ priceSummary.change == null ? '' : isEtf ? ' 元' : ' 点' }}</strong> <strong>{{ signedValue(priceSummary.changePercent, 2, '%') }}</strong></p>
+                <p v-if="priceSummary.dailyReason" class="price-note">{{ priceSummary.dailyReason }}</p>
+                <p :class="priceTone(priceSummary.ytdPercent)"><span>{{ priceSummary.year ? `${priceSummary.year} 年初至今` : '年初至今' }}</span> <strong>{{ signedValue(priceSummary.ytdPercent, 2, '%') }}</strong></p>
+                <p v-if="priceSummary.ytdReason" class="price-note">{{ priceSummary.ytdReason }}</p>
+                <p v-else class="price-note">基准：{{ priceSummary.baseDate }} 收盘；截至 {{ priceSummary.date }}</p>
+                <p class="price-note">{{ isEtf ? 'ETF 未复权价格涨跌，不含现金分红。' : '价格指数涨跌，不含分红再投资。' }}</p>
+              </div>
+            </template>
+            <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf(metric.kind || metric.key).warning }">{{ noticeOf(metric.kind || metric.key).text }}</p>
+            <p v-if="!state[metric.kind || metric.key].loading && freshnessOf(metric.kind || metric.key).text" class="source-notice" :class="{ 'load-error': freshnessOf(metric.kind || metric.key).level === 'old' }">{{ freshnessOf(metric.kind || metric.key).text }}</p>
+            <p v-if="state[metric.kind || metric.key].error" class="load-error" role="status">读取失败{{ state[metric.kind || metric.key].data ? '，保留上次数据' : '' }} <button :disabled="state[metric.kind || metric.key].loading" @click="load(metric.kind || metric.key)">重试</button></p>
+          </MetricCard>
+        </section>
+      </template>
+      <template v-else-if="module.id === 'market-chart'">
+        <section id="market-chart" class="chart-section" aria-label="行情走势">
+          <IndexChart :key="instrument" :ref="value => { indexChart = value }" :instrument="instrument" :history="dailyHistory" :backfill-completed="state.market.data?.backfill?.completed === true" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" @retry="load('market')" />
+          <p class="chart-hint">放大图表可查看指数详情和成分股 <ArrowRight :size="13" /></p>
+        </section>
+      </template>
+      <template v-else-if="module.id === 'drawdown-analysis'">
+        <DrawdownAnalysis id="drawdown-analysis" :instrument="instrument" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :backfill-completed="state.market.data?.backfill?.completed === true" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
+      </template>
+      <template v-else-if="module.id === 'observation-alerts'">
+        <ObservationAlerts id="observation-alerts" :ref="value => { observationAlerts = value }" :instrument="instrument" />
+      </template>
+      <template v-else-if="module.id === 'performance-metrics'">
+        <LatestIndexMetrics id="performance-metrics" :ref="value => { performanceMetrics = value }" :instrument="instrument" :collection-entry="entryOf('performance')" :collection-unavailable="Boolean(collection.error)" :checked-at="checkedAt" performance-only />
+      </template>
+      <template v-else-if="module.id === 'index-comparison'">
+        <IndexComparisonAnalysis id="index-comparison" :ref="value => { indexComparison = value }" :instrument="instrument" />
+      </template>
+      <template v-else-if="module.id === 'low-volatility'">
+        <LowVolatilityAnalysis id="low-volatility" :instrument="instrument" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
+      </template>
+      <template v-else-if="module.id === 'etf-income'">
+        <EtfIncomeAnalysis v-if="isEtf" id="etf-income" :ref="value => { etfIncome = value }" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
+      </template>
+      <template v-else-if="module.id === 'etf-nav-analysis'">
+        <EtfNavAnalysis v-if="isEtf" id="etf-nav-analysis" :ref="value => { etfNav = value }" />
+      </template>
+      <template v-else-if="module.id === 'portfolio-ledger'">
+        <PortfolioLedger v-if="isEtf" id="portfolio-ledger" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :source-notice="[noticeOf('market').warning ? noticeOf('market').text : '', freshnessOf('market').level === 'old' ? freshnessOf('market').text : ''].filter(Boolean).join('；')" />
+      </template>
+      <template v-else-if="module.id === 'investment-simulator'">
+        <InvestmentSimulator id="investment-simulator" :instrument="instrument" />
+      </template>
+      <template v-else-if="module.id === 'holding-periods'">
+        <HoldingPeriodAnalysis id="holding-periods" :instrument="instrument" />
+      </template>
+      <template v-else-if="module.id === 'valuation-analysis'">
+        <ValuationAnalysis id="valuation-analysis" :ref="value => { valuationAnalysis = value }" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
+      </template>
+      <template v-else-if="module.id === 'yield-spread'">
+        <YieldSpreadAnalysis id="yield-spread" :ref="value => { yieldSpread = value }" :instrument="instrument" />
+      </template>
+      <template v-else-if="module.id === 'constituent-structure'">
+        <ConstituentStructure id="constituent-structure" :ref="value => { constituentStructure = value }" :instrument="instrument" />
+      </template>
+      <template v-else-if="module.id === 'dividend-quality'">
+        <DividendQualityAnalysis id="dividend-quality" :ref="value => { dividendQuality = value }" :instrument="instrument" />
+      </template>
+      <template v-else-if="module.id === 'review-summary'">
+        <ReviewSummary id="review-summary" :instrument="instrument" />
+      </template>
+      <template v-else-if="module.id === 'data-notes'">
+        <section id="data-notes" class="bottom-grid" aria-label="收益率参考与数据说明">
+          <MetricCard title="中国十年期国债收益率" :value="formatYield('treasury', 4)" description="中债国债到期收益率曲线 · 10年" :period="period('treasury')" source="中债" :source-url="sources.treasury" detail="国债到期收益率与指数股息率口径不同，不能直接等同。" :aria-busy="state.treasury.loading">
+            <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf('treasury').warning }">{{ noticeOf('treasury').text }}</p>
+            <p v-if="!state.treasury.loading && freshnessOf('treasury').text" class="source-notice" :class="{ 'load-error': freshnessOf('treasury').level === 'old' }">{{ freshnessOf('treasury').text }}</p>
+            <p v-if="state.treasury.error" class="load-error" role="status">读取失败{{ state.treasury.data ? '，保留上次数据' : '' }} <button :disabled="state.treasury.loading" @click="load('treasury')">重试</button></p>
+          </MetricCard>
+          <article class="data-notes panel">
+            <h2 class="panel-heading">数据说明</h2>
+            <p v-if="isEtf">价格对应 512890 ETF；股息率、PE 和 PB 对应其跟踪指数 H30269。</p>
+            <p>行情与指标分别更新，数据日期可能不同；页面展示最近一次已同步数据，不是实时行情。</p>
+            <p v-if="dailyHistory.length">行情范围：<span class="mono">{{ dailyHistory[0].date }} — {{ latest?.date }}</span>，共 {{ dailyHistory.length }} 条日 K。{{ state.market.data?.backfill?.completed ? '历史数据已完成同步。' : '历史数据仍在补充。' }}</p>
+            <p>点击指标卡右上角的信息按钮，可查看来源与口径说明。</p>
+          </article>
+        </section>
+      </template>
+    </HomepageModule>
   </div>
 </template>
 

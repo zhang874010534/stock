@@ -1,28 +1,13 @@
 <script setup>
-import { House, ChartNoAxesCombined, Database, LayoutGrid, ChevronDown, X, Bell, Calculator } from 'lucide-vue-next'
-defineProps({ open: Boolean, instrument: String })
+import { computed } from 'vue'
+import { House, ChartNoAxesCombined, Database, LayoutGrid, ChevronDown, X, Bell, Calculator, Settings2 } from 'lucide-vue-next'
+import { useHomeLayout } from '../composables/useHomeLayout.js'
+import { availableHomeModules } from '../utils/homeLayout.js'
+const props = defineProps({ open: Boolean, instrument: { type: String, default: '512890' } })
 defineEmits(['close'])
-const navigation = [
-  { label: '今日与我有关', icon: Bell, href: '#today-overview' },
-  { label: '关键指标', icon: LayoutGrid, href: '#key-metrics' },
-  { label: '行情走势', icon: ChartNoAxesCombined, href: '#market-chart' },
-  { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },
-  { label: '观察提醒', icon: Bell, href: '#observation-alerts' },
-  { label: '收益与风险', icon: ChartNoAxesCombined, href: '#performance-metrics' },
-  { label: '收益风险对比', icon: ChartNoAxesCombined, href: '#index-comparison' },
-  { label: '低波特征分析', icon: ChartNoAxesCombined, href: '#low-volatility' },
-  { label: 'ETF 分红与收益', icon: ChartNoAxesCombined, href: '#etf-income', etf: true },
-  { label: 'ETF 净值与跟踪', icon: ChartNoAxesCombined, href: '#etf-nav-analysis', etf: true },
-  { label: '个人持仓与交易账本', icon: Calculator, href: '#portfolio-ledger', etf: true },
-  { label: '定投模拟器', icon: Calculator, href: '#investment-simulator' },
-  { label: '滚动持有期', icon: ChartNoAxesCombined, href: '#holding-periods' },
-  { label: '估值分析', icon: ChartNoAxesCombined, href: '#valuation-analysis' },
-  { label: '股息与国债差值', icon: ChartNoAxesCombined, href: '#yield-spread' },
-  { label: '成分与行业结构', icon: LayoutGrid, href: '#constituent-structure' },
-  { label: '分红质量与基本面', icon: ChartNoAxesCombined, href: '#dividend-quality' },
-  { label: '每周／每月复盘', icon: Calculator, href: '#review-summary' },
-  { label: '数据说明', icon: Database, href: '#data-notes' },
-]
+const layouts = useHomeLayout()
+const icons = { chart: ChartNoAxesCombined, bell: Bell, wallet: Calculator, grid: LayoutGrid, database: Database }
+const navigation = computed(() => availableHomeModules(layouts.current(props.instrument).modules, props.instrument).filter(module => !module.hidden))
 const planned = ['宏观环境', '回测工具', '组合配置']
 </script>
 <template>
@@ -31,7 +16,8 @@ const planned = ['宏观环境', '回测工具', '组合配置']
     <nav class="navigation">
       <a class="nav-item is-active" href="#main-content" aria-current="page" @click="$emit('close')"><House :size="20" /><span>首页</span></a>
       <p class="nav-label">本页导航</p>
-      <a v-for="item in navigation.filter(item => !item.etf || instrument === '512890')" :key="item.label" class="nav-item" :href="item.href" @click="$emit('close')"><component :is="item.icon" :size="19" :stroke-width="1.6" /><span>{{ item.label }}</span></a>
+      <a class="nav-item" href="#homepage-layout" @click="$emit('close')"><Settings2 :size="19" /><span>自定义首页</span></a>
+      <a v-for="item in navigation" :key="item.id" class="nav-item" :href="`#${item.id}`" @click="$emit('close')"><component :is="icons[item.icon]" :size="19" :stroke-width="1.6" /><span>{{ item.label }}</span><small v-if="item.collapsed">折叠</small></a>
       <details class="planned-navigation"><summary>功能规划 <ChevronDown :size="14" /></summary><p v-for="label in planned" :key="label">{{ label }}<span>规划中</span></p></details>
     </nav>
     <div class="sidebar-footer"><span class="mono">V0.1.0</span><span>红利低波 · 长期观察</span></div>
@@ -42,6 +28,7 @@ const planned = ['宏观环境', '回测工具', '组合配置']
 .navigation { flex: 1; min-height: 0; overflow-y: auto; }
 .nav-item { width: 100%; display: flex; align-items: center; gap: 14px; min-height: 43px; margin-bottom: 7px; padding: 8px 16px; border: 1px solid transparent; border-radius: 8px; font-size: 13px; color: #a4afc3; white-space: nowrap; }
 .nav-item:hover { background: #12213a; color: #e1eaff; }
+.nav-item small { margin-left: auto; font-size: 9px; color: #8495ae; }
 .nav-item.is-active { border-color: #2b64c7; color: #f2f6ff; background: linear-gradient(100deg, #183767, #142852); font-weight: 600; }
 .is-active svg { color: #83b8ff; }
 .nav-label { padding: 18px 16px 12px; color: #7f90ac; font-size: 11px; }

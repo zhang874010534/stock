@@ -3,12 +3,13 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { createRenderer, h, reactive, nextTick } from 'vue'
 import { parse, compileScript } from '@vue/compiler-sfc'
+import { createHomeLayout, provideHomeLayout } from '../src/composables/useHomeLayout.js'
 
 // Render Home with lightweight child stubs; exercise its actual API requests,
 // source selection, summary and card slots without requiring a canvas/browser.
-async function mountHome(realOverview = false) {
+async function mountHome(realOverview = false, layoutStore) {
   const realComponents = new Map()
-  if (realOverview) for (const name of ['TodayOverview', 'ObservationAlerts']) {
+  for (const name of ['HomeLayoutSettings', 'HomepageModule', ...(realOverview ? ['TodayOverview', 'ObservationAlerts'] : [])]) {
     const componentFile = new URL(`../src/components/${name}.vue`, import.meta.url)
     const { descriptor } = parse(await readFile(componentFile, 'utf8'))
     const content = compileScript(descriptor, { id: `home-${name}`, inlineTemplate: true, templateOptions: { compilerOptions: { hoistStatic: false } } }).content
@@ -26,19 +27,19 @@ async function mountHome(realOverview = false) {
     .replace(/from (['"])([^'"]+)\1/g, (_, quote, specifier) => `from '${specifier.startsWith('.') ? new URL(specifier, file).href : import.meta.resolve(specifier)}'`)
   script = `import { h as testH } from '${import.meta.resolve('vue')}';\n${script}`
   const component = (await import(`data:text/javascript;base64,${Buffer.from(script).toString('base64')}`)).default
-  const node = tag => ({ tag, tagName: tag.toUpperCase(), children: [], props: {}, text: '', addEventListener() {}, removeEventListener() {}, getRootNode: () => ({}),
+  const node = tag => ({ tag, tagName: tag.toUpperCase(), children: [], props: {}, text: '', style: { display: '' }, addEventListener() {}, removeEventListener() {}, getRootNode: () => ({}),
     focus() { this.focused = true }, setAttribute(key, value) { this.props[key] = value },
     get options() { return this.children.filter(n => n.tag === 'option') } })
   const renderer = createRenderer({
     createElement: node, createText: text => ({ ...node('#text'), text }), createComment: () => node('#comment'),
-    insert(child, parent, anchor) { child.parent = parent; const i = parent.children.indexOf(anchor); parent.children.splice(i < 0 ? parent.children.length : i, 0, child) },
+    insert(child, parent, anchor) { if (child.parent) { const previous = child.parent.children.indexOf(child); if (previous >= 0) child.parent.children.splice(previous, 1) } child.parent = parent; const i = parent.children.indexOf(anchor); parent.children.splice(i < 0 ? parent.children.length : i, 0, child) },
     remove(child) { const items = child.parent.children; items.splice(items.indexOf(child), 1) },
     setText: (n, text) => { n.text = text }, setElementText: (n, text) => { n.text = text; n.children = [] },
     parentNode: n => n.parent, nextSibling: n => n.parent?.children[n.parent.children.indexOf(n) + 1],
     patchProp: (n, key, oldValue, value) => { n.props[key] = value; if (key === 'value') n.value = n._value = value },
   })
   const props = reactive({ instrument: '512890' }), host = node('host')
-  const app = renderer.createApp({ render: () => h(component, props) })
+  const app = renderer.createApp({ setup() { provideHomeLayout(layoutStore ?? createHomeLayout()); return () => h(component, props) } })
   app.mount(host)
   const all = n => [n, ...n.children.flatMap(all)]
   return { app, props, nodes: () => all(host), text: () => all(host).map(n => n.text).join(' '), refresh: () => all(host).find(n => n.props.class === 'refresh-button').props.onClick() }
@@ -57,7 +58,8 @@ test('首页真实概览与提醒模块同步触发、已读和证券切换，�
     const names = ['512890', 'h30269', 'valuation-h30269', 'dividend-h30269', 'china-bond-10y', 'dashboard-source-status']
     const snapshots = Object.fromEntries(await Promise.all(names.map(async name => [name, JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), 'utf8'))])))
     globalThis.fetch = async url => Response.json(snapshots[url.split('/').at(-1).split('.json')[0]])
-    mounted = await mountHome(true); await flush()
+    const layouts = createHomeLayout()
+    mounted = await mountHome(true, layouts); await flush()
     const button = label => mounted.nodes().find(n => n.tag === 'button' && n.text === label)
     const field = label => mounted.nodes().find(n => n.props['aria-label'] === label)
     const overview = () => mounted.nodes().find(n => n.props.id === 'today-overview')
@@ -67,6 +69,13 @@ test('首页真实概览与提醒模块同步触发、已读和证券切换，�
     assert.match(cardText(), /0 条.*尚未设置条件/)
     button('添加条件').props.onClick(); await nextTick()
     field('观察阈值').props['onUpdate:modelValue']('2')
+    layouts.configure('512890', 'observation-alerts', 'hidden', true)
+    layouts.configure('512890', 'observation-alerts', 'collapsed', true)
+    await nextTick()
+    assert.equal(mounted.nodes().find(n => n.props['data-home-module'] === 'observation-alerts').style.display, 'none')
+    alertCard().props.onClick(); await flush()
+    assert.equal(layouts.current('512890').modules.find(module => module.id === 'observation-alerts').hidden, false)
+    assert.equal(field('观察阈值').value, '2') // Hidden form remains mounted with its draft.
     mounted.nodes().find(n => n.tag === 'form').props.onSubmit({ preventDefault() {} }); await flush()
     assert.match(cardText(), /1 条.*1 条条件满足/)
     alertCard().props.onClick(); await flush()
@@ -80,6 +89,60 @@ test('首页真实概览与提醒模块同步触发、已读和证券切换，�
     mounted.props.instrument = '512890'; await flush()
     assert.match(cardText(), /0 条.*1 条条件满足/)
     assert.equal(JSON.parse(memory.get('stock:observation-alerts:v1')).events.length, 1)
+  } finally {
+    mounted?.app.unmount()
+    for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete globalThis[key]; else globalThis[key] = value }
+  }
+})
+
+test('真实首页布局设置可隐藏折叠排序、保存更新删除撤销，刷新与证券切换恢复布局', async () => {
+  const previous = Object.fromEntries(['fetch', 'document', 'localStorage', 'Document', 'ShadowRoot'].map(key => [key, globalThis[key]]))
+  const memory = new Map(), storage = { getItem: key => memory.get(key) ?? null, setItem: (key, value) => memory.set(key, value) }
+  let counter = 0, mounted
+  try {
+    globalThis.Document = class {}; globalThis.ShadowRoot = class {}; globalThis.localStorage = storage
+    globalThis.document = { title: '' }
+    const names = ['512890', 'h30269', 'valuation-h30269', 'dividend-h30269', 'china-bond-10y', 'dashboard-source-status']
+    const snapshots = Object.fromEntries(await Promise.all(names.map(async name => [name, JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), 'utf8'))])))
+    globalThis.fetch = async url => Response.json(snapshots[url.split('/').at(-1).split('.json')[0]])
+    let layouts = createHomeLayout({ storage, id: () => `layout-${++counter}` })
+    mounted = await mountHome(false, layouts); await flush()
+    const field = label => mounted.nodes().find(n => n.props['aria-label'] === label)
+    const button = label => mounted.nodes().find(n => n.tag === 'button' && n.text === label)
+    const frame = id => mounted.nodes().find(n => n.props['data-home-module'] === id)
+    const order = () => mounted.nodes().filter(n => n.props['data-home-module']).map(n => n.props['data-home-module'])
+    const chart = mounted.nodes().find(n => n.props['data-component'] === 'IndexChart')
+    field('切换首页布局').props.onChange({ target: { value: 'portfolio' } }); await nextTick()
+    assert.equal(order()[1], 'portfolio-ledger'); assert.equal(frame('valuation-analysis').style.display, 'none')
+    field('默认折叠行情走势').props.onChange({ target: { checked: true } }); await nextTick()
+    assert.equal(mounted.nodes().find(n => n.props.id === 'market-chart-body').style.display, 'none')
+    field('展开行情走势').props.onClick(); await nextTick()
+    assert.equal(mounted.nodes().find(n => n.props.id === 'market-chart-body').style.display, '')
+    field('显示行情走势').props.onChange({ target: { checked: false } }); await nextTick()
+    assert.equal(frame('market-chart').style.display, 'none')
+    field('上移个人持仓与交易账本').props.onClick(); await nextTick(); assert.equal(order()[0], 'portfolio-ledger')
+    assert.equal(mounted.nodes().find(n => n.props['data-component'] === 'IndexChart'), chart)
+    field('首页布局名称').props['onUpdate:modelValue']('我的持仓')
+    button('另存为新布局').props.onClick(); await nextTick(); assert.equal(layouts.state.saved.length, 1)
+    const savedId = layouts.state.saved[0].id
+    field('默认折叠观察提醒').props.onChange({ target: { checked: true } }); await nextTick()
+    assert.equal(layouts.state.saved[0].modules.find(module => module.id === 'observation-alerts').collapsed, false)
+    button('更新所选布局').props.onClick(); await nextTick()
+    assert.equal(layouts.state.saved[0].modules.find(module => module.id === 'observation-alerts').collapsed, true)
+    button('删除所选布局').props.onClick(); await nextTick(); assert.equal(layouts.state.saved.length, 0)
+    button('撤销删除布局').props.onClick(); await nextTick(); assert.equal(layouts.state.saved.length, 1)
+    field('切换首页布局').props.onChange({ target: { value: savedId } }); await nextTick()
+    mounted.props.instrument = 'H30269'; await flush()
+    assert.equal(frame('portfolio-ledger'), undefined); assert.equal(frame('market-chart').style.display, '')
+    mounted.props.instrument = '512890'; await flush(); assert.equal(frame('market-chart').style.display, 'none')
+    mounted.app.unmount(); mounted = null
+    layouts = createHomeLayout({ storage })
+    mounted = await mountHome(false, layouts); await flush()
+    assert.equal(order()[0], 'portfolio-ledger'); assert.equal(frame('market-chart').style.display, 'none')
+    assert.equal(mounted.nodes().find(n => n.props.id === 'observation-alerts-body').style.display, 'none')
+    button('恢复默认首页').props.onClick(); await nextTick()
+    assert.equal(frame('market-chart').style.display, ''); assert.equal(layouts.state.saved.length, 1)
+    button('撤销布局切换').props.onClick(); await nextTick(); assert.equal(frame('market-chart').style.display, 'none')
   } finally {
     mounted?.app.unmount()
     for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete globalThis[key]; else globalThis[key] = value }
@@ -165,7 +228,7 @@ test('homepage summary follows the selected instrument, retains values on failur
     assert.equal(drawdown().props.instrument, '512890')
     assert.deepEqual(drawdown().props.history, snapshots['512890'].history)
     const entry = mounted.nodes().find(n => n.props.class === 'refresh-button constituents-button')
-    entry.props.onClick()
+    await entry.props.onClick()
     assert.equal(mounted.nodes().find(n => n.props['data-component'] === 'IndexChart').props.onCheckOpened(), true)
     mounted.props.instrument = 'H30269'; await flush()
     assert.match(mounted.text(), /-1.00 点/)

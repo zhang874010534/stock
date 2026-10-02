@@ -1,5 +1,5 @@
 <script setup>
-import { ref, toRef } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, toRef } from 'vue'
 import { NConfigProvider, darkTheme, zhCN, dateZhCN } from 'naive-ui'
 import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
@@ -7,12 +7,43 @@ import Home from './views/Home.vue'
 import { providePreferences } from './composables/usePreferences.js'
 import { provideObservationNotes } from './composables/useObservationNotes.js'
 import { providePortfolioLedger } from './composables/usePortfolioLedger.js'
+import { provideHomeLayout } from './composables/useHomeLayout.js'
+import { homeModuleForAnchor } from './utils/homeLayout.js'
 
 const preferences = providePreferences()
+const layouts = provideHomeLayout()
 provideObservationNotes()
 providePortfolioLedger()
 const instrument = toRef(preferences.state, 'instrument')
 const sidebarOpen = ref(false)
+function moduleForTarget(target) {
+  const element = document.getElementById(target.slice(1))
+  if (!element) return null
+  return element.closest('[data-home-module]')?.dataset.homeModule ?? homeModuleForAnchor(target)
+}
+async function navigateHome(target, record = false) {
+  const moduleId = moduleForTarget(target)
+  if (!moduleId) return
+  layouts.reveal(instrument.value, moduleId)
+  await nextTick()
+  const element = document.getElementById(target.slice(1))
+  if (!element) return
+  if (element.tagName === 'DETAILS') element.open = true
+  if (record && window.location.hash !== target) window.history.pushState(null, '', target)
+  element.setAttribute('tabindex', '-1')
+  element.scrollIntoView({ block: 'start' })
+  element.focus({ preventScroll: true })
+}
+function handleHomeLink(event) {
+  if (event.defaultPrevented || event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
+  const link = event.target.closest?.('a[href^="#"]'), target = link?.getAttribute('href')
+  if (!target || !moduleForTarget(target)) return
+  event.preventDefault()
+  navigateHome(target, true)
+}
+const handleHash = () => navigateHome(window.location.hash)
+onMounted(() => { window.addEventListener('hashchange', handleHash); handleHash() })
+onUnmounted(() => window.removeEventListener('hashchange', handleHash))
 const themeOverrides = {
   common: {
     primaryColor: '#408cff',
@@ -35,7 +66,7 @@ const themeOverrides = {
 
 <template>
   <NConfigProvider :theme="darkTheme" :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN">
-    <div class="app-shell" @keydown.esc="sidebarOpen = false">
+    <div class="app-shell" @keydown.esc="sidebarOpen = false" @click="handleHomeLink">
       <a class="skip-link" href="#main-content">跳转到主要内容</a>
       <AppHeader v-model:instrument="instrument" :menu-open="sidebarOpen" @toggle-menu="sidebarOpen = !sidebarOpen" @reset-preferences="preferences.reset" />
       <button v-if="sidebarOpen" class="sidebar-backdrop" aria-label="关闭导航" @click="sidebarOpen = false" />
