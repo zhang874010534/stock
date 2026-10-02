@@ -95,6 +95,8 @@ export function todayOverview({ instrument, states, entries = [], constituentInp
     ['yieldHistory', '收益率历史', '#yield-spread', 'yieldHistory', 'indicator'],
     ['constituents', '成分名单', '#constituent-structure'],
     ['constituentHistory', '成分历史', '#constituent-structure'],
+    ['constituentWeights', '指数权重', '#constituent-structure'],
+    ['etfHoldings', 'ETF 完整披露持仓', '#constituent-structure'],
     ['fundamentals', '分红基本面', '#dividend-quality'],
     ...(instrument === '512890' ? [['etfDistributions', 'ETF 分红', '#etf-income'], ['etfNav', 'ETF 净值', '#etf-nav-analysis']] : []),
   ]

@@ -1,5 +1,6 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
+import ConstituentWeights from './ConstituentWeights.vue'
 import { useDashboardData } from '../composables/useDashboardData.js'
 import { CONSTITUENTS_SOURCE } from '../api/constituents.js'
 import { INDUSTRY_SOURCE, industryDistribution, matchingSnapshot, membershipTimeline, compareConstituentObservations } from '../utils/constituentStructure.js'
@@ -8,6 +9,7 @@ defineProps({ instrument: { type: String, default: 'H30269' } })
 const dashboard = useDashboardData()
 const currentState = dashboard.states.constituents, historyState = dashboard.states.constituentHistory
 const inputs = reactive({ current: null, history: null })
+const weightsAnalysis = ref(null)
 const loading = computed(() => currentState.loading || historyState.loading)
 const error = computed(() => [currentState.error, historyState.error].filter(Boolean).join('；'))
 watch(() => [currentState.data, historyState.data, loading.value, error.value], () => {
@@ -69,16 +71,17 @@ const observedDates = computed(() => [...new Set(snapshot.value?.members.map(ite
 const formatTime = value => value ? new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', dateStyle: 'short', timeStyle: 'medium' }).format(new Date(value)) : '尚未采集'
 const dateRange = values => values.length ? values[0] === values.at(-1) ? values[0] : `${values[0]} — ${values.at(-1)}` : '暂无'
 const filterKey = group => group.industry ?? 'unknown'
-const hasWarning = computed(() => Boolean(error.value || mismatch.value || inputs.current?.status !== 'ok' || history.value?.membershipStatus !== 'ok' || history.value?.industryStatus !== 'ok'))
+const hasWarning = computed(() => Boolean(error.value || mismatch.value || inputs.current?.status !== 'ok' || history.value?.membershipStatus !== 'ok' || history.value?.industryStatus !== 'ok' || weightsAnalysis.value?.hasWarning))
 const refresh = () => dashboard.refresh(['constituents', 'constituentHistory'])
-defineExpose({ loading, hasWarning, compareLatest, inputs })
+const allLoading = computed(() => loading.value || weightsAnalysis.value?.loading)
+defineExpose({ loading: allLoading, hasWarning, compareLatest, inputs })
 for (const key of ['constituents', 'constituentHistory']) dashboard.ensure(key)
 </script>
 
 <template>
   <section class="constituent-structure panel" aria-label="H30269成分股变化与行业结构" :aria-busy="loading">
-    <header class="structure-heading"><div><h2>成分股变化与行业结构</h2><p>H30269 · 中证红利低波动指数{{ instrument === '512890' ? ' · ETF 标的指数' : '' }}</p></div><div class="structure-actions"><a href="#constituent-comparison" class="comparison-shortcut">查看名单对比</a><button type="button" :disabled="loading" @click="refresh">{{ loading ? '读取中…' : '重新读取成分股' }}</button></div></header>
-    <p class="structure-note">{{ instrument === '512890' ? '展示标的指数样本，非 ETF 实际持仓。' : '展示指数样本名单。' }}行业占比按股票数量计算，不代表指数权重或资金配置比例。</p>
+    <header class="structure-heading"><div><h2>成分股变化与行业结构</h2><p>H30269 · 中证红利低波动指数{{ instrument === '512890' ? ' · ETF 标的指数' : '' }}</p></div><div class="structure-actions"><a href="#constituent-weights" class="comparison-shortcut">查看权重与持仓</a><a href="#constituent-comparison" class="comparison-shortcut">查看名单对比</a><button type="button" :disabled="allLoading" @click="refresh">{{ allLoading ? '读取中…' : '重新读取成分股' }}</button></div></header>
+    <p class="structure-note">{{ instrument === '512890' ? '以下名单与数量统计展示标的指数样本，非 ETF 实际持仓。' : '以下数量统计展示指数样本名单。' }}行业数量占比不代表指数权重或资金配置比例；权重与 ETF 完整披露对照见下方独立分析。</p>
     <p v-if="error" class="structure-warning" role="status">读取失败{{ inputs.current || inputs.history ? '，保留上次分析及原日期。' : '，暂无可用分析。' }}{{ error }}</p>
     <p v-if="inputs.current?.status && inputs.current.status !== 'ok'" class="structure-warning">{{ inputs.current.reason }}</p>
     <p v-if="history?.membershipStatus && history.membershipStatus !== 'ok'" class="structure-warning">最近名单采集：{{ history.membershipReason }}</p>
@@ -102,6 +105,7 @@ for (const key of ['constituents', 'constituentHistory']) dashboard.ensure(key)
         </section>
       </div>
     </template>
+    <ConstituentWeights ref="weightsAnalysis" :classification="snapshots[0] ?? null" />
     <section id="constituent-comparison" class="membership-comparison" aria-label="名单区间对比">
       <div class="structure-subheading"><h3>名单区间对比</h3><button type="button" :disabled="snapshots.length < 2" @click="compareLatest">最近两次观察</button></div>
       <p class="structure-note">选择两次已保存观察，查看期末相较期初新增、移除的股票及行业数量变化。跨多次观察只显示净变化；逐次记录见下方时间线。</p>

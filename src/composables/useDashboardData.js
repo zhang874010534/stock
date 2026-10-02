@@ -12,6 +12,7 @@ import { getYieldHistory } from '../api/yieldHistory.js'
 import { getEtfNav } from '../api/etfNav.js'
 import { getFundamentals } from '../api/fundamentals.js'
 import { getEtfSize, getEtfFees } from '../api/etfLiquidity.js'
+import { getConstituentWeights, getEtfHoldings } from '../api/constituentWeights.js'
 
 const dashboardKey = Symbol('dashboard-data')
 const metricKeys = ['latestMetrics', 'valuation', 'dividend']
@@ -29,6 +30,7 @@ export function createDashboardData(overrides = {}) {
     etfSize: getEtfSize, etfFees: getEtfFees,
     fundamentals: getFundamentals,
     constituents: getConstituents, constituentHistory: getConstituentHistory,
+    constituentWeights: getConstituentWeights, etfHoldings: getEtfHoldings,
     yieldHistory: getYieldHistory,
     ...overrides,
   }
@@ -61,6 +63,9 @@ export function createDashboardData(overrides = {}) {
 
   function refresh(keys) {
     const selected = new Set(keys)
+    if (keys.some(key => ['constituents', 'constituentHistory', 'constituentWeights', 'etfHoldings'].includes(key))) {
+      for (const key of ['constituents', 'constituentHistory', 'constituentWeights', 'etfHoldings']) if (states[key].attempted) selected.add(key)
+    }
     if (states.fundamentals.attempted && keys.some(key => ['fundamentals', 'constituents', 'constituentHistory'].includes(key))) {
       selected.add('fundamentals'); selected.add('constituents')
       if (states.constituentHistory.attempted) selected.add('constituentHistory')

@@ -1,0 +1,684 @@
+{
+  "schemaVersion": 1,
+  "code": "512890",
+  "unit": "CNY",
+  "scope": "full_equity",
+  "discoverySource": "https://www.sse.com.cn/disclosure/fund/announcement/",
+  "source": "https://www.sse.com.cn/disclosure/fund/announcement/c/new/2026-08-29/512890_20260829_K5D2.pdf",
+  "publishedDate": "2026-08-29",
+  "date": "2026-06-30",
+  "netAssets": 31289783576.42,
+  "equityValue": 30628450191.87,
+  "members": [
+    {
+      "code": "601229",
+      "name": "上海银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 101852776,
+      "marketValue": 884082095.68,
+      "reportedWeight": 0.028300000000000002
+    },
+    {
+      "code": "601009",
+      "name": "南京银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 85249614,
+      "marketValue": 843118682.46,
+      "reportedWeight": 0.0269
+    },
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 82870993,
+      "marketValue": 832853479.65,
+      "reportedWeight": 0.026600000000000002
+    },
+    {
+      "code": "601838",
+      "name": "成都银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 46320402,
+      "marketValue": 819871115.4,
+      "reportedWeight": 0.0262
+    },
+    {
+      "code": "000651",
+      "name": "格力电器",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 20690098,
+      "marketValue": 775878675.0,
+      "reportedWeight": 0.0248
+    },
+    {
+      "code": "600919",
+      "name": "江苏银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 70903820,
+      "marketValue": 764343179.6,
+      "reportedWeight": 0.024399999999999998
+    },
+    {
+      "code": "600350",
+      "name": "山东高速",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 67288922,
+      "marketValue": 748925701.86,
+      "reportedWeight": 0.0239
+    },
+    {
+      "code": "601825",
+      "name": "沪农商行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 98890027,
+      "marketValue": 740686302.23,
+      "reportedWeight": 0.023700000000000002
+    },
+    {
+      "code": "601369",
+      "name": "陕鼓动力",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 78703473,
+      "marketValue": 712266430.65,
+      "reportedWeight": 0.022799999999999997
+    },
+    {
+      "code": "600016",
+      "name": "民生银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 219012817,
+      "marketValue": 705221270.74,
+      "reportedWeight": 0.0225
+    },
+    {
+      "code": "601577",
+      "name": "长沙银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 80595830,
+      "marketValue": 701989679.3,
+      "reportedWeight": 0.022400000000000003
+    },
+    {
+      "code": "601857",
+      "name": "中国石油",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 80591056,
+      "marketValue": 699530366.08,
+      "reportedWeight": 0.022400000000000003
+    },
+    {
+      "code": "600007",
+      "name": "中国国贸",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 36618972,
+      "marketValue": 695028088.56,
+      "reportedWeight": 0.0222
+    },
+    {
+      "code": "600015",
+      "name": "华夏银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 108196542,
+      "marketValue": 691375903.38,
+      "reportedWeight": 0.022099999999999998
+    },
+    {
+      "code": "000429",
+      "name": "粤高速A",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 49907329,
+      "marketValue": 681235040.85,
+      "reportedWeight": 0.0218
+    },
+    {
+      "code": "601077",
+      "name": "渝农商行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 109680465,
+      "marketValue": 670147641.15,
+      "reportedWeight": 0.021400000000000002
+    },
+    {
+      "code": "600750",
+      "name": "华润江中",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 30309137,
+      "marketValue": 668922653.59,
+      "reportedWeight": 0.021400000000000002
+    },
+    {
+      "code": "601187",
+      "name": "厦门银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 96840195,
+      "marketValue": 661418531.85,
+      "reportedWeight": 0.021099999999999997
+    },
+    {
+      "code": "601169",
+      "name": "北京银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 131547275,
+      "marketValue": 644581647.5,
+      "reportedWeight": 0.0206
+    },
+    {
+      "code": "601963",
+      "name": "重庆银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 63836565,
+      "marketValue": 643472575.2,
+      "reportedWeight": 0.0206
+    },
+    {
+      "code": "601939",
+      "name": "建设银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 66505450,
+      "marketValue": 640447483.5,
+      "reportedWeight": 0.020499999999999997
+    },
+    {
+      "code": "600863",
+      "name": "华能蒙电",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 135585082,
+      "marketValue": 637249885.4,
+      "reportedWeight": 0.0204
+    },
+    {
+      "code": "600737",
+      "name": "中粮糖业",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 51561474,
+      "marketValue": 635752974.42,
+      "reportedWeight": 0.0203
+    },
+    {
+      "code": "601988",
+      "name": "中国银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 109902100,
+      "marketValue": 628640012.0,
+      "reportedWeight": 0.020099999999999996
+    },
+    {
+      "code": "600566",
+      "name": "济川药业",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 27826754,
+      "marketValue": 617475671.26,
+      "reportedWeight": 0.0197
+    },
+    {
+      "code": "600820",
+      "name": "隧道股份",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 118204753,
+      "marketValue": 615846763.13,
+      "reportedWeight": 0.0197
+    },
+    {
+      "code": "601998",
+      "name": "中信银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 88802787,
+      "marketValue": 615403313.91,
+      "reportedWeight": 0.0197
+    },
+    {
+      "code": "600938",
+      "name": "中国海油",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 22267047,
+      "marketValue": 604550326.05,
+      "reportedWeight": 0.019299999999999998
+    },
+    {
+      "code": "601665",
+      "name": "齐鲁银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 104536192,
+      "marketValue": 603173827.84,
+      "reportedWeight": 0.019299999999999998
+    },
+    {
+      "code": "601398",
+      "name": "工商银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 84304575,
+      "marketValue": 596033345.25,
+      "reportedWeight": 0.019
+    },
+    {
+      "code": "600036",
+      "name": "招商银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 16606256,
+      "marketValue": 589522088.0,
+      "reportedWeight": 0.018799999999999997
+    },
+    {
+      "code": "000333",
+      "name": "美的集团",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 7803511,
+      "marketValue": 589399185.83,
+      "reportedWeight": 0.018799999999999997
+    },
+    {
+      "code": "601328",
+      "name": "交通银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 90143276,
+      "marketValue": 579621264.68,
+      "reportedWeight": 0.018500000000000003
+    },
+    {
+      "code": "002966",
+      "name": "苏州银行",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 83228724,
+      "marketValue": 579271919.04,
+      "reportedWeight": 0.018500000000000003
+    },
+    {
+      "code": "601658",
+      "name": "邮储银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 115018636,
+      "marketValue": 567041875.48,
+      "reportedWeight": 0.0181
+    },
+    {
+      "code": "601928",
+      "name": "凤凰传媒",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 64274602,
+      "marketValue": 564973751.58,
+      "reportedWeight": 0.0181
+    },
+    {
+      "code": "600461",
+      "name": "洪城环境",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 60751202,
+      "marketValue": 550405890.12,
+      "reportedWeight": 0.0176
+    },
+    {
+      "code": "600803",
+      "name": "新奥股份",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 34282126,
+      "marketValue": 541657590.8,
+      "reportedWeight": 0.0173
+    },
+    {
+      "code": "601288",
+      "name": "农业银行",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 88728475,
+      "marketValue": 538581843.25,
+      "reportedWeight": 0.0172
+    },
+    {
+      "code": "601668",
+      "name": "中国建筑",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 122459219,
+      "marketValue": 531473010.46,
+      "reportedWeight": 0.017
+    },
+    {
+      "code": "000708",
+      "name": "中信特钢",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 41919918,
+      "marketValue": 529029365.16,
+      "reportedWeight": 0.0169
+    },
+    {
+      "code": "601318",
+      "name": "中国平安",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 10804869,
+      "marketValue": 515824446.06,
+      "reportedWeight": 0.0165
+    },
+    {
+      "code": "600941",
+      "name": "中国移动",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 5602477,
+      "marketValue": 482541344.01,
+      "reportedWeight": 0.0154
+    },
+    {
+      "code": "600873",
+      "name": "梅花生物",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 63922472,
+      "marketValue": 469830169.2,
+      "reportedWeight": 0.015
+    },
+    {
+      "code": "002807",
+      "name": "江阴银行",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 121969716,
+      "marketValue": 452507646.36,
+      "reportedWeight": 0.014499999999999999
+    },
+    {
+      "code": "002839",
+      "name": "张家港行",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 109495340,
+      "marketValue": 427031826.0,
+      "reportedWeight": 0.013600000000000001
+    },
+    {
+      "code": "600757",
+      "name": "长江传媒",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 57803381,
+      "marketValue": 422542715.11,
+      "reportedWeight": 0.013500000000000002
+    },
+    {
+      "code": "002233",
+      "name": "塔牌集团",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 54513468,
+      "marketValue": 379958871.96,
+      "reportedWeight": 0.0121
+    },
+    {
+      "code": "600502",
+      "name": "安徽建工",
+      "exchange": "SSE",
+      "kind": "index",
+      "shares": 82172652,
+      "marketValue": 357451036.2,
+      "reportedWeight": 0.011399999999999999
+    },
+    {
+      "code": "002469",
+      "name": "三维化学",
+      "exchange": "SZSE",
+      "kind": "index",
+      "shares": 31170300,
+      "marketValue": 178294116.0,
+      "reportedWeight": 0.005699999999999999
+    },
+    {
+      "code": "001248",
+      "name": "华润新能源",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 84104,
+      "marketValue": 850291.44,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301666",
+      "name": "大普微",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 1220,
+      "marketValue": 565262.6,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "001399",
+      "name": "惠科股份",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 6488,
+      "marketValue": 179912.24,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301682",
+      "name": "宏明电子",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 714,
+      "marketValue": 114282.84,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "001257",
+      "name": "盛龙股份",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 1743,
+      "marketValue": 36149.82,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "603459",
+      "name": "红板科技",
+      "exchange": "SSE",
+      "kind": "active",
+      "shares": 330,
+      "marketValue": 27825.6,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "001365",
+      "name": "天海电子",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 719,
+      "marketValue": 22511.89,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301696",
+      "name": "三瑞智能",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 216,
+      "marketValue": 18748.8,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "001237",
+      "name": "惠康科技",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 285,
+      "marketValue": 16740.9,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301669",
+      "name": "高特电子",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 546,
+      "marketValue": 15506.4,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301687",
+      "name": "新广益",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 195,
+      "marketValue": 15167.1,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "001393",
+      "name": "维通利",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 387,
+      "marketValue": 15089.13,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301531",
+      "name": "春光集团",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 290,
+      "marketValue": 14952.4,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301599",
+      "name": "理奇智能",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 433,
+      "marketValue": 14059.51,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "601112",
+      "name": "振石股份",
+      "exchange": "SSE",
+      "kind": "active",
+      "shares": 775,
+      "marketValue": 13632.25,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301680",
+      "name": "固德电材",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 117,
+      "marketValue": 13122.72,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301683",
+      "name": "慧谷新材",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 96,
+      "marketValue": 11689.92,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "301513",
+      "name": "尚水智能",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 138,
+      "marketValue": 7032.48,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "603435",
+      "name": "嘉德利",
+      "exchange": "SSE",
+      "kind": "active",
+      "shares": 104,
+      "marketValue": 4857.84,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "603352",
+      "name": "至信股份",
+      "exchange": "SSE",
+      "kind": "active",
+      "shares": 112,
+      "marketValue": 2858.24,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "603293",
+      "name": "埃泰克",
+      "exchange": "SSE",
+      "kind": "active",
+      "shares": 72,
+      "marketValue": 2442.96,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "001312",
+      "name": "福恩股份",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 134,
+      "marketValue": 2248.52,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "603284",
+      "name": "林平发展",
+      "exchange": "SSE",
+      "kind": "active",
+      "shares": 46,
+      "marketValue": 1604.02,
+      "reportedWeight": 0.0
+    },
+    {
+      "code": "001220",
+      "name": "世盟股份",
+      "exchange": "SZSE",
+      "kind": "active",
+      "shares": 57,
+      "marketValue": 1583.46,
+      "reportedWeight": 0.0
+    }
+  ],
+  "lastAttemptAt": "2026-10-02T15:14:29.574Z",
+  "lastSuccessAt": "2026-10-02T15:14:29.574Z",
+  "status": "ok",
+  "reason": null
+}

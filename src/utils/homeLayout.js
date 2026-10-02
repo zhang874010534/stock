@@ -88,5 +88,5 @@ export function availableHomeModules(modules, instrument) {
 export function homeModuleForAnchor(anchor) {
   const id = anchor.replace(/^#/, '')
   if (known.has(id)) return id
-  return { 'constituent-comparison': 'constituent-structure', 'today-data-issues': 'today-overview' }[id] ?? null
+  return { 'constituent-comparison': 'constituent-structure', 'constituent-weights': 'constituent-structure', 'holdings-comparison': 'constituent-structure', 'today-data-issues': 'today-overview' }[id] ?? null
 }

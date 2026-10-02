@@ -13,6 +13,7 @@ async function mount(name, initial, dashboard) {
   const file = new URL(`../src/components/${name}.vue`, import.meta.url)
   const { descriptor } = parse(await readFile(file, 'utf8'))
   const script = compileScript(descriptor, { id: 'structure-test', inlineTemplate: true, templateOptions: { compilerOptions: { hoistStatic: false } } }).content
+    .replace("import ConstituentWeights from './ConstituentWeights.vue'", 'const ConstituentWeights = { render: () => null }')
     .replace(/from (['"])([^'"]+)\1/g, (_, quote, path) => `from '${path.startsWith('.') ? new URL(path, file).href : import.meta.resolve(path)}'`)
   const component = (await import(`data:text/javascript;base64,${Buffer.from(script).toString('base64')}`)).default
   const node = tag => ({ tag, tagName: tag.toUpperCase(), children: [], props: {}, text: '', addEventListener() {}, removeEventListener() {}, getRootNode: () => ({}), get options() { return this.children.filter(n => n.tag === 'option') } })
