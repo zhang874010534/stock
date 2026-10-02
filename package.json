@@ -13,6 +13,7 @@
     "data:constituents": "python scripts/fetch-constituents.py",
     "data:etf-distributions": "node scripts/fetch-etf-distributions.mjs",
     "data:etf-nav": "node scripts/fetch-etf-nav.mjs",
+    "data:etf-size": "node scripts/fetch-etf-size.mjs",
     "data:fundamentals": "node scripts/fetch-fundamentals.mjs",
     "data:refresh-market": "node scripts/update-latest-metrics.mjs market",
     "data:benchmark": "node scripts/fetch-benchmark.mjs",

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "code": "512890",
+  "provider": "Eastmoney",
+  "source": "https://fund.eastmoney.com/512890.html",
+  "dataSource": "https://fund.eastmoney.com/pingzhongdata/512890.js",
+  "unit": "CNY",
+  "basis": "reported_net_assets",
+  "status": "ok",
+  "reason": null,
+  "lastAttemptAt": "2026-10-02T14:43:57.059Z",
+  "lastSuccessAt": "2026-10-02T14:43:57.059Z",
+  "date": "2026-06-30",
+  "history": [
+    {
+      "date": "2025-06-30",
+      "netAssets": 18741000000
+    },
+    {
+      "date": "2025-09-30",
+      "netAssets": 20164000000
+    },
+    {
+      "date": "2025-12-31",
+      "netAssets": 26754000000
+    },
+    {
+      "date": "2026-03-31",
+      "netAssets": 31187000000
+    },
+    {
+      "date": "2026-06-30",
+      "netAssets": 31290000000
+    }
+  ]
+}

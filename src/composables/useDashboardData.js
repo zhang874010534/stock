@@ -11,6 +11,7 @@ import { getConstituentHistory } from '../api/constituentHistory.js'
 import { getYieldHistory } from '../api/yieldHistory.js'
 import { getEtfNav } from '../api/etfNav.js'
 import { getFundamentals } from '../api/fundamentals.js'
+import { getEtfSize, getEtfFees } from '../api/etfLiquidity.js'
 
 const dashboardKey = Symbol('dashboard-data')
 const metricKeys = ['latestMetrics', 'valuation', 'dividend']
@@ -25,6 +26,7 @@ export function createDashboardData(overrides = {}) {
     eastmoneyHistory: getValuationHistory, csiHistory: getCsiValuationHistory, csiStatus: getCsiValuationStatus,
     etfDistributions: getEtfDistributions,
     etfNav: getEtfNav,
+    etfSize: getEtfSize, etfFees: getEtfFees,
     fundamentals: getFundamentals,
     constituents: getConstituents, constituentHistory: getConstituentHistory,
     yieldHistory: getYieldHistory,

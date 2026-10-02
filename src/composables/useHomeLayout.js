@@ -1,5 +1,5 @@
 import { computed, inject, provide, reactive, ref } from 'vue'
-import { HOME_INSTRUMENTS, HOME_LAYOUT_KEY, HOME_PRESETS, MAX_HOME_LAYOUTS, defaultHomeLayouts, homeLayoutName, normalizeHomeLayouts, presetHomeModules } from '../utils/homeLayout.js'
+import { HOME_INSTRUMENTS, HOME_LAYOUT_KEY, HOME_MODULES, HOME_PRESETS, MAX_HOME_LAYOUTS, defaultHomeLayouts, homeLayoutName, normalizeHomeLayouts, presetHomeModules } from '../utils/homeLayout.js'
 
 const homeLayoutKey = Symbol('home-layouts')
 const copyModules = modules => modules.map(module => ({ ...module }))
@@ -36,7 +36,7 @@ export function createHomeLayout({ storage, id = () => crypto.randomUUID() } = {
     const modules = current(instrument).modules, index = modules.findIndex(item => item.id === moduleId)
     if (index < 0) throw new Error('首页模块不存在')
     // Skip ETF-only rows when ordering the index page.
-    const etfOnly = new Set(['etf-income', 'etf-nav-analysis', 'portfolio-ledger'])
+    const etfOnly = new Set(HOME_MODULES.filter(module => module.etf).map(module => module.id))
     let target = index + direction
     while (instrument !== '512890' && target >= 0 && target < modules.length && etfOnly.has(modules[target].id)) target += direction
     if (target < 0 || target >= modules.length) return

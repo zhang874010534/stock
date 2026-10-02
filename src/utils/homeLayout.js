@@ -13,6 +13,7 @@ export const HOME_MODULES = [
   { id: 'low-volatility', label: '低波特征分析', icon: 'chart' },
   { id: 'etf-income', label: 'ETF 分红与收益', icon: 'chart', etf: true },
   { id: 'etf-nav-analysis', label: 'ETF 净值与跟踪', icon: 'chart', etf: true },
+  { id: 'etf-liquidity', label: 'ETF 规模与交易成本', icon: 'chart', etf: true },
   { id: 'portfolio-ledger', label: '个人持仓与交易账本', icon: 'wallet', etf: true },
   { id: 'investment-simulator', label: '定投模拟器', icon: 'wallet' },
   { id: 'holding-periods', label: '滚动持有期', icon: 'chart' },
@@ -25,9 +26,9 @@ export const HOME_MODULES = [
 ]
 export const HOME_PRESETS = [
   { id: 'all', name: '默认全览', primary: HOME_MODULES.map(module => module.id) },
-  { id: 'market', name: '看行情', primary: ['today-overview', 'key-metrics', 'market-chart', 'drawdown-analysis', 'observation-alerts', 'performance-metrics', 'index-comparison'] },
-  { id: 'portfolio', name: '看持仓', primary: ['today-overview', 'portfolio-ledger', 'observation-alerts', 'market-chart', 'etf-income', 'etf-nav-analysis', 'review-summary'] },
-  { id: 'research', name: '做研究', primary: ['key-metrics', 'valuation-analysis', 'yield-spread', 'constituent-structure', 'dividend-quality', 'index-comparison', 'low-volatility', 'holding-periods', 'investment-simulator', 'review-summary', 'data-notes'] },
+  { id: 'market', name: '看行情', primary: ['today-overview', 'key-metrics', 'market-chart', 'etf-liquidity', 'drawdown-analysis', 'observation-alerts', 'performance-metrics', 'index-comparison'] },
+  { id: 'portfolio', name: '看持仓', primary: ['today-overview', 'portfolio-ledger', 'observation-alerts', 'market-chart', 'etf-income', 'etf-nav-analysis', 'etf-liquidity', 'review-summary'] },
+  { id: 'research', name: '做研究', primary: ['key-metrics', 'valuation-analysis', 'etf-liquidity', 'yield-spread', 'constituent-structure', 'dividend-quality', 'index-comparison', 'low-volatility', 'holding-periods', 'investment-simulator', 'review-summary', 'data-notes'] },
 ]
 const object = value => value && typeof value === 'object' && !Array.isArray(value)
 const known = new Set(HOME_MODULES.map(module => module.id))

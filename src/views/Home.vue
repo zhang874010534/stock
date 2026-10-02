@@ -8,6 +8,7 @@ import LatestIndexMetrics from '../components/LatestIndexMetrics.vue'
 import DrawdownAnalysis from '../components/DrawdownAnalysis.vue'
 import EtfIncomeAnalysis from '../components/EtfIncomeAnalysis.vue'
 import EtfNavAnalysis from '../components/EtfNavAnalysis.vue'
+import EtfLiquidityAnalysis from '../components/EtfLiquidityAnalysis.vue'
 import IndexComparisonAnalysis from '../components/IndexComparisonAnalysis.vue'
 import LowVolatilityAnalysis from '../components/LowVolatilityAnalysis.vue'
 import ConstituentStructure from '../components/ConstituentStructure.vue'
@@ -50,6 +51,7 @@ const performanceMetrics = ref(null)
 const indexChart = ref(null)
 const etfIncome = ref(null)
 const etfNav = ref(null)
+const etfLiquidity = ref(null)
 const indexComparison = ref(null)
 const constituentStructure = ref(null)
 const dividendQuality = ref(null)
@@ -62,6 +64,7 @@ const overviewWarnings = computed(() => [
   { active: performanceMetrics.value?.hasWarning && !performanceMetrics.value?.loading, label: '收益风险指标', target: '#performance-metrics', message: '收益风险指标含保留值或不可用项' },
   { active: isEtf.value && etfIncome.value?.hasWarning && !etfIncome.value?.loading, label: 'ETF 分红', target: '#etf-income', message: 'ETF 分红记录或收益范围待核验' },
   { active: isEtf.value && etfNav.value?.hasWarning && !etfNav.value?.loading, label: 'ETF 净值', target: '#etf-nav-analysis', message: 'ETF 净值、折溢价或跟踪输入待核验' },
+  { active: isEtf.value && etfLiquidity.value?.hasWarning && !etfLiquidity.value?.loading, label: 'ETF 规模与交易成本', target: '#etf-liquidity', message: 'ETF 规模、费率或流动性数据待核验' },
   { active: constituentStructure.value?.hasWarning && !constituentStructure.value?.loading, label: '成分数据', target: '#constituent-structure', message: '成分股或行业分类覆盖待核验' },
   { active: dividendQuality.value?.hasWarning && !dividendQuality.value?.loading, label: '分红基本面', target: '#dividend-quality', message: '分红基本面数据或年度覆盖待核验' },
   { active: yieldSpread.value?.hasWarning && !yieldSpread.value?.loading, label: '收益率差值', target: '#yield-spread', message: '收益率差值输入或更新状态待核验' },
@@ -86,7 +89,7 @@ async function openConstituents() {
 const yieldSpread = ref(null)
 const collection = dashboard.states.collection
 const checkedAt = dashboard.checkedAt
-const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading || etfNav.value?.loading || indexComparison.value?.loading || constituentStructure.value?.loading || dividendQuality.value?.loading || yieldSpread.value?.loading)
+const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading || etfNav.value?.loading || etfLiquidity.value?.loading || indexComparison.value?.loading || constituentStructure.value?.loading || dividendQuality.value?.loading || yieldSpread.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
 const priceSummary = computed(() => marketSummary(dailyHistory.value))
@@ -115,6 +118,7 @@ const statusLabel = computed(() => {
   if (performanceMetrics.value?.hasWarning) messages.push('收益风险指标含保留值或不可用项')
   if (etfIncome.value?.hasWarning) messages.push('ETF 分红记录或收益范围待核验')
   if (etfNav.value?.hasWarning) messages.push('ETF 净值、折溢价或跟踪输入待核验')
+  if (etfLiquidity.value?.hasWarning) messages.push('ETF 规模、费率或流动性数据待核验')
   if (constituentStructure.value?.hasWarning) messages.push('成分股或行业分类覆盖待核验')
   if (dividendQuality.value?.hasWarning) messages.push('分红基本面数据或年度覆盖待核验')
   if (yieldSpread.value?.hasWarning) messages.push('收益率差值输入或更新状态待核验')
@@ -124,7 +128,7 @@ const statusLabel = computed(() => {
   if (!dailyHistory.value.length) return '暂无行情数据'
   return datesDiffer.value ? '各来源分别发布，数据日期可能不同' : '已读取保存的数据 · 非实时行情'
 })
-const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error || etfIncome.value?.hasWarning || etfNav.value?.hasWarning || constituentStructure.value?.hasWarning || dividendQuality.value?.hasWarning || yieldSpread.value?.hasWarning)
+const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error || etfIncome.value?.hasWarning || etfNav.value?.hasWarning || etfLiquidity.value?.hasWarning || constituentStructure.value?.hasWarning || dividendQuality.value?.hasWarning || yieldSpread.value?.hasWarning)
 const period = kind => state[kind].loading ? '正在读取…' : dateOf(kind) ? `数据日期：${dateOf(kind)}` : '暂无数据'
 const formatYield = (kind, digits) => state[kind].data ? `${state[kind].data.value.toFixed(digits)}%` : '—'
 const metrics = computed(() => [
@@ -221,6 +225,9 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
       </template>
       <template v-else-if="module.id === 'etf-nav-analysis'">
         <EtfNavAnalysis v-if="isEtf" id="etf-nav-analysis" :ref="value => { etfNav = value }" />
+      </template>
+      <template v-else-if="module.id === 'etf-liquidity'">
+        <EtfLiquidityAnalysis v-if="isEtf" id="etf-liquidity" :ref="value => { etfLiquidity = value }" />
       </template>
       <template v-else-if="module.id === 'portfolio-ledger'">
         <PortfolioLedger v-if="isEtf" id="portfolio-ledger" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :source-notice="[noticeOf('market').warning ? noticeOf('market').text : '', freshnessOf('market').level === 'old' ? freshnessOf('market').text : ''].filter(Boolean).join('；')" />
