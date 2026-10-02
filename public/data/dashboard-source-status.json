@@ -3,14 +3,14 @@
   "sources": {
     "512890": {
       "status": "ok",
-      "lastAttemptAt": "2026-10-01T15:32:19.037Z",
-      "lastSuccessAt": "2026-10-01T15:32:19.037Z",
+      "lastAttemptAt": "2026-10-02T14:49:41.819Z",
+      "lastSuccessAt": "2026-10-02T14:49:41.819Z",
       "error": null
     },
     "H30269": {
       "status": "ok",
-      "lastAttemptAt": "2026-10-01T15:32:19.037Z",
-      "lastSuccessAt": "2026-10-01T15:32:19.037Z",
+      "lastAttemptAt": "2026-10-02T14:49:41.819Z",
+      "lastSuccessAt": "2026-10-02T14:49:41.819Z",
       "error": null
     },
     "valuation": {
@@ -39,8 +39,8 @@
     },
     "000300": {
       "status": "ok",
-      "lastAttemptAt": "2026-10-01T15:32:19.037Z",
-      "lastSuccessAt": "2026-10-01T15:32:19.037Z",
+      "lastAttemptAt": "2026-10-02T14:49:41.819Z",
+      "lastSuccessAt": "2026-10-02T14:49:41.819Z",
       "error": null
     },
     "yieldHistory": {
