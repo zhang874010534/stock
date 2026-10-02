@@ -6,6 +6,7 @@ import { parse, compileScript } from '@vue/compiler-sfc'
 import { createDashboardData, provideDashboardData } from '../src/composables/useDashboardData.js'
 import { ALERTS_KEY } from '../src/utils/observationAlerts.js'
 import { VALUATION_SOURCE } from '../src/api/valuations.js'
+import { emptyYieldHistory, YIELD_SERIES } from '../src/utils/yieldSpread.js'
 
 const NativeDate = Date
 const memoryStorage = () => { const entries = new Map(); return { getItem: key => entries.get(key) ?? null, setItem: (key, value) => entries.set(key, value) } }
@@ -113,4 +114,63 @@ test('浏览器禁止保存时仍能创建与检查，并明确提示当前修�
   const view = await mount(createDashboardData(loaders()), { getItem() { return null }, setItem() { throw new Error('denied') } })
   try { await flush(); await saveRule(view); assert.match(view.text(), /保存失败/); assert.match(view.text(), /1 条满足/) }
   finally { view.unmount() }
+})
+
+function compoundLoaders() {
+  const history = emptyYieldHistory()
+  for (const [kind, value] of [['dividend', 4.5], ['treasury', 2]]) history.series[kind].history = ['2026-09-29', '2026-09-30'].map(date => ({ date, value }))
+  return { ...loaders(), dividend: () => ({ ...YIELD_SERIES.dividend, unit: 'percent', date: '2026-09-30', value: 4.5 }),
+    treasury: () => ({ ...YIELD_SERIES.treasury, unit: 'percent', date: '2026-09-30', value: 2 }), yieldHistory: () => history,
+    collection: () => ({ sources: { H30269: { status: 'ok' }, '512890': { status: 'ok' }, valuation: { status: 'ok' }, dividend: { status: 'ok' }, bond: { status: 'ok' }, yieldHistory: { status: 'ok' } } }) }
+}
+test('页面保存复合股息与利差条件、连续天数和冷却期，显示完整触发说明并可编辑移除条件', async () => {
+  const view = await mount(createDashboardData(compoundLoaders()))
+  try {
+    await flush(); view.button('添加条件').props.onClick(); await nextTick()
+    view.field('观察指标').props['onUpdate:modelValue']('dividend')
+    view.field('满足条件').props['onUpdate:modelValue']('gte')
+    view.field('观察阈值').props['onUpdate:modelValue']('4')
+    view.button('增加同时满足条件').props.onClick(); await nextTick()
+    view.field('观察指标 2').props['onUpdate:modelValue']('spread')
+    view.field('满足条件 2').props['onUpdate:modelValue']('gte')
+    view.field('观察阈值 2').props['onUpdate:modelValue']('2')
+    view.field('连续交易日').props['onUpdate:modelValue']('2')
+    view.field('冷却期').props['onUpdate:modelValue']('5')
+    await flush(); view.nodes().find(n => n.tag === 'form').props.onSubmit({ preventDefault() {} }); await flush()
+    let saved = JSON.parse(view.storage.getItem(ALERTS_KEY))
+    assert.equal(saved.rules[0].conditions.length, 2); assert.equal(saved.rules[0].consecutiveDays, 2); assert.equal(saved.rules[0].cooldownDays, 5)
+    assert.equal(saved.events.length, 1); assert.equal(saved.events[0].values.length, 2)
+    assert.match(view.text(), /股息率 ≥ 4 % 且 股息与国债差值 ≥ 2 个百分点/)
+    assert.match(view.text(), /触发说明：.*2026-09-29 至 2026-09-30 连续 2 个交易日满足/)
+    view.button('重新读取并检查').props.onClick(); await flush()
+    assert.equal(JSON.parse(view.storage.getItem(ALERTS_KEY)).events.length, 1)
+    view.button('编辑').props.onClick(); await nextTick()
+    view.field('移除条件 2').props.onClick(); await nextTick()
+    assert.equal(view.field('观察指标 2'), undefined)
+    view.field('观察阈值').props['onUpdate:modelValue']('4.1')
+    view.nodes().find(n => n.tag === 'form').props.onSubmit({ preventDefault() {} }); await flush()
+    saved = JSON.parse(view.storage.getItem(ALERTS_KEY))
+    assert.equal(saved.rules[0].conditions.length, 1); assert.equal(saved.events[1].conditions.length, 2)
+  } finally { view.unmount() }
+})
+
+test('复合规则来源失败保留触发记录，日期错位或连续样本不足明确待核验', async () => {
+  let fail = false, date = '2026-09-30'
+  const base = compoundLoaders(), dashboard = createDashboardData({ ...base, treasury: () => { if (fail) throw new Error('offline'); return { ...base.treasury(), date } } })
+  const view = await mount(dashboard)
+  try {
+    await flush(); await saveRule(view, 'spread', '3')
+    assert.equal(JSON.parse(view.storage.getItem(ALERTS_KEY)).events.length, 1)
+    fail = true; await dashboard.refresh(['treasury']); await flush()
+    assert.match(view.text(), /待核验/); assert.equal(JSON.parse(view.storage.getItem(ALERTS_KEY)).rules[0].lastMatched, true)
+    fail = false; date = '2026-09-29'; await dashboard.refresh(['treasury']); await flush()
+    assert.match(view.text(), /股息与国债日期不一致/)
+    date = '2026-09-30'; await dashboard.refresh(['treasury']); await flush()
+    assert.equal(JSON.parse(view.storage.getItem(ALERTS_KEY)).events.length, 1)
+    view.button('编辑').props.onClick(); await nextTick()
+    view.field('连续交易日').props['onUpdate:modelValue']('3')
+    await flush(); view.nodes().find(n => n.tag === 'form').props.onSubmit({ preventDefault() {} }); await flush()
+    assert.match(view.text(), /2026-09-28 缺少同日历史样本/)
+    assert.equal(JSON.parse(view.storage.getItem(ALERTS_KEY)).events.length, 1)
+  } finally { view.unmount() }
 })
