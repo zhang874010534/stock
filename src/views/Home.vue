@@ -15,6 +15,7 @@ import InvestmentSimulator from '../components/InvestmentSimulator.vue'
 import HoldingPeriodAnalysis from '../components/HoldingPeriodAnalysis.vue'
 import YieldSpreadAnalysis from '../components/YieldSpreadAnalysis.vue'
 import PortfolioLedger from '../components/PortfolioLedger.vue'
+import ReviewSummary from '../components/ReviewSummary.vue'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -159,6 +160,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     <ValuationAnalysis id="valuation-analysis" ref="valuationAnalysis" :instrument="instrument" :collection-notice="noticeOf('valuation').text" :collection-warning="noticeOf('valuation').warning" summary />
     <YieldSpreadAnalysis id="yield-spread" ref="yieldSpread" :instrument="instrument" />
     <ConstituentStructure id="constituent-structure" ref="constituentStructure" :instrument="instrument" />
+    <ReviewSummary id="review-summary" :instrument="instrument" />
     <section id="data-notes" class="bottom-grid" aria-label="收益率参考与数据说明">
       <MetricCard title="中国十年期国债收益率" :value="formatYield('treasury', 4)" description="中债国债到期收益率曲线 · 10年" :period="period('treasury')" source="中债" :source-url="sources.treasury" detail="国债到期收益率与指数股息率口径不同，不能直接等同。" :aria-busy="state.treasury.loading">
         <p v-if="!collection.loading" class="source-notice" :class="{ 'load-error': noticeOf('treasury').warning }">{{ noticeOf('treasury').text }}</p>

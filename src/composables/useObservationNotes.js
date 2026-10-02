@@ -48,7 +48,7 @@ export function createObservationNotes({ storage, now = () => new Date(), id = (
     notes.value = mergeNotes(notes.value, incoming)
     save('备份已合并；同编号笔记保留更新时间较新的内容。')
   }
-  return { notes, removed, message: computed(() => error.value || notice.value), upsert, remove, undoRemove, importBackup,
+  return { notes, removed, message: computed(() => error.value || notice.value), hasWarning: computed(() => Boolean(error.value)), upsert, remove, undoRemove, importBackup,
     exportBackup: () => JSON.stringify(notesDocument(notes.value, now().toISOString()), null, 2) }
 }
 export function provideObservationNotes(notes = createObservationNotes()) { provide(notesKey, notes); return notes }
