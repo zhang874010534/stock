@@ -126,7 +126,7 @@ test('index is theoretical price-only; published snapshots simulate with default
   for (const code of ['512890', 'h30269']) {
     const m = JSON.parse(await readFile(new URL(`../public/data/${code}.json`, import.meta.url)))
     const events = JSON.parse(await readFile(new URL('../public/data/distributions-512890.json', import.meta.url)))
-    const result = calculateInvestmentSimulation(m, simulatorDefaults(m), { distribution: events, now })
+    const result = calculateInvestmentSimulation(m, simulatorDefaults(m), { distribution: events, now: new Date(`${events.coverage.end}T08:00:00Z`) })
     assert.ok(result.count > 200); assert.ok(result.series.every(s => Number.isFinite(s.current.assets)))
     const option = investmentSimulatorOption(result)
     assert.equal(option.series.length, 5); assert.equal(option.series[0].data.length, result.count)
