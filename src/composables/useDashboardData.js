@@ -9,6 +9,7 @@ import { getEtfDistributions } from '../api/etfDistributions.js'
 import { getConstituents } from '../api/constituents.js'
 import { getConstituentHistory } from '../api/constituentHistory.js'
 import { getYieldHistory } from '../api/yieldHistory.js'
+import { getEtfNav } from '../api/etfNav.js'
 
 const dashboardKey = Symbol('dashboard-data')
 const metricKeys = ['latestMetrics', 'valuation', 'dividend']
@@ -22,6 +23,7 @@ export function createDashboardData(overrides = {}) {
     valuation: getValuation, latestMetrics: getLatestMetrics, collection: getSourceStatus,
     eastmoneyHistory: getValuationHistory, csiHistory: getCsiValuationHistory, csiStatus: getCsiValuationStatus,
     etfDistributions: getEtfDistributions,
+    etfNav: getEtfNav,
     constituents: getConstituents, constituentHistory: getConstituentHistory,
     yieldHistory: getYieldHistory,
     ...overrides,
@@ -55,12 +57,15 @@ export function createDashboardData(overrides = {}) {
 
   function refresh(keys) {
     const selected = new Set(keys)
+    if (states.etfNav.attempted && keys.some(key => ['512890', 'etfNav', 'H30269', 'etfDistributions'].includes(key))) {
+      for (const key of ['512890', 'etfNav', 'H30269', 'etfDistributions']) selected.add(key)
+    }
     if (keys.some(key => ['constituents', 'constituentHistory'].includes(key))) {
       for (const key of ['constituents', 'constituentHistory']) if (states[key].attempted) selected.add(key)
     }
     // A used comparison refreshes both inputs as one group. Its view commits
     // the pair only after both requests finish successfully.
-    if (states['000300'].attempted && keys.some(key => ['H30269', '000300'].includes(key))) {
+    if (states['000300'].attempted && [...selected].some(key => ['H30269', '000300'].includes(key))) {
       selected.add('H30269')
       selected.add('000300')
     }

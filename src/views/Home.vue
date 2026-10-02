@@ -7,6 +7,7 @@ import ValuationAnalysis from '../components/ValuationAnalysis.vue'
 import LatestIndexMetrics from '../components/LatestIndexMetrics.vue'
 import DrawdownAnalysis from '../components/DrawdownAnalysis.vue'
 import EtfIncomeAnalysis from '../components/EtfIncomeAnalysis.vue'
+import EtfNavAnalysis from '../components/EtfNavAnalysis.vue'
 import IndexComparisonAnalysis from '../components/IndexComparisonAnalysis.vue'
 import LowVolatilityAnalysis from '../components/LowVolatilityAnalysis.vue'
 import ConstituentStructure from '../components/ConstituentStructure.vue'
@@ -40,13 +41,14 @@ const valuationAnalysis = ref(null)
 const performanceMetrics = ref(null)
 const indexChart = ref(null)
 const etfIncome = ref(null)
+const etfNav = ref(null)
 const indexComparison = ref(null)
 const constituentStructure = ref(null)
 const observationAlerts = ref(null)
 const yieldSpread = ref(null)
 const collection = dashboard.states.collection
 const checkedAt = dashboard.checkedAt
-const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading || indexComparison.value?.loading || constituentStructure.value?.loading || yieldSpread.value?.loading)
+const loading = computed(() => collection.loading || Object.values(state).some(item => item.loading) || valuationAnalysis.value?.loading || performanceMetrics.value?.loading || etfIncome.value?.loading || etfNav.value?.loading || indexComparison.value?.loading || constituentStructure.value?.loading || yieldSpread.value?.loading)
 const dailyHistory = computed(() => state.market.data?.history ?? [])
 const latest = computed(() => state.market.data?.latest)
 const priceSummary = computed(() => marketSummary(dailyHistory.value))
@@ -74,6 +76,7 @@ const statusLabel = computed(() => {
   if (collectionFailed.value) messages.push('部分后台更新失败')
   if (performanceMetrics.value?.hasWarning) messages.push('收益风险指标含保留值或不可用项')
   if (etfIncome.value?.hasWarning) messages.push('ETF 分红记录或收益范围待核验')
+  if (etfNav.value?.hasWarning) messages.push('ETF 净值、折溢价或跟踪输入待核验')
   if (constituentStructure.value?.hasWarning) messages.push('成分股或行业分类覆盖待核验')
   if (yieldSpread.value?.hasWarning) messages.push('收益率差值输入或更新状态待核验')
   if (oldData.value) messages.push('部分数据较旧')
@@ -82,7 +85,7 @@ const statusLabel = computed(() => {
   if (!dailyHistory.value.length) return '暂无行情数据'
   return datesDiffer.value ? '各来源分别发布，数据日期可能不同' : '已读取保存的数据 · 非实时行情'
 })
-const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error || etfIncome.value?.hasWarning || constituentStructure.value?.hasWarning || yieldSpread.value?.hasWarning)
+const hasWarning = computed(() => collectionFailed.value || oldData.value || Object.values(state).some(item => item.error) || performanceMetrics.value?.error || performanceMetrics.value?.hasWarning || valuationAnalysis.value?.error || etfIncome.value?.hasWarning || etfNav.value?.hasWarning || constituentStructure.value?.hasWarning || yieldSpread.value?.hasWarning)
 const period = kind => state[kind].loading ? '正在读取…' : dateOf(kind) ? `数据日期：${dateOf(kind)}` : '暂无数据'
 const formatYield = (kind, digits) => state[kind].data ? `${state[kind].data.value.toFixed(digits)}%` : '—'
 const metrics = computed(() => [
@@ -154,6 +157,7 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     <IndexComparisonAnalysis id="index-comparison" ref="indexComparison" :instrument="instrument" />
     <LowVolatilityAnalysis id="low-volatility" :instrument="instrument" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :collection-notice="noticeOf('market').text" :collection-warning="noticeOf('market').warning" @retry="load('market')" />
     <EtfIncomeAnalysis v-if="isEtf" id="etf-income" ref="etfIncome" :history="dailyHistory" :loading="state.market.loading" :error="state.market.error" :source-notice="noticeOf('market').warning ? noticeOf('market').text : ''" :backfill-completed="state.market.data?.backfill?.completed === true" @retry-market="load('market')" />
+    <EtfNavAnalysis v-if="isEtf" id="etf-nav-analysis" ref="etfNav" />
     <PortfolioLedger v-if="isEtf" id="portfolio-ledger" :market="state.market.data" :loading="state.market.loading" :error="state.market.error" :source-notice="[noticeOf('market').warning ? noticeOf('market').text : '', freshnessOf('market').level === 'old' ? freshnessOf('market').text : ''].filter(Boolean).join('；')" />
     <InvestmentSimulator id="investment-simulator" :instrument="instrument" />
     <HoldingPeriodAnalysis id="holding-periods" :instrument="instrument" />
