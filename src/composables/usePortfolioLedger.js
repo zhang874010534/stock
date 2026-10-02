@@ -52,7 +52,7 @@ export function createPortfolioLedger({ storage, now = () => new Date(), id = ()
     }
     commit([...byId.values()], '账本备份已合并；同编号记录采用更新时间较新的版本。')
   }
-  return { entries, removed, selectedId, message: computed(() => error.value || notice.value), upsert, remove, undoRemove, importBackup,
+  return { entries, removed, selectedId, message: computed(() => error.value || notice.value), hasWarning: computed(() => Boolean(error.value)), upsert, remove, undoRemove, importBackup,
     select: entryId => { selectedId.value = entryId },
     exportBackup: () => JSON.stringify({ ...ledgerDocument(entries.value, options()), exportedAt: now().toISOString() }, null, 2) }
 }

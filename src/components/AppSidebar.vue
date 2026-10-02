@@ -3,6 +3,7 @@ import { House, ChartNoAxesCombined, Database, LayoutGrid, ChevronDown, X, Bell,
 defineProps({ open: Boolean, instrument: String })
 defineEmits(['close'])
 const navigation = [
+  { label: '今日与我有关', icon: Bell, href: '#today-overview' },
   { label: '关键指标', icon: LayoutGrid, href: '#key-metrics' },
   { label: '行情走势', icon: ChartNoAxesCombined, href: '#market-chart' },
   { label: '回撤曲线', icon: ChartNoAxesCombined, href: '#drawdown-analysis' },

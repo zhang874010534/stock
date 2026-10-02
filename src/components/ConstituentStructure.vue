@@ -71,7 +71,7 @@ const dateRange = values => values.length ? values[0] === values.at(-1) ? values
 const filterKey = group => group.industry ?? 'unknown'
 const hasWarning = computed(() => Boolean(error.value || mismatch.value || inputs.current?.status !== 'ok' || history.value?.membershipStatus !== 'ok' || history.value?.industryStatus !== 'ok'))
 const refresh = () => dashboard.refresh(['constituents', 'constituentHistory'])
-defineExpose({ loading, hasWarning })
+defineExpose({ loading, hasWarning, compareLatest, inputs })
 for (const key of ['constituents', 'constituentHistory']) dashboard.ensure(key)
 </script>
 

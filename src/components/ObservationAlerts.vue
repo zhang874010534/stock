@@ -42,6 +42,8 @@ watch(evaluations, values => alerts.record(values.map(item => item.result)), { i
 const activeCount = computed(() => evaluations.value.filter(item => item.result.status === 'matched').length)
 const unreadCount = computed(() => events.value.filter(event => !event.read).length)
 const pendingCount = computed(() => evaluations.value.filter(item => item.result.status === 'pending').length)
+const ruleCount = computed(() => rules.value.length)
+const storageMessage = computed(() => alerts.message.value)
 const statusLabels = { matched: '条件满足', unmatched: '未满足', pending: '待核验', paused: '已暂停' }
 async function openForm(rule) {
   Object.assign(draft, { id: rule?.id ?? null, conditions: rule ? rule.conditions.map(condition => ({ ...condition, threshold: String(condition.threshold) })) : [newCondition()], consecutiveDays: rule?.consecutiveDays ?? 1, cooldownDays: rule?.cooldownDays ?? 0 })
@@ -61,7 +63,7 @@ watch(() => props.instrument, () => { formOpen.value = false; formError.value = 
 const formatTime = value => new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', dateStyle: 'short', timeStyle: 'short' }).format(new Date(value))
 const refresh = () => { observedNow.value = new Date(); return dashboard.refresh(dependencies.value) }
 const loading = computed(() => dependencies.value.some(key => dashboard.states[key].loading))
-defineExpose({ activeCount, unreadCount })
+defineExpose({ activeCount, unreadCount, pendingCount, ruleCount, storageMessage })
 </script>
 
 <template>

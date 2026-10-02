@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { ArrowRight, RefreshCw, Database } from 'lucide-vue-next'
 import MetricCard from '../components/MetricCard.vue'
 import IndexChart from '../components/IndexChart.vue'
@@ -18,6 +18,7 @@ import HoldingPeriodAnalysis from '../components/HoldingPeriodAnalysis.vue'
 import YieldSpreadAnalysis from '../components/YieldSpreadAnalysis.vue'
 import PortfolioLedger from '../components/PortfolioLedger.vue'
 import ReviewSummary from '../components/ReviewSummary.vue'
+import TodayOverview from '../components/TodayOverview.vue'
 import { provideDashboardData } from '../composables/useDashboardData.js'
 import { VALUATION_SOURCE } from '../api/valuations.js'
 import { formatIndexValue } from '../utils/indexHistory.js'
@@ -47,6 +48,28 @@ const indexComparison = ref(null)
 const constituentStructure = ref(null)
 const dividendQuality = ref(null)
 const observationAlerts = ref(null)
+const alertOverview = computed(() => observationAlerts.value ? {
+  unreadCount: observationAlerts.value.unreadCount, activeCount: observationAlerts.value.activeCount,
+  pendingCount: observationAlerts.value.pendingCount, ruleCount: observationAlerts.value.ruleCount,
+} : {})
+const overviewWarnings = computed(() => [
+  { active: performanceMetrics.value?.hasWarning && !performanceMetrics.value?.loading, label: '收益风险指标', target: '#performance-metrics', message: '收益风险指标含保留值或不可用项' },
+  { active: isEtf.value && etfIncome.value?.hasWarning && !etfIncome.value?.loading, label: 'ETF 分红', target: '#etf-income', message: 'ETF 分红记录或收益范围待核验' },
+  { active: isEtf.value && etfNav.value?.hasWarning && !etfNav.value?.loading, label: 'ETF 净值', target: '#etf-nav-analysis', message: 'ETF 净值、折溢价或跟踪输入待核验' },
+  { active: constituentStructure.value?.hasWarning && !constituentStructure.value?.loading, label: '成分数据', target: '#constituent-structure', message: '成分股或行业分类覆盖待核验' },
+  { active: dividendQuality.value?.hasWarning && !dividendQuality.value?.loading, label: '分红基本面', target: '#dividend-quality', message: '分红基本面数据或年度覆盖待核验' },
+  { active: yieldSpread.value?.hasWarning && !yieldSpread.value?.loading, label: '收益率差值', target: '#yield-spread', message: '收益率差值输入或更新状态待核验' },
+  { active: Boolean(observationAlerts.value?.storageMessage), label: '观察提醒', target: '#observation-alerts', message: observationAlerts.value?.storageMessage },
+])
+async function navigateOverview(target) {
+  if (target === '#constituent-comparison') constituentStructure.value?.compareLatest?.()
+  await nextTick()
+  const element = document.getElementById(target.slice(1))
+  if (!element) return
+  if (element.tagName === 'DETAILS') element.open = true
+  element.setAttribute('tabindex', '-1')
+  element.focus({ preventScroll: true })
+}
 const yieldSpread = ref(null)
 const collection = dashboard.states.collection
 const checkedAt = dashboard.checkedAt
@@ -121,7 +144,8 @@ for (const kind of ['dividend', 'valuation', 'treasury', 'collection']) dashboar
     </section>
     <div class="data-status" :class="{ warning: hasWarning }" role="status"><Database :size="14" /><span>{{ statusLabel }}</span><span class="status-caption">各项日期见卡片</span></div>
     <a v-if="observationAlerts?.activeCount" class="observation-notice" href="#observation-alerts" role="status">{{ instrument }} · {{ observationAlerts.activeCount }} 条观察条件满足 · 查看观察提醒 →</a>
-    <details class="collection-details panel">
+    <TodayOverview :instrument="instrument" :alerts="alertOverview" :constituent-inputs="constituentStructure?.inputs" :module-warnings="overviewWarnings" @navigate="navigateOverview" />
+    <details id="data-source-status" class="collection-details panel">
       <summary>查看后台采集状态与时间</summary>
       <p>重新读取只获取站点已保存的文件，不触发后台采集。来源日期不同本身不表示更新失败。</p>
       <p v-if="collection.error" role="status">采集状态文件暂不可用；已有记录仅供参考，不能确认当前状态。<button :disabled="collection.loading" @click="loadCollection">重试读取状态</button></p>
@@ -216,7 +240,7 @@ h1 .mono { display: inline-block; margin-left: 8px; color: #7899ca; font-size: .
 .load-error { color: #d5b57f; font-size: 11px; margin-top: 7px; }
 .source-notice { color: #93a4bf; font-size: 11px; margin-top: 7px; line-height: 1.6; }
 .source-notice.load-error { color: #d5b57f; }
-.collection-details { padding: 12px 16px; color: #93a4bf; font-size: 11px; line-height: 1.8; }
+.collection-details { padding: 12px 16px; color: #93a4bf; font-size: 11px; line-height: 1.8; scroll-margin-top: calc(var(--header-height) + 18px); }
 .collection-details summary { cursor: pointer; color: #b8ceec; }
 .collection-details p { margin-top: 8px; }
 .collection-details button { background: none; border: 0; color: #9bc5ff; text-decoration: underline; }

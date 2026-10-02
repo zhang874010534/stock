@@ -6,11 +6,19 @@ import { parse, compileScript } from '@vue/compiler-sfc'
 
 // Render Home with lightweight child stubs; exercise its actual API requests,
 // source selection, summary and card slots without requiring a canvas/browser.
-async function mountHome() {
+async function mountHome(realOverview = false) {
+  const realComponents = new Map()
+  if (realOverview) for (const name of ['TodayOverview', 'ObservationAlerts']) {
+    const componentFile = new URL(`../src/components/${name}.vue`, import.meta.url)
+    const { descriptor } = parse(await readFile(componentFile, 'utf8'))
+    const content = compileScript(descriptor, { id: `home-${name}`, inlineTemplate: true, templateOptions: { compilerOptions: { hoistStatic: false } } }).content
+      .replace(/from (['"])([^'"]+)\1/g, (_, quote, specifier) => `from '${specifier.startsWith('.') ? new URL(specifier, componentFile).href : import.meta.resolve(specifier)}'`)
+    realComponents.set(name, `data:text/javascript;base64,${Buffer.from(content).toString('base64')}`)
+  }
   const file = new URL('../src/views/Home.vue', import.meta.url)
   const { descriptor } = parse(await readFile(file, 'utf8'))
   let script = compileScript(descriptor, { id: 'home-status-test', inlineTemplate: true }).content
-  script = script.replace(/import (\w+) from ['"]([^'"]+\.vue)['"]/g, (_, name) => `const ${name} = { setup(props, { slots, expose }) {
+  script = script.replace(/import (\w+) from ['"]([^'"]+\.vue)['"]/g, (_, name) => realComponents.has(name) ? `import ${name} from '${realComponents.get(name)}'` : `const ${name} = { setup(props, { slots, expose }) {
     let opened = false;
     expose({ loading: false, error: false, hasWarning: false, asOf: '2026-09-17', refresh: async () => {}, openConstituents: () => { opened = true; } });
     return () => testH('div', { 'data-component': '${name}', onCheckOpened: () => opened }, [slots['value-detail']?.(), slots.default?.()]);
@@ -18,14 +26,16 @@ async function mountHome() {
     .replace(/from (['"])([^'"]+)\1/g, (_, quote, specifier) => `from '${specifier.startsWith('.') ? new URL(specifier, file).href : import.meta.resolve(specifier)}'`)
   script = `import { h as testH } from '${import.meta.resolve('vue')}';\n${script}`
   const component = (await import(`data:text/javascript;base64,${Buffer.from(script).toString('base64')}`)).default
-  const node = tag => ({ tag, children: [], props: {}, text: '' })
+  const node = tag => ({ tag, tagName: tag.toUpperCase(), children: [], props: {}, text: '', addEventListener() {}, removeEventListener() {}, getRootNode: () => ({}),
+    focus() { this.focused = true }, setAttribute(key, value) { this.props[key] = value },
+    get options() { return this.children.filter(n => n.tag === 'option') } })
   const renderer = createRenderer({
     createElement: node, createText: text => ({ ...node('#text'), text }), createComment: () => node('#comment'),
     insert(child, parent, anchor) { child.parent = parent; const i = parent.children.indexOf(anchor); parent.children.splice(i < 0 ? parent.children.length : i, 0, child) },
     remove(child) { const items = child.parent.children; items.splice(items.indexOf(child), 1) },
     setText: (n, text) => { n.text = text }, setElementText: (n, text) => { n.text = text; n.children = [] },
     parentNode: n => n.parent, nextSibling: n => n.parent?.children[n.parent.children.indexOf(n) + 1],
-    patchProp: (n, key, oldValue, value) => { n.props[key] = value },
+    patchProp: (n, key, oldValue, value) => { n.props[key] = value; if (key === 'value') n.value = n._value = value },
   })
   const props = reactive({ instrument: '512890' }), host = node('host')
   const app = renderer.createApp({ render: () => h(component, props) })
@@ -34,6 +44,47 @@ async function mountHome() {
   return { app, props, nodes: () => all(host), text: () => all(host).map(n => n.text).join(' '), refresh: () => all(host).find(n => n.props.class === 'refresh-button').props.onClick() }
 }
 const flush = async () => { for (let i = 0; i < 3; i++) { await new Promise(resolve => setImmediate(resolve)); await nextTick() } }
+
+test('首页真实概览与提醒模块同步触发、已读和证券切换，卡片导航转移焦点', async () => {
+  const previous = Object.fromEntries(['fetch', 'document', 'Date', 'localStorage', 'Document', 'ShadowRoot'].map(key => [key, globalThis[key]]))
+  const NativeDate = Date, memory = new Map()
+  let mounted
+  try {
+    globalThis.Date = class extends NativeDate { constructor(...args) { super(...(args.length ? args : ['2026-10-02T08:00:00Z'])) } static now() { return NativeDate.parse('2026-10-02T08:00:00Z') } }
+    globalThis.Document = class {}; globalThis.ShadowRoot = class {}
+    globalThis.localStorage = { getItem: key => memory.get(key) ?? null, setItem: (key, value) => memory.set(key, value) }
+    globalThis.document = { title: '', getElementById: id => mounted?.nodes().find(n => n.props.id === id) }
+    const names = ['512890', 'h30269', 'valuation-h30269', 'dividend-h30269', 'china-bond-10y', 'dashboard-source-status']
+    const snapshots = Object.fromEntries(await Promise.all(names.map(async name => [name, JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url), 'utf8'))])))
+    globalThis.fetch = async url => Response.json(snapshots[url.split('/').at(-1).split('.json')[0]])
+    mounted = await mountHome(true); await flush()
+    const button = label => mounted.nodes().find(n => n.tag === 'button' && n.text === label)
+    const field = label => mounted.nodes().find(n => n.props['aria-label'] === label)
+    const overview = () => mounted.nodes().find(n => n.props.id === 'today-overview')
+    const all = n => [n, ...n.children.flatMap(all)]
+    const alertCard = () => all(overview()).find(n => n.tag === 'a' && n.props.href === '#observation-alerts')
+    const cardText = () => all(alertCard()).map(n => n.text).join(' ')
+    assert.match(cardText(), /0 条.*尚未设置条件/)
+    button('添加条件').props.onClick(); await nextTick()
+    field('观察阈值').props['onUpdate:modelValue']('2')
+    mounted.nodes().find(n => n.tag === 'form').props.onSubmit({ preventDefault() {} }); await flush()
+    assert.match(cardText(), /1 条.*1 条条件满足/)
+    alertCard().props.onClick(); await flush()
+    assert.equal(field('自定义观察提醒').focused, true)
+    assert.match(cardText(), /1 条/)
+    button('全部标为已读').props.onClick(); await flush()
+    assert.match(cardText(), /0 条.*1 条条件满足/)
+    mounted.props.instrument = 'H30269'; await flush()
+    assert.match(cardText(), /0 条.*尚未设置条件/)
+    assert.ok(!all(overview()).some(n => n.tag === 'a' && n.props.href === '#portfolio-ledger'))
+    mounted.props.instrument = '512890'; await flush()
+    assert.match(cardText(), /0 条.*1 条条件满足/)
+    assert.equal(JSON.parse(memory.get('stock:observation-alerts:v1')).events.length, 1)
+  } finally {
+    mounted?.app.unmount()
+    for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete globalThis[key]; else globalThis[key] = value }
+  }
+})
 
 test('homepage separates readable snapshots, source failure, unknown status and instrument identity', async () => {
   const previousFetch = globalThis.fetch, previousDocument = globalThis.document
