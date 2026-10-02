@@ -16,5 +16,5 @@ onMounted(() => { observer = new ResizeObserver(render); observer.observe(canvas
 watch(() => [props.series, props.code, props.basis], () => { dirty = true; render() }, { flush: 'post' })
 onBeforeUnmount(() => { disposed = true; observer?.disconnect(); chart?.dispose() })
 </script>
-<template><div ref="canvas" class="holding-period-charts" role="img" :aria-label="`${code}持有${series.years}年的买入日期收益曲线与收益分布，${series.count}个完整样本，${basis === 'cash' ? '含现金分红不再投' : '价格收益'}`" /></template>
+<template><div ref="canvas" class="holding-period-charts" role="img" :aria-label="`${code}持有${series.years}年的买入日期收益曲线与收益分布，${series.count}个完整样本，${basis === 'cash' ? '含现金分红不再投' : '价格收益'}${series.conditionLabel ? `，买入环境条件：${series.conditionLabel}` : ''}`" /></template>
 <style scoped>.holding-period-charts { width: 100%; height: 570px; min-width: 0; }</style>

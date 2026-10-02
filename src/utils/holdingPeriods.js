@@ -49,7 +49,7 @@ function windowReturn(buy, exit, distribution, basis) {
     priceReturn: marketValue / buy.close - 1, cashReturn: income / buy.close, returnRate: Math.abs(raw) < 1e-12 ? 0 : raw }
 }
 
-function summarize(years, points, counts) {
+export function summarizeHoldingWindows(years, points, counts = {}) {
   const windows = points.filter(point => point.status === 'complete'), values = windows.map(point => point.returnRate).sort((a, b) => a - b)
   let best = null, worst = null
   for (const point of windows) {
@@ -101,7 +101,7 @@ export function calculateHoldingPeriods(market, { basis = market?.code === '5128
       points.push({ buyDate, targetDate, exitDate, buyClose: buy.close, exitClose: exit.close,
         holdingDays: (dateTimestamp(exitDate) - dateTimestamp(buyDate)) / 86400000, status: 'complete', ...windowReturn(buy, exit, events, basis) })
     }
-    return summarize(years, points, { immatureCount, missingCount, candidateCount: days.length })
+    return summarizeHoldingWindows(years, points, { immatureCount, missingCount, candidateCount: days.length })
   })
   return { code: market.code, basis, sourceDate: market.latest.date, startDate: days[0], endDate: days.at(-1), count: days.length,
     missingSessions: missingPrefix.at(-1), excludedBefore: market.history.filter(row => row.date < start).length,

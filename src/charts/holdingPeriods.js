@@ -1,7 +1,7 @@
 export function holdingPeriodOption(series) {
   return {
     animation: false, textStyle: { color: '#959baa', fontFamily: 'sans-serif' },
-    title: [{ text: `买入日期与持有 ${series.years} 年收益`, top: 0, left: 10 }, { text: '完整样本的收益分布', top: 305, left: 10 }].map(item => ({ ...item, textStyle: { color: '#b8ceec', fontSize: 12, fontWeight: 400 } })),
+    title: [{ text: `${series.conditionLabel ? '符合条件的' : ''}买入日期与持有 ${series.years} 年收益`, top: 0, left: 10 }, { text: `${series.conditionLabel ? '符合条件的' : ''}完整样本收益分布`, top: 305, left: 10 }].map(item => ({ ...item, textStyle: { color: '#b8ceec', fontSize: 12, fontWeight: 400 } })),
     grid: [{ left: 55, right: 18, top: 38, height: 210 }, { left: 55, right: 18, top: 347, height: 150 }],
     tooltip: { trigger: 'axis', confine: true, backgroundColor: '#20232c', borderColor: '#383d49', textStyle: { color: '#e1e8f3' }, formatter(params) {
       const item = Array.isArray(params) ? params[0] : params
@@ -11,7 +11,8 @@ export function holdingPeriodOption(series) {
         return bin ? `${bin.description}<br/>${bin.count} 个完整样本 · ${(bin.count / series.count * 100).toFixed(2)}%` : ''
       }
       const point = series.points[item.dataIndex]
-      return point ? `买入 ${point.buyDate}<br/>目标周年 ${point.targetDate}<br/>到期 ${point.exitDate}<br/>${point.status === 'complete' ? `持有收益 ${(point.returnRate * 100).toFixed(2)}%` : '区间行情缺失，未纳入统计'}` : ''
+      const reason = point?.status === 'excluded' ? '买入环境不符合条件，未纳入筛选结果' : point?.status === 'unknown' ? '买入环境条件缺失，未纳入筛选结果' : '区间行情缺失，未纳入统计'
+      return point ? `买入 ${point.buyDate}<br/>目标周年 ${point.targetDate}<br/>到期 ${point.exitDate}<br/>${point.status === 'complete' ? `持有收益 ${(point.returnRate * 100).toFixed(2)}%` : reason}` : ''
     } },
     xAxis: [
       { type: 'category', data: series.points.map(point => point.buyDate), boundaryGap: false, axisLabel: { hideOverlap: true }, axisTick: { show: false }, axisLine: { lineStyle: { color: '#383d49' } } },
