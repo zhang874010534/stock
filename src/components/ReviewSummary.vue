@@ -2,6 +2,8 @@
 import { computed, ref, watch } from 'vue'
 import { useDashboardData } from '../composables/useDashboardData.js'
 import { useObservationNotes } from '../composables/useObservationNotes.js'
+import { usePortfolioLedger } from '../composables/usePortfolioLedger.js'
+import { reviewLedgerDetails, reviewMoney, reviewTransactionLines } from '../utils/reviewLedger.js'
 import { createReviewSummaries } from '../composables/useReviewSummaries.js'
 import { buildReviewSummary, chinaReviewDate, formatReviewMetric, MAX_REFLECTION_LENGTH, MAX_REVIEWS, reviewFilename, reviewMarkdown, reviewPeriod, reviewTitle } from '../utils/reviewSummary.js'
 import { createReviewPng } from '../utils/reviewExport.js'
@@ -10,6 +12,7 @@ import { shiftDay } from '../utils/priceRisk.js'
 
 const props = defineProps({ instrument: { type: String, default: '512890' } })
 const dashboard = useDashboardData(), notesStore = useObservationNotes(), history = createReviewSummaries()
+const ledger = usePortfolioLedger()
 const today = ref(chinaReviewDate()), type = ref('week'), week = ref(today.value)
 const month = ref(shiftDay(`${today.value.slice(0, 7)}-01`, -1).slice(0, 7))
 const reflection = ref(''), draft = ref(null), selectedId = ref(''), message = ref(''), exporting = ref(false)
@@ -18,6 +21,7 @@ watch(keys, values => { for (const key of values) dashboard.ensure(key) }, { imm
 const loading = computed(() => keys.value.some(key => dashboard.states[key].loading))
 const reports = computed(() => history.reviews.value.filter(report => report.instrument === props.instrument))
 const activeReport = computed(() => selectedId.value ? reports.value.find(report => report.id === selectedId.value) : draft.value ? { ...draft.value, reflection: reflection.value } : null)
+const personal = computed(() => activeReport.value?.portfolio ? reviewLedgerDetails(activeReport.value.portfolio, activeReport.value.period, activeReport.value.notes) : null)
 const periodLabel = computed(() => {
   try { const period = reviewPeriod(type.value, type.value === 'week' ? week.value : `${month.value}-01`); return `${period.start} — ${period.end}${period.ongoing ? ' · 周期进行中' : ''}` } catch { return '请选择日期' }
 })
@@ -42,8 +46,8 @@ function generate() {
     if (notesStore.hasWarning.value) warnings.push(`个人笔记状态：${notesStore.message.value}`)
     draft.value = buildReviewSummary({ instrument: props.instrument, type: type.value, anchor: type.value === 'week' ? week.value : `${month.value}-01`,
       market: dashboard.states[props.instrument].data, valuationHistory: dashboard.states.eastmoneyHistory.data, constituentHistory: dashboard.states.constituentHistory.data,
-      notes: notesStore.notes.value, reflection: reflection.value, warnings })
-    selectedId.value = ''; message.value = '摘要已生成；保存后保留当时数据和笔记。'
+      notes: notesStore.notes.value, ledgerEntries: ledger.entries.value, ledgerNotice: ledger.hasWarning.value ? `账本读取或保存异常：${ledger.message.value}；仅汇总当前页面可用记录，不能确认账本完整。` : '', reflection: reflection.value, warnings })
+    selectedId.value = ''; message.value = '摘要已生成；保存后保留当时行情、账本和笔记。'
   } catch (error) { message.value = `生成未完成：${error.message}` }
 }
 function save() {
@@ -92,6 +96,20 @@ defineExpose({ generate, activeReport, exportReport })
     <article v-if="activeReport" class="review-report" aria-label="复盘摘要内容">
       <div class="review-heading"><div><h3>{{ reviewTitle(activeReport) }}</h3><p>汇总截至 {{ activeReport.period.asOf }} · {{ activeReport.period.ongoing ? '周期进行中' : '完整自然周期' }} · 生成 {{ formatTime(activeReport.createdAt) }}（北京时间）{{ activeReport.id ? ' · 已保存快照' : ' · 尚未保存' }}</p></div></div>
       <div class="review-metrics"><article v-for="metric in activeReport.metrics" :key="metric.id"><h4>{{ metric.label }}</h4><strong>{{ formatReviewMetric(metric) }}</strong><p>{{ metric.detail }}</p></article></div>
+      <section v-if="instrument === '512890'" class="review-section" aria-label="复盘账本与盈亏">
+        <div class="review-heading"><h4>我的账本与盈亏</h4><a href="#portfolio-ledger">查看／补录账本</a></div>
+        <p v-if="!personal">这份历史复盘未包含账本快照；重新生成可加入当前账本。</p>
+        <template v-else>
+          <p v-if="activeReport.portfolio.notice" class="review-warning">{{ activeReport.portfolio.notice }}</p>
+          <p v-if="!activeReport.portfolio.entries.length">截至本期末没有可用账本记录；录入自己的实际交易后重新生成。</p>
+          <template v-else>
+            <div class="review-metrics personal-metrics"><article v-for="card in personal.cards" :key="card.label"><h4>{{ card.label }}</h4><strong>{{ reviewMoney(card.value) }}</strong></article></div>
+            <p v-for="(line, index) in personal.context" :key="index">{{ line }}</p>
+            <p>{{ personal.transactions.length ? `本期 ${personal.transactions.length} 笔记录，按日期与同日顺序排列。` : '本期没有买卖、费用、分红或份额调整记录；已有持仓仍按期初期末收盘计算盈亏变化。' }}</p>
+            <details class="review-transactions"><summary>交易明细与同日观察（{{ personal.transactions.length }} 笔）</summary><ul class="review-notes"><li v-for="row in personal.transactions" :key="row.id"><p v-for="(line, index) in reviewTransactionLines(row)" :key="index">{{ line }}</p></li></ul></details>
+          </template>
+        </template>
+      </section>
       <section class="review-section" aria-label="复盘成分变化"><h4>成分变化</h4><p v-for="(line, index) in activeReport.constituents" :key="index">{{ line }}</p></section>
       <section class="review-section" aria-label="复盘个人笔记"><h4>我的观察笔记 · {{ activeReport.notes.length }} 条</h4><p v-if="!activeReport.notes.length">本区间没有该证券的观察笔记。可在 K 线的“观察笔记”中记录，再重新生成摘要。</p><ul v-else class="review-notes"><li v-for="note in activeReport.notes" :key="note.id"><strong>{{ note.date }}{{ note.price === null ? '' : ` · 记录价格 ${note.price}` }}</strong><p>{{ note.text }}</p></li></ul></section>
       <section class="review-section"><h4>我的复盘感想</h4><p v-if="activeReport.id" class="personal-reflection">{{ activeReport.reflection || '暂无补充感想。' }}</p><label v-else class="reflection-label">记录判断、疑问和下次观察重点<textarea v-model="reflection" :maxlength="MAX_REFLECTION_LENGTH" rows="4" aria-label="复盘感想" placeholder="本次观察到了什么？哪些判断需要继续验证？" /></label></section>
@@ -99,7 +117,7 @@ defineExpose({ generate, activeReport, exportReport })
       <div class="review-actions export-actions"><button type="button" :disabled="Boolean(activeReport.id) || history.reviews.value.length >= MAX_REVIEWS" @click="save">保存本次复盘</button><button v-if="activeReport.id" type="button" @click="newVersion">另存修改版本</button><button type="button" :disabled="exporting" @click="exportReport('png')">导出复盘图片</button><button type="button" :disabled="exporting" @click="exportReport('md')">导出 Markdown</button><button v-if="activeReport.id" type="button" @click="removeSelected">删除这份复盘</button></div>
     </article>
     <p v-else class="review-empty">选择周期并点击“生成复盘”，查看区间指标、成分变化与自己的笔记。</p>
-    <p class="review-note">历史保存在当前浏览器、当前站点，不跨设备同步。导出包含个人笔记与感想；保存和导出均由你手动操作。数据较少时缺失项目显示原因，完整长笔记可用 Markdown 导出。</p>
+    <p class="review-note">历史保存在当前浏览器、当前站点，不跨设备同步。生成时自动加入 ETF 账本及同日观察；编辑账本或笔记后重新生成，旧复盘保持原快照。导出包含本期账本明细、个人笔记与感想；完整长内容可用 Markdown 导出。</p>
   </section>
 </template>
 
@@ -119,6 +137,7 @@ label { min-width: 0; color: #acbcd3; font-size: 11px; } select, input, textarea
 .review-section { margin-top: 18px; } .review-section h4 { color: #d0ddf0; font-size: 13px; } .review-notes { list-style: none; padding: 0; display: grid; gap: 10px; margin-top: 10px; }
 .review-notes li { padding: 12px 14px; border-left: 2px solid #408cff; background: #0a1220; border-radius: 4px; } .review-notes strong { color: #c5d7ee; font-size: 11px; } .review-notes p, .personal-reflection { white-space: pre-wrap; }
 .reflection-label { display: block; margin-top: 10px; } textarea { resize: vertical; line-height: 1.8; } .review-actions { justify-content: flex-start; } .export-actions { margin-top: 18px; } .review-warning, .review-section p.review-warning { color: #d5b57f; } .review-empty { padding: 22px 0; color: #93a4bf; font-size: 12px; line-height: 1.9; }
+.review-section a { color: #89dce4; font-size: 12px; }.review-section a:focus-visible, .review-transactions summary:focus-visible { outline: 2px solid #67d5df; outline-offset: 2px; }.personal-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }.personal-metrics strong { font-size: 19px; }.review-transactions { margin-top: 12px; color: #acbcd3; font-size: 12px; }.review-transactions summary { cursor: pointer; }.review-transactions p { white-space: pre-wrap; }
 @media (max-width: 1100px) { .review-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); } .review-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .review-summary { padding: 15px 12px; } .review-controls, .review-metrics { grid-template-columns: minmax(0, 1fr); } .review-history label { width: 100%; } .review-metrics strong { font-size: 22px; } }
 </style>

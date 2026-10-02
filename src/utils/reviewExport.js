@@ -1,4 +1,5 @@
 import { formatReviewMetric, reviewTitle, validateReviewSummary } from './reviewSummary.js'
+import { reviewLedgerDetails, reviewTransactionLines } from './reviewLedger.js'
 
 // Render text directly to canvas: no remote assets, HTML screenshots, or
 // truncated personal notes. Markdown is available when a full PNG is too tall.
@@ -15,6 +16,15 @@ export async function createReviewPng(input, { createCanvas = () => document.cre
   for (const metric of report.metrics) {
     add(`${metric.label}   ${formatReviewMetric(metric)}`, 24, '#d7e8ff', 8)
     add(metric.detail, 18, '#9baec8', 20)
+  }
+  if (report.instrument === '512890') {
+    add('我的账本与盈亏', 25, '#86dce4', 14)
+    if (!report.portfolio) add('这份历史复盘未包含账本快照；重新生成可加入当前账本。')
+    else {
+      const details = reviewLedgerDetails(report.portfolio, report.period, report.notes)
+      for (const line of details.lines) add(line)
+      for (const row of details.transactions) for (const line of reviewTransactionLines(row)) add(line)
+    }
   }
   add('成分变化', 25, '#86dce4', 14)
   for (const line of report.constituents) add(line)

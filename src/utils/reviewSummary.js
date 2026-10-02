@@ -6,6 +6,7 @@ import { validateValuationHistory, VALUATION_SOURCE } from '../api/valuations.js
 import { validateConstituentHistory, compareMembership } from './constituentStructure.js'
 import { CONSTITUENTS_SOURCE } from '../api/constituents.js'
 import { validateNote, validNoteDate } from './observationNotes.js'
+import { buildReviewLedger, validateReviewLedger, reviewLedgerDetails, reviewTransactionLines } from './reviewLedger.js'
 
 export const REVIEWS_KEY = 'stock:review-summaries:v1'
 export const MAX_REVIEWS = 50
@@ -37,7 +38,7 @@ export function formatReviewMetric(metric) {
 }
 const pct = value => `${value.toFixed(2)}%`
 
-export function buildReviewSummary({ instrument, type, anchor, market, valuationHistory, constituentHistory, notes = [], reflection = '', warnings = [], now = new Date(), calendar = tradingCalendar }) {
+export function buildReviewSummary({ instrument, type, anchor, market, valuationHistory, constituentHistory, notes = [], ledgerEntries = [], ledgerNotice = '', reflection = '', warnings = [], now = new Date(), calendar = tradingCalendar }) {
   requireValue(['H30269', '512890'].includes(instrument), '复盘证券不受支持')
   const period = reviewPeriod(type, anchor, { now })
   const metrics = metricDefinitions.map(([id, label, unit]) => ({ id, label: ['pe', 'pb'].includes(id) && instrument === '512890' ? `标的${label}` : label, unit, value: null, detail: '暂无可核验数据' }))
@@ -113,6 +114,7 @@ export function buildReviewSummary({ instrument, type, anchor, market, valuation
   if (market?.backfill?.completed === false) notices.push('行情历史仍在补充；回撤高点仅代表已同步样本。')
   const report = {
     schemaVersion: 1, kind: 'stock-review-summary', id: null, instrument, period, createdAt: now.toISOString(), metrics,
+    portfolio: instrument === '512890' ? buildReviewLedger(ledgerEntries, market, period, { now, notice: ledgerNotice }) : null,
     constituents: constituentLines, notes: notes.filter(note => note.instrument === instrument && note.date >= period.start && note.date <= period.asOf).map(validateNote).sort((a, b) => a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt)), reflection,
     warnings: [...new Set(notices)],
     methodology: [`${instrument === '512890' ? 'ETF 未复权价格收益，不含实际现金分红；除息和份额拆分可能影响价格指标' : '价格指数收益，不含分红再投资'}。这不是个人账户收益。`, '收益以区间前一个交易日收盘为基准；完整核验基准至期末每个交易日，不填补缺失行情。回撤使用日收盘，波动率为固定 60 日年化窗口。', '估值和成分来自独立保存观察，展示真实日期，不插值、不使用区间之后的数据。已保存摘要与笔记为生成时快照，不随后续编辑或历史回补改变。'],
@@ -142,8 +144,10 @@ export function validateReviewSummary(report) {
   const notes = report.notes.map(validateNote)
   requireValue(new Set(notes.map(note => note.id)).size === notes.length && notes.every(note => note.instrument === report.instrument && note.date >= period.start && note.date <= period.asOf), '复盘笔记证券或日期异常')
   requireValue(typeof report.reflection === 'string' && report.reflection.length <= MAX_REFLECTION_LENGTH, `复盘感想最多 ${MAX_REFLECTION_LENGTH} 字`)
+  requireValue(report.instrument === '512890' || report.portfolio == null, '指数复盘不能包含 ETF 个人账本')
+  const portfolio = report.portfolio == null ? null : validateReviewLedger(report.portfolio, period, new Date(report.createdAt))
   return { schemaVersion: 1, kind: 'stock-review-summary', id: report.id, instrument: report.instrument, period: { ...expected }, createdAt: report.createdAt,
-    metrics, constituents: strings(report.constituents), notes, reflection: report.reflection.trim(), warnings: strings(report.warnings, 30), methodology: strings(report.methodology, 10) }
+    metrics, portfolio, constituents: strings(report.constituents), notes, reflection: report.reflection.trim(), warnings: strings(report.warnings, 30), methodology: strings(report.methodology, 10) }
 }
 export function validateReviewsDocument(document) {
   requireValue(document?.schemaVersion === 1 && document.kind === 'stock-review-history' && Array.isArray(document.reviews) && document.reviews.length <= MAX_REVIEWS, '复盘历史保存格式异常')
@@ -157,6 +161,15 @@ export function reviewMarkdown(input) {
   const report = validateReviewSummary(input), text = escapeReviewMarkdown
   const lines = [`# ${text(reviewTitle(report))}`, '', `生成时间：${text(report.createdAt)}；${report.period.ongoing ? '周期进行中' : '完整自然周期'}；汇总截至 ${report.period.asOf}。`, '', '## 区间指标', '']
   for (const metric of report.metrics) lines.push(`- **${text(metric.label)}：${text(formatReviewMetric(metric))}**`, `  ${text(metric.detail)}`)
+  if (report.instrument === '512890') {
+    lines.push('', '## 我的账本与盈亏', '')
+    if (!report.portfolio) lines.push('这份历史复盘未包含账本快照；重新生成可加入当前账本。')
+    else {
+      const details = reviewLedgerDetails(report.portfolio, report.period, report.notes)
+      lines.push(...details.lines.map(text))
+      for (const row of details.transactions) lines.push('', ...reviewTransactionLines(row).map(text))
+    }
+  }
   lines.push('', '## 成分变化', '', ...report.constituents.map(line => `- ${text(line)}`), '', `## 我的观察笔记（${report.notes.length} 条）`, '')
   if (!report.notes.length) lines.push('本区间没有该证券的观察笔记。')
   for (const note of report.notes) lines.push(`### ${note.date}${note.price === null ? '' : ` · 记录价格 ${note.price}`}`, '', ...note.text.split(/\r?\n/).map(line => text(line)), '')

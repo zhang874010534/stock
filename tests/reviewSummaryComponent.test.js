@@ -5,6 +5,7 @@ import { createRenderer, h, nextTick, reactive } from 'vue'
 import { compileScript, parse } from '@vue/compiler-sfc'
 import { createDashboardData, provideDashboardData } from '../src/composables/useDashboardData.js'
 import { createObservationNotes, provideObservationNotes } from '../src/composables/useObservationNotes.js'
+import { createPortfolioLedger, providePortfolioLedger } from '../src/composables/usePortfolioLedger.js'
 import { REVIEWS_KEY } from '../src/utils/reviewSummary.js'
 import { tradingSessions } from '../src/utils/priceRisk.js'
 import { tradingCalendar } from '../src/data/tradingCalendar.js'
@@ -22,7 +23,7 @@ function loaders(overrides = {}) {
     eastmoneyHistory: () => ({ schemaVersion: 1, code: 'H30269', provider: 'Eastmoney', source: VALUATION_SOURCE, basis: 'provider_unspecified', unit: 'multiple', date: '2026-09-30', history: [{ date: '2026-08-31', pe: 8, pb: .8 }, { date: '2026-09-30', pe: 8.5, pb: .85 }] }),
     constituentHistory: () => { throw new Error('unavailable') }, collection: () => ({ sources: { '512890': { status: 'ok' }, H30269: { status: 'ok' }, valuation: { status: 'ok' } } }), ...overrides }
 }
-async function mount(dashboard, storage = memoryStorage(), notes) {
+async function mount(dashboard, storage = memoryStorage(), notes, ledger) {
   const previous = Object.fromEntries(['Date', 'Document', 'ShadowRoot', 'localStorage', 'document'].map(key => [key, globalThis[key]]))
   const originalCreateUrl = URL.createObjectURL, originalRevokeUrl = URL.revokeObjectURL
   globalThis.Date = class extends NativeDate { constructor(...args) { super(...(args.length ? args : [now().toISOString()])) } static now() { return now().getTime() } }
@@ -39,7 +40,7 @@ async function mount(dashboard, storage = memoryStorage(), notes) {
     remove(child) { child.parent.children.splice(child.parent.children.indexOf(child), 1) }, setText: (n, text) => { n.text = text }, setElementText: (n, text) => { n.text = text; n.children = [] },
     parentNode: n => n.parent, nextSibling: n => n.parent?.children[n.parent.children.indexOf(n) + 1], patchProp(n, key, old, value) { n.props[key] = value; if (key === 'value') n.value = n._value = value } })
   const props = reactive({ instrument: '512890' }), host = node('host')
-  const app = renderer.createApp({ setup() { provideDashboardData(dashboard); provideObservationNotes(notes ?? createObservationNotes({ storage })); return () => h(component, props) } })
+  const app = renderer.createApp({ setup() { provideDashboardData(dashboard); provideObservationNotes(notes ?? createObservationNotes({ storage })); providePortfolioLedger(ledger ?? createPortfolioLedger({ storage })); return () => h(component, props) } })
   app.mount(host)
   const all = n => [n, ...n.children.flatMap(all)]
   return { props, storage, downloads, blobs, drawn, text: () => all(host).map(n => n.text).join(' '), nodes: () => all(host), field: label => all(host).find(n => n.props['aria-label'] === label), button: text => all(host).find(n => n.tag === 'button' && n.text === text),
@@ -50,6 +51,52 @@ async function generateMonth(view) {
   view.field('复盘月份').props['onUpdate:modelValue']('2026-09')
   view.nodes().find(n => n.tag === 'form').props.onSubmit({ preventDefault() {} }); await nextTick()
 }
+
+test('共享账本自动进入复盘及导出，编辑后重新生成读取新记录，保存的交易与关联笔记保持原快照', async () => {
+  const storage = memoryStorage(), notes = createObservationNotes({ storage, now, id: () => 'trade-note' })
+  let serial = 0
+  const ledger = createPortfolioLedger({ storage, now, id: () => `trade-${++serial}` })
+  const trade = { type: 'buy', date: '2026-09-01', sequence: 1, quantity: 100, price: 1, fee: 1, amount: null, ratio: null, note: '复盘测试买入原因\n完整备注' }
+  ledger.upsert(trade)
+  ledger.upsert({ type: 'dividend', date: '2026-09-26', sequence: 1, quantity: null, price: null, fee: 1, amount: 10, ratio: null, note: '' })
+  ledger.upsert({ type: 'fee', date: '2026-09-27', sequence: 1, quantity: null, price: null, fee: 0, amount: 2, ratio: null, note: '' })
+  notes.upsert({ instrument: '512890', date: '2026-09-01', price: 1, text: '交易当日观察\n笔记第二行' })
+  let view = await mount(createDashboardData(loaders()), storage, notes, ledger)
+  try {
+    await flush(); await generateMonth(view)
+    assert.match(view.text(), /我的账本与盈亏/); assert.match(view.text(), /个人累计盈亏变化.*16.00 元/)
+    assert.match(view.text(), /复盘测试买入原因/); assert.match(view.text(), /交易当日观察/); assert.match(view.text(), /后来补记/)
+    assert.ok(view.nodes().some(node => node.tag === 'a' && node.props.href === '#portfolio-ledger'))
+    view.button('保存本次复盘').props.onClick(); await nextTick()
+    const savedId = JSON.parse(storage.getItem(REVIEWS_KEY)).reviews[0].id
+    ledger.upsert({ ...trade, id: 'trade-1', price: 2, note: '新的交易原因' })
+    notes.upsert({ id: 'trade-note', instrument: '512890', date: '2026-09-01', price: 1, text: '后来笔记' }); await nextTick()
+    assert.match(view.text(), /个人累计盈亏变化.*16.00 元/); assert.ok(!view.text().includes('新的交易原因'))
+    await view.button('导出 Markdown').props.onClick(); await nextTick()
+    const md = await view.blobs.at(-1).text()
+    assert.match(md, /个人累计盈亏变化：16/); assert.match(md, /完整备注/); assert.match(md, /笔记第二行/); assert.ok(!md.includes('新的交易原因'))
+    await view.button('导出复盘图片').props.onClick(); await nextTick()
+    assert.ok(view.drawn.includes('个人累计盈亏变化：16.00 元')); assert.ok(view.drawn.includes('笔记第二行'))
+    await generateMonth(view); assert.match(view.text(), /个人累计盈亏变化.*-84.00 元/); assert.match(view.text(), /新的交易原因/)
+    view.unmount(); view = await mount(createDashboardData(loaders()), storage, notes, ledger); await flush()
+    view.field('查看已保存复盘').props['onUpdate:modelValue'](savedId); await nextTick()
+    assert.match(view.text(), /个人累计盈亏变化.*16.00 元/); assert.match(view.text(), /复盘测试买入原因/)
+    view.props.instrument = 'H30269'; await flush(); await generateMonth(view)
+    assert.ok(!view.text().includes('我的账本与盈亏')); assert.ok(!view.text().includes('复盘测试买入原因'))
+  } finally { view.unmount() }
+})
+
+test('账本读取失败在复盘和导出中提示完整性未知，不能把损坏账本当作零收益', async () => {
+  const ledger = createPortfolioLedger({ storage: { getItem: () => '{bad', setItem() { throw new Error('must preserve') } }, now })
+  const view = await mount(createDashboardData(loaders()), memoryStorage(), undefined, ledger)
+  try {
+    await flush(); await generateMonth(view)
+    assert.match(view.text(), /账本读取或保存异常/); assert.match(view.text(), /不能确认账本完整/)
+    assert.ok(!view.text().includes('个人累计盈亏变化'))
+    await view.button('导出 Markdown').props.onClick(); await nextTick()
+    assert.match(await view.blobs.at(-1).text(), /不能确认账本完整/)
+  } finally { view.unmount() }
+})
 
 test('页面生成周月摘要、感想、笔记和导出，保存后编辑笔记与刷新不改变历史，另存版本保留旧稿', async () => {
   const storage = memoryStorage(), notes = createObservationNotes({ storage, now, id: () => 'my-note' })

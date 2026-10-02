@@ -41,6 +41,8 @@ K 线工具栏提供「观察笔记」和「导出 PNG」。首页小图和全�
 
 针对性验证：
 
+周／月复盘会自动匹配买卖记录同证券、同日期的笔记，保留全文、记录价格及创建／更新时间；补记和修改会标明。由于账本未记录成交时刻，同日关联不表示笔记一定在成交前写下。复盘保存和 PNG／Markdown 导出使用生成时快照，修改笔记后需重新生成。详见 [账本与复盘联动](review-summary.md#账本与复盘联动)。
+
 ```powershell
 node --test tests/observationNotes.test.js tests/observationNotesComponent.test.js
 ```
