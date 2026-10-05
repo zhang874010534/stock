@@ -15,26 +15,26 @@
     },
     "valuation": {
       "status": "ok",
-      "lastAttemptAt": "2026-10-02T16:14:52.083Z",
-      "lastSuccessAt": "2026-10-02T16:14:52.083Z",
+      "lastAttemptAt": "2026-10-05T19:16:31.686Z",
+      "lastSuccessAt": "2026-10-05T19:16:31.686Z",
       "error": null
     },
     "dividend": {
       "status": "ok",
-      "lastAttemptAt": "2026-10-02T16:14:52.083Z",
-      "lastSuccessAt": "2026-10-02T16:14:52.083Z",
+      "lastAttemptAt": "2026-10-05T19:16:31.686Z",
+      "lastSuccessAt": "2026-10-05T19:16:31.686Z",
       "error": null
     },
     "bond": {
       "status": "ok",
-      "lastAttemptAt": "2026-10-02T16:14:52.083Z",
-      "lastSuccessAt": "2026-10-02T16:14:52.083Z",
+      "lastAttemptAt": "2026-10-05T19:16:31.686Z",
+      "lastSuccessAt": "2026-10-05T19:16:31.686Z",
       "error": null
     },
     "csiValuation": {
       "status": "ok",
-      "lastAttemptAt": "2026-10-02T16:14:52.083Z",
-      "lastSuccessAt": "2026-10-02T16:14:52.083Z",
+      "lastAttemptAt": "2026-10-05T19:16:31.686Z",
+      "lastSuccessAt": "2026-10-05T19:16:31.686Z",
       "error": null
     },
     "000300": {
@@ -45,8 +45,8 @@
     },
     "yieldHistory": {
       "status": "ok",
-      "lastAttemptAt": "2026-10-02T16:14:52.083Z",
-      "lastSuccessAt": "2026-10-02T16:14:52.083Z",
+      "lastAttemptAt": "2026-10-05T19:16:31.686Z",
+      "lastSuccessAt": "2026-10-05T19:16:31.686Z",
       "error": null
     }
   }
