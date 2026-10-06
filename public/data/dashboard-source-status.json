@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "sources": {
     "512890": {
-      "status": "ok",
-      "lastAttemptAt": "2026-10-05T17:15:14.063Z",
+      "status": "error",
+      "lastAttemptAt": "2026-10-06T15:19:44.101Z",
       "lastSuccessAt": "2026-10-05T17:15:14.063Z",
-      "error": null
+      "error": "近期行情更新失败"
     },
     "H30269": {
-      "status": "ok",
-      "lastAttemptAt": "2026-10-05T17:15:14.063Z",
+      "status": "error",
+      "lastAttemptAt": "2026-10-06T15:19:44.101Z",
       "lastSuccessAt": "2026-10-05T17:15:14.063Z",
-      "error": null
+      "error": "近期行情更新失败"
     },
     "valuation": {
       "status": "ok",
@@ -38,10 +38,10 @@
       "error": null
     },
     "000300": {
-      "status": "ok",
-      "lastAttemptAt": "2026-10-05T17:15:14.063Z",
+      "status": "error",
+      "lastAttemptAt": "2026-10-06T15:19:44.101Z",
       "lastSuccessAt": "2026-10-05T17:15:14.063Z",
-      "error": null
+      "error": "近期行情更新失败"
     },
     "yieldHistory": {
       "status": "ok",
