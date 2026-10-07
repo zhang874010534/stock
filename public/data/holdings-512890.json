@@ -677,8 +677,8 @@
       "reportedWeight": 0.0
     }
   ],
-  "lastAttemptAt": "2026-10-06T16:45:09.298Z",
+  "lastAttemptAt": "2026-10-07T17:24:31.939Z",
   "lastSuccessAt": "2026-10-06T16:45:09.298Z",
-  "status": "ok",
-  "reason": null
+  "status": "stale",
+  "reason": "权重／完整持仓采集失败，保留原数据及日期"
 }
