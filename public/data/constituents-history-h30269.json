@@ -3040,11 +3040,517 @@
           "industryObservedAt": "2026-10-01T09:23:56.021910Z"
         }
       ]
+    },
+    {
+      "date": "2026-10-08",
+      "observedAt": "2026-10-08T17:22:46.710475Z",
+      "members": [
+        {
+          "code": "000001",
+          "name": "平安银行",
+          "exchange": "SZSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "000333",
+          "name": "美的集团",
+          "exchange": "SZSE",
+          "industry": "可选消费",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932080",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "000429",
+          "name": "粤高速A",
+          "exchange": "SZSE",
+          "industry": "工业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932079",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "000651",
+          "name": "格力电器",
+          "exchange": "SZSE",
+          "industry": "可选消费",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932080",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "000708",
+          "name": "中信特钢",
+          "exchange": "SZSE",
+          "industry": "原材料",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932078",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "002233",
+          "name": "塔牌集团",
+          "exchange": "SZSE",
+          "industry": "原材料",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932078",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "002469",
+          "name": "三维化学",
+          "exchange": "SZSE",
+          "industry": "原材料",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932078",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "002807",
+          "name": "江阴银行",
+          "exchange": "SZSE",
+          "industry": null,
+          "industryStatus": "unavailable",
+          "industryObservedAt": null,
+          "industryDate": null,
+          "industrySourceIndex": null
+        },
+        {
+          "code": "002839",
+          "name": "张家港行",
+          "exchange": "SZSE",
+          "industry": null,
+          "industryStatus": "unavailable",
+          "industryObservedAt": null,
+          "industryDate": null,
+          "industrySourceIndex": null
+        },
+        {
+          "code": "002966",
+          "name": "苏州银行",
+          "exchange": "SZSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600007",
+          "name": "中国国贸",
+          "exchange": "SSE",
+          "industry": null,
+          "industryStatus": "unavailable",
+          "industryObservedAt": null,
+          "industryDate": null,
+          "industrySourceIndex": null
+        },
+        {
+          "code": "600015",
+          "name": "华夏银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600016",
+          "name": "民生银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600036",
+          "name": "招商银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600350",
+          "name": "山东高速",
+          "exchange": "SSE",
+          "industry": "工业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932079",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600461",
+          "name": "洪城环境",
+          "exchange": "SSE",
+          "industry": "公用事业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932086",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600502",
+          "name": "安徽建工",
+          "exchange": "SSE",
+          "industry": "工业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932079",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600566",
+          "name": "济川药业",
+          "exchange": "SSE",
+          "industry": "医药卫生",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932082",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600737",
+          "name": "中粮糖业",
+          "exchange": "SSE",
+          "industry": "主要消费",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932081",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600750",
+          "name": "华润江中",
+          "exchange": "SSE",
+          "industry": "医药卫生",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932082",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600757",
+          "name": "长江传媒",
+          "exchange": "SSE",
+          "industry": "通信服务",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932085",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600803",
+          "name": "新奥股份",
+          "exchange": "SSE",
+          "industry": "公用事业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932086",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600820",
+          "name": "隧道股份",
+          "exchange": "SSE",
+          "industry": "工业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932079",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600863",
+          "name": "华能蒙电",
+          "exchange": "SSE",
+          "industry": "公用事业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932086",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600873",
+          "name": "梅花生物",
+          "exchange": "SSE",
+          "industry": "主要消费",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932081",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600919",
+          "name": "江苏银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600938",
+          "name": "中国海油",
+          "exchange": "SSE",
+          "industry": "能源",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932077",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "600941",
+          "name": "中国移动",
+          "exchange": "SSE",
+          "industry": "通信服务",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932085",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601009",
+          "name": "南京银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601077",
+          "name": "渝农商行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601169",
+          "name": "北京银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601187",
+          "name": "厦门银行",
+          "exchange": "SSE",
+          "industry": null,
+          "industryStatus": "unavailable",
+          "industryObservedAt": null,
+          "industryDate": null,
+          "industrySourceIndex": null
+        },
+        {
+          "code": "601229",
+          "name": "上海银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601288",
+          "name": "农业银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601318",
+          "name": "中国平安",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601328",
+          "name": "交通银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601369",
+          "name": "陕鼓动力",
+          "exchange": "SSE",
+          "industry": "工业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932079",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601398",
+          "name": "工商银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601577",
+          "name": "长沙银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601658",
+          "name": "邮储银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601665",
+          "name": "齐鲁银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601668",
+          "name": "中国建筑",
+          "exchange": "SSE",
+          "industry": "工业",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932079",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601825",
+          "name": "沪农商行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601838",
+          "name": "成都银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601857",
+          "name": "中国石油",
+          "exchange": "SSE",
+          "industry": "能源",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932077",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601928",
+          "name": "凤凰传媒",
+          "exchange": "SSE",
+          "industry": "通信服务",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932085",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601939",
+          "name": "建设银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601963",
+          "name": "重庆银行",
+          "exchange": "SSE",
+          "industry": null,
+          "industryStatus": "unavailable",
+          "industryObservedAt": null,
+          "industryDate": null,
+          "industrySourceIndex": null
+        },
+        {
+          "code": "601988",
+          "name": "中国银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        },
+        {
+          "code": "601998",
+          "name": "中信银行",
+          "exchange": "SSE",
+          "industry": "金融",
+          "industryDate": "2026-10-08",
+          "industrySourceIndex": "932083",
+          "industryStatus": "ok",
+          "industryObservedAt": "2026-10-08T17:22:46.710475Z"
+        }
+      ]
     }
   ],
   "membershipStatus": "ok",
   "industryStatus": "partial",
   "membershipReason": null,
   "industryReason": "5 只未匹配，计入未分类",
-  "lastAttemptAt": "2026-10-07T17:24:29.024974Z"
+  "lastAttemptAt": "2026-10-08T17:22:46.710683Z"
 }

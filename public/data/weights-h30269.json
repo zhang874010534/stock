@@ -4,311 +4,311 @@
   "unit": "fraction",
   "scope": "full_index",
   "source": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/closeweight/H30269closeweight.xls",
-  "date": "2026-08-31",
+  "date": "2026-09-30",
   "members": [
     {
       "code": "000001",
       "name": "平安银行",
       "exchange": "SZSE",
-      "weight": 0.027530000000000002
+      "weight": 0.0273
     },
     {
       "code": "000333",
       "name": "美的集团",
       "exchange": "SZSE",
-      "weight": 0.018779999999999998
+      "weight": 0.017230000000000002
     },
     {
       "code": "000429",
       "name": "粤高速A",
       "exchange": "SZSE",
-      "weight": 0.01882
+      "weight": 0.01781
     },
     {
       "code": "000651",
       "name": "格力电器",
       "exchange": "SZSE",
-      "weight": 0.02289
+      "weight": 0.0226
     },
     {
       "code": "000708",
       "name": "中信特钢",
       "exchange": "SZSE",
-      "weight": 0.01633
+      "weight": 0.01564
     },
     {
       "code": "002233",
       "name": "塔牌集团",
       "exchange": "SZSE",
-      "weight": 0.01763
+      "weight": 0.01676
     },
     {
       "code": "002469",
       "name": "三维化学",
       "exchange": "SZSE",
-      "weight": 0.01752
+      "weight": 0.01628
     },
     {
       "code": "002807",
       "name": "江阴银行",
       "exchange": "SZSE",
-      "weight": 0.01701
+      "weight": 0.01768
     },
     {
       "code": "002839",
       "name": "张家港行",
       "exchange": "SZSE",
-      "weight": 0.02015
+      "weight": 0.02038
     },
     {
       "code": "002966",
       "name": "苏州银行",
       "exchange": "SZSE",
-      "weight": 0.02093
+      "weight": 0.02199
     },
     {
       "code": "600007",
       "name": "中国国贸",
       "exchange": "SSE",
-      "weight": 0.01969
+      "weight": 0.02147
     },
     {
       "code": "600015",
       "name": "华夏银行",
       "exchange": "SSE",
-      "weight": 0.0191
+      "weight": 0.01931
     },
     {
       "code": "600016",
       "name": "民生银行",
       "exchange": "SSE",
-      "weight": 0.02193
+      "weight": 0.02191
     },
     {
       "code": "600036",
       "name": "招商银行",
       "exchange": "SSE",
-      "weight": 0.01879
+      "weight": 0.01941
     },
     {
       "code": "600350",
       "name": "山东高速",
       "exchange": "SSE",
-      "weight": 0.0197
+      "weight": 0.01952
     },
     {
       "code": "600461",
       "name": "洪城环境",
       "exchange": "SSE",
-      "weight": 0.01595
+      "weight": 0.0159
     },
     {
       "code": "600502",
       "name": "安徽建工",
       "exchange": "SSE",
-      "weight": 0.019530000000000002
+      "weight": 0.01861
     },
     {
       "code": "600566",
       "name": "济川药业",
       "exchange": "SSE",
-      "weight": 0.020419999999999997
+      "weight": 0.02031
     },
     {
       "code": "600737",
       "name": "中粮糖业",
       "exchange": "SSE",
-      "weight": 0.020470000000000002
+      "weight": 0.02004
     },
     {
       "code": "600750",
       "name": "华润江中",
       "exchange": "SSE",
-      "weight": 0.02573
+      "weight": 0.024409999999999998
     },
     {
       "code": "600757",
       "name": "长江传媒",
       "exchange": "SSE",
-      "weight": 0.01431
+      "weight": 0.014570000000000001
     },
     {
       "code": "600803",
       "name": "新奥股份",
       "exchange": "SSE",
-      "weight": 0.0178
+      "weight": 0.01877
     },
     {
       "code": "600820",
       "name": "隧道股份",
       "exchange": "SSE",
-      "weight": 0.01851
+      "weight": 0.01788
     },
     {
       "code": "600863",
       "name": "华能蒙电",
       "exchange": "SSE",
-      "weight": 0.01691
+      "weight": 0.0174
     },
     {
       "code": "600873",
       "name": "梅花生物",
       "exchange": "SSE",
-      "weight": 0.014119999999999999
+      "weight": 0.013600000000000001
     },
     {
       "code": "600919",
       "name": "江苏银行",
       "exchange": "SSE",
-      "weight": 0.02428
+      "weight": 0.02497
     },
     {
       "code": "600938",
       "name": "中国海油",
       "exchange": "SSE",
-      "weight": 0.02188
+      "weight": 0.02116
     },
     {
       "code": "600941",
       "name": "中国移动",
       "exchange": "SSE",
-      "weight": 0.01571
+      "weight": 0.015260000000000001
     },
     {
       "code": "601009",
       "name": "南京银行",
       "exchange": "SSE",
-      "weight": 0.028149999999999998
+      "weight": 0.02905
     },
     {
       "code": "601077",
       "name": "渝农商行",
       "exchange": "SSE",
-      "weight": 0.02113
+      "weight": 0.020950000000000003
     },
     {
       "code": "601169",
       "name": "北京银行",
       "exchange": "SSE",
-      "weight": 0.02004
+      "weight": 0.020950000000000003
     },
     {
       "code": "601187",
       "name": "厦门银行",
       "exchange": "SSE",
-      "weight": 0.020139999999999998
+      "weight": 0.019
     },
     {
       "code": "601229",
       "name": "上海银行",
       "exchange": "SSE",
-      "weight": 0.027360000000000002
+      "weight": 0.02826
     },
     {
       "code": "601288",
       "name": "农业银行",
       "exchange": "SSE",
-      "weight": 0.01583
+      "weight": 0.01601
     },
     {
       "code": "601318",
       "name": "中国平安",
       "exchange": "SSE",
-      "weight": 0.01688
+      "weight": 0.01619
     },
     {
       "code": "601328",
       "name": "交通银行",
       "exchange": "SSE",
-      "weight": 0.01833
+      "weight": 0.0197
     },
     {
       "code": "601369",
       "name": "陕鼓动力",
       "exchange": "SSE",
-      "weight": 0.02121
+      "weight": 0.020489999999999998
     },
     {
       "code": "601398",
       "name": "工商银行",
       "exchange": "SSE",
-      "weight": 0.01882
+      "weight": 0.01939
     },
     {
       "code": "601577",
       "name": "长沙银行",
       "exchange": "SSE",
-      "weight": 0.02212
+      "weight": 0.02226
     },
     {
       "code": "601658",
       "name": "邮储银行",
       "exchange": "SSE",
-      "weight": 0.017159999999999998
+      "weight": 0.01789
     },
     {
       "code": "601665",
       "name": "齐鲁银行",
       "exchange": "SSE",
-      "weight": 0.02081
+      "weight": 0.0212
     },
     {
       "code": "601668",
       "name": "中国建筑",
       "exchange": "SSE",
-      "weight": 0.01506
+      "weight": 0.01516
     },
     {
       "code": "601825",
       "name": "沪农商行",
       "exchange": "SSE",
-      "weight": 0.02492
+      "weight": 0.024220000000000002
     },
     {
       "code": "601838",
       "name": "成都银行",
       "exchange": "SSE",
-      "weight": 0.02473
+      "weight": 0.025179999999999998
     },
     {
       "code": "601857",
       "name": "中国石油",
       "exchange": "SSE",
-      "weight": 0.02656
+      "weight": 0.02619
     },
     {
       "code": "601928",
       "name": "凤凰传媒",
       "exchange": "SSE",
-      "weight": 0.01591
+      "weight": 0.01544
     },
     {
       "code": "601939",
       "name": "建设银行",
       "exchange": "SSE",
-      "weight": 0.01975
+      "weight": 0.01998
     },
     {
       "code": "601963",
       "name": "重庆银行",
       "exchange": "SSE",
-      "weight": 0.02021
+      "weight": 0.02032
     },
     {
       "code": "601988",
       "name": "中国银行",
       "exchange": "SSE",
-      "weight": 0.02027
+      "weight": 0.02105
     },
     {
       "code": "601998",
       "name": "中信银行",
       "exchange": "SSE",
-      "weight": 0.02221
+      "weight": 0.022940000000000002
     }
   ],
-  "lastAttemptAt": "2026-10-07T17:24:30.962Z",
-  "lastSuccessAt": "2026-10-07T17:24:30.962Z",
+  "lastAttemptAt": "2026-10-08T17:22:48.652Z",
+  "lastSuccessAt": "2026-10-08T17:22:48.652Z",
   "status": "ok",
   "reason": null
 }
