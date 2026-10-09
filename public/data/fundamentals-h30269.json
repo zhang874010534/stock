@@ -18,10 +18,10 @@
   "membershipSource": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/H30269cons.xls",
   "industrySource": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/H30199_Index_Methodology_cn.pdf",
   "industryBasis": "csi_level1_membership_match",
-  "lastAttemptAt": "2026-10-08T17:22:59.472Z",
+  "lastAttemptAt": "2026-10-09T16:58:31.673Z",
   "status": "ok",
   "reason": null,
-  "membershipDate": "2026-10-08",
+  "membershipDate": "2026-10-09",
   "membershipStatus": "ok",
   "membershipReason": null,
   "members": [
@@ -31,13 +31,13 @@
       "exchange": "SZSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -74,8 +74,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -136,13 +136,13 @@
       "exchange": "SZSE",
       "industry": "可选消费",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932080",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -179,8 +179,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -241,13 +241,13 @@
       "exchange": "SZSE",
       "industry": "工业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932079",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -284,8 +284,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -346,13 +346,13 @@
       "exchange": "SZSE",
       "industry": "可选消费",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932080",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -389,8 +389,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -451,13 +451,13 @@
       "exchange": "SZSE",
       "industry": "原材料",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932078",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -494,8 +494,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -556,13 +556,13 @@
       "exchange": "SZSE",
       "industry": "原材料",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932078",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -599,8 +599,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -661,13 +661,13 @@
       "exchange": "SZSE",
       "industry": "原材料",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932078",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -704,8 +704,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -771,8 +771,8 @@
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -809,8 +809,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -876,8 +876,8 @@
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -914,8 +914,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -976,13 +976,13 @@
       "exchange": "SZSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1019,8 +1019,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1086,8 +1086,8 @@
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1124,8 +1124,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1186,13 +1186,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1229,8 +1229,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1291,13 +1291,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1334,8 +1334,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1396,13 +1396,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1439,8 +1439,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1501,13 +1501,13 @@
       "exchange": "SSE",
       "industry": "工业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932079",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1544,8 +1544,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1606,13 +1606,13 @@
       "exchange": "SSE",
       "industry": "公用事业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932086",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1649,8 +1649,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1711,13 +1711,13 @@
       "exchange": "SSE",
       "industry": "工业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932079",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1754,8 +1754,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1816,13 +1816,13 @@
       "exchange": "SSE",
       "industry": "医药卫生",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932082",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1859,8 +1859,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1921,13 +1921,13 @@
       "exchange": "SSE",
       "industry": "主要消费",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932081",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -1964,8 +1964,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2026,13 +2026,13 @@
       "exchange": "SSE",
       "industry": "医药卫生",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932082",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2069,8 +2069,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2131,13 +2131,13 @@
       "exchange": "SSE",
       "industry": "通信服务",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932085",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2174,8 +2174,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2236,13 +2236,13 @@
       "exchange": "SSE",
       "industry": "公用事业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932086",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2279,8 +2279,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2341,13 +2341,13 @@
       "exchange": "SSE",
       "industry": "工业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932079",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2384,8 +2384,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2446,13 +2446,13 @@
       "exchange": "SSE",
       "industry": "公用事业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932086",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2489,8 +2489,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2551,13 +2551,13 @@
       "exchange": "SSE",
       "industry": "主要消费",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932081",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2594,8 +2594,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2656,13 +2656,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2699,8 +2699,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2761,13 +2761,13 @@
       "exchange": "SSE",
       "industry": "能源",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932077",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2022,
@@ -2798,8 +2798,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2860,13 +2860,13 @@
       "exchange": "SSE",
       "industry": "通信服务",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932085",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2022,
@@ -2897,8 +2897,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -2959,13 +2959,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3002,8 +3002,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3064,13 +3064,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3107,8 +3107,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3169,13 +3169,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3212,8 +3212,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3279,8 +3279,8 @@
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3317,8 +3317,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3379,13 +3379,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3422,8 +3422,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3484,13 +3484,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3527,8 +3527,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3589,13 +3589,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3632,8 +3632,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3694,13 +3694,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3737,8 +3737,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3799,13 +3799,13 @@
       "exchange": "SSE",
       "industry": "工业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932079",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3842,8 +3842,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3904,13 +3904,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -3947,8 +3947,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4009,13 +4009,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4052,8 +4052,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4114,13 +4114,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4157,8 +4157,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4219,13 +4219,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4262,8 +4262,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4324,13 +4324,13 @@
       "exchange": "SSE",
       "industry": "工业",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932079",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4367,8 +4367,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4429,13 +4429,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4472,8 +4472,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4534,13 +4534,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4577,8 +4577,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4639,13 +4639,13 @@
       "exchange": "SSE",
       "industry": "能源",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932077",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4682,8 +4682,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4744,13 +4744,13 @@
       "exchange": "SSE",
       "industry": "通信服务",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932085",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4787,8 +4787,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4849,13 +4849,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4892,8 +4892,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4959,8 +4959,8 @@
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -4997,8 +4997,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -5059,13 +5059,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -5102,8 +5102,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -5164,13 +5164,13 @@
       "exchange": "SSE",
       "industry": "金融",
       "industryStatus": "ok",
-      "industryDate": "2026-10-08",
+      "industryDate": "2026-10-09",
       "industrySourceIndex": "932083",
       "dividends": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,
@@ -5207,8 +5207,8 @@
       "financials": {
         "status": "ok",
         "reason": null,
-        "lastAttemptAt": "2026-10-08T17:22:59.472Z",
-        "lastSuccessAt": "2026-10-08T17:22:59.472Z",
+        "lastAttemptAt": "2026-10-09T16:58:31.673Z",
+        "lastSuccessAt": "2026-10-09T16:58:31.673Z",
         "history": [
           {
             "year": 2021,

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "code": "H30269",
   "source": "https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/file/autofile/cons/H30269cons.xls",
-  "date": "2026-10-08",
+  "date": "2026-10-09",
   "count": 50,
   "members": [
     {
@@ -258,5 +258,5 @@
   ],
   "status": "ok",
   "reason": null,
-  "updatedAt": "2026-10-08T17:22:41.728348Z"
+  "updatedAt": "2026-10-09T16:58:11.639311Z"
 }
