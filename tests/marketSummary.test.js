@@ -43,7 +43,7 @@ test('空数据、平价、坏值和日历边界都有明确处理', () => {
     assert.equal(marketSummary(rows(['2026-01-05', close])).change, null)
   }
   assert.match(marketSummary(rows(['2027-01-04', 100])).ytdReason, /待核验/)
-  assert.match(marketSummary(rows(['2023-01-03', 100])).ytdReason, /未覆盖上年末/)
+  assert.match(marketSummary(rows(['2013-01-04', 100])).ytdReason, /未覆盖上年末/)
   assert.match(marketSummary(rows(['2026-01-03', 100])).dailyReason, /待核验/)
 })
 

@@ -32,8 +32,23 @@ test('official calendar closes holidays and make-up weekends, rejects unknown ye
   assert.equal(isTradingDay('2024-02-09'), false)
   assert.equal(isTradingDay('2024-02-18'), false)
   assert.equal(isTradingDay('2024-02-19'), true)
-  assert.throws(() => isTradingDay('2022-12-30'), /日历待核验/)
+  assert.throws(() => isTradingDay('2012-12-31'), /日历待核验.*2012-12-31.*2013-01-01.*2026-12-31/)
   assert.throws(() => isTradingDay('2027-01-04'), /日历待核验/)
+})
+
+test('backfilled all-history metrics recover and retain strict session completeness checks', () => {
+  const previous = build()
+  const market = marketFixture({ start: '2013-12-19', end: '2026-09-24' })
+  const recovered = build({ market, previous })
+  assert.equal(recovered.calculation.windowStart, '2013-12-19')
+  assert.equal(recovered.calculation.windowEnd, '2026-09-24')
+  assert.equal(recovered.calculation.priceCount, market.history.length)
+  for (const key of ['annualReturn', 'maxDrawdown', 'sharpe']) assert.equal(recovered.metrics[key].status, 'ok')
+  market.history = market.history.filter(row => row.date !== '2020-02-03')
+  const failed = build({ market, previous: recovered })
+  assert.equal(failed.metrics.annualReturn.status, 'stale')
+  assert.match(failed.metrics.annualReturn.reason, /窗口行情缺失/)
+  assert.deepEqual(failed.calculation, recovered.calculation)
 })
 
 test('all-history window keeps supplied endpoints and rejects non-session boundaries', () => {

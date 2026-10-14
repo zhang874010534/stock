@@ -85,7 +85,7 @@ test('历史不足、缺日、非交易日、未来日期和日历越界均停�
   assert.throws(() => custom(a, b, days[0], days[5], { calendar: { ...calendar, end: '2025-12-31' } }), /日历未覆盖/)
   assert.throws(() => custom(a, b, days[0], days[5], { now: new Date('2026-01-05T00:00:00Z') }), /未来日期/)
   const older = dates('2022-12-28', 8, tradingCalendar)
-  const all = calculateIndexComparison(dataset('H30269', older), dataset('000300', older), { range: 'all', now })
+  const all = calculateIndexComparison(dataset('H30269', older), dataset('000300', older), { range: 'all', now, calendar: { ...tradingCalendar, start: '2023-01-01' } })
   assert.equal(all.startDate, '2023-01-03')
 })
 

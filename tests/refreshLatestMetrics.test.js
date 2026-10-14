@@ -4,7 +4,7 @@ import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { refreshLatestMetrics } from '../scripts/update-latest-metrics.mjs'
-import { generateLatestMetrics } from '../scripts/build-latest-metrics.mjs'
+import { generateLatestMetrics, logMetricStatus } from '../scripts/build-latest-metrics.mjs'
 import { DIVIDEND_SOURCE } from '../src/utils/latestMetrics.js'
 import { VALUATION_SOURCE } from '../src/api/valuations.js'
 import { YIELD_SERIES } from '../src/utils/yieldSpread.js'
@@ -29,11 +29,28 @@ async function fixture(run) {
 test('沪深300采集失败独立记录，不把红利低波收益风险标为失败', async () => fixture(async ({ refresh, directory }) => {
   const result = await refresh({ mode: 'market', marketUpdater: async () => ({ failed: true, sources: { H30269: null, '512890': null, '000300': '基准行情失败' } }) })
   assert.equal(result.failed, true)
+  assert.deepEqual(result.sourceErrors, { '000300': '基准行情失败' })
   assert.equal(result.data.metrics.annualReturn.status, 'ok')
   assert.equal(result.data.metrics.maxDrawdown.status, 'ok')
   const status = JSON.parse(await readFile(join(directory, 'dashboard-source-status.json'), 'utf8'))
   assert.equal(status.sources['000300'].status, 'error')
   assert.equal(status.sources.H30269.status, 'ok')
+}))
+
+test('successful collection still exposes calculation failures in refresh diagnostics', async () => fixture(async ({ refresh, directory, market, initial }) => {
+  market.history.unshift({ date: '2012-12-31', close: 90 })
+  await writeFile(join(directory, 'h30269.json'), JSON.stringify(market))
+  const result = await refresh({ mode: 'market', marketUpdater: async () => ({ failed: false,
+    sources: { H30269: null, '512890': null, '000300': null } }) })
+  assert.equal(result.failed, true)
+  assert.deepEqual(result.sourceErrors, {})
+  assert.deepEqual(result.data.calculation, initial.data.calculation)
+  const lines = []
+  logMetricStatus(result.data, { warn: line => lines.push(line) })
+  assert.equal(lines.length, 3)
+  assert.match(lines.join('\n'), /annualReturn: stale.*2012-12-31.*2013-01-01.*2026-12-31/)
+  assert.match(lines.join('\n'), /maxDrawdown: stale/)
+  assert.match(lines.join('\n'), /sharpe: stale/)
 }))
 
 test('source failure survives unrelated schedule and manual generation; only recovery clears it', async () => fixture(async ({ refresh, directory, initial }) => {

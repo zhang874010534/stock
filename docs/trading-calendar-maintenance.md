@@ -1,8 +1,12 @@
 # 交易日历维护
 
-维护对象：`src/data/tradingCalendar.js`。当前范围为 2023-01-01 至 2026-12-31，用于行情完整性校验及页面时效参考，不是通用工作日历。
+维护对象：`src/data/tradingCalendar.js`。当前范围为 2013-01-01 至 2026-12-31，用于行情完整性校验及页面时效参考，不是通用工作日历。
 
 ## 本次核验与下一步
+
+2026-10-14 修复历史回补超出日历起点导致统一指标持续失败的问题，按上交所年度公告补齐 2013–2022 年休市区间，逐年直接链接保存在 `annualSources`。东方财富 H30269 接口查询 2005-01-01 至 2013-12-31 返回的首条为 2013-12-19，与[中证指数单张](https://oss-ch.csindex.com.cn/static/html/csindex/public/uploads/indices/detail/files/zh_CN/H30269factsheet.pdf)的发布日期一致；本次起点覆盖当前接口可回补的全部 H30269 历史，不假定基日 2005-12-30 起的行情可用。
+
+年度公告之外的修订保存到 `supplementarySources`，并随计算结果写入来源列表：[2015 年纪念日临时休市](https://www.sse.com.cn/disclosure/dealinstruc/closed/list/c/c_20160104_3979337.shtml)、[2019 年劳动节调整](https://www.sse.com.cn/disclosure/announcement/general/c/c_20190418_4771364.shtml)、[2020 年春节延长](https://www.sse.com.cn/disclosure/announcement/general/c/c_20200127_4991582.shtml)。周末补班仍休市。保留窗口完整性校验，日历越界诊断包含具体日期和覆盖范围，采集日志逐项输出指标与来源失败原因。
 
 2026-09-29 检查了[上交所休市安排](https://www.sse.com.cn/disclosure/dealinstruc/closed/)和官方公告搜索。页面当前列出 2026 年安排，与代码中的 2026 年区间一致；未找到可确认的 2027 年公告。本次不扩展覆盖年份，也不依据法定节假日或港股通日历推测 A 股交易日。
 
@@ -20,7 +24,7 @@
 ## 更新步骤
 
 1. 阅读上交所对应年度的正式休市公告，保存直接链接与核验日期到本文。保持补班周末休市，不把政府工作日安排当交易日。
-2. 在 `annualSources` 增加年度及官方链接；逐项核对并添加 `closures`，按日期排序且不重叠，再延长 `end` 和更新 `id`。历史回补早于 2023 年时，同样需要先补官方来源及休市区间，再调整 `start`。
+2. 在 `annualSources` 增加年度及官方链接；逐项核对并添加 `closures`，按日期排序且不重叠，再延长 `end` 和更新 `id`。临时调整须增加 `supplementarySources` 并修订对应区间。历史回补早于 2013 年时，同样需要先补官方来源及休市区间，再调整 `start`。
 3. 增加该年度节假日前后、补班周末、跨年边界的固定测试。仅修改 `end` 不能通过本地检查，但填入来源和区间也不代表内容已经正确，仍需人工逐项核对。
 4. 执行 `npm run calendar:check`、`npm test`、`npm run test:collectors`、`npm run build`。公式和状态测试使用固定时间，不依赖测试运行当天。
 5. 在有效行情已同步后，使用完整数据刷新入口重算统一指标；确认实际区间、缺日校验和来源状态。不要通过删除失败记录、补零或放宽交易日校验消除告警。

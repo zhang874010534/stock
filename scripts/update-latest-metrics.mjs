@@ -5,7 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { spawn } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { updateMarket } from './fetch-market.mjs'
-import { generateLatestMetrics } from './build-latest-metrics.mjs'
+import { generateLatestMetrics, logMetricStatus } from './build-latest-metrics.mjs'
 import { validateSourceStatus } from '../src/utils/sourceStatus.js'
 import { generateYieldHistory } from './build-yield-history.mjs'
 
@@ -94,12 +94,17 @@ export async function refreshLatestMetrics({ mode, directory = join(root, 'publi
     await rename(dashboardTemporary, dashboardPath)
   } finally { await unlink(dashboardTemporary).catch(error => { if (error.code !== 'ENOENT') throw error }) }
   const generated = await generateLatestMetrics({ directory, now })
-  return { ...generated, failed: Boolean(result?.failed) || generated.failed || yieldHistoryFailed || attemptedKeys.some(key => dashboard.sources[key].status === 'error') }
+  const sourceErrors = Object.fromEntries([...attemptedKeys, ...(mode === 'indicators' ? ['yieldHistory'] : [])]
+    .filter(key => dashboard.sources[key].status === 'error')
+    .map(key => [key, dashboard.sources[key].error]))
+  return { ...generated, sourceErrors, failed: Boolean(result?.failed) || generated.failed || yieldHistoryFailed || Object.keys(sourceErrors).length > 0 }
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
   refreshLatestMetrics({ mode: process.argv[2] }).then(result => {
     console.log(`统一指标：${result.changed ? '已更新' : '无变化'}；${result.failed ? '部分来源或计算失败，已保留可用数据' : '成功'}`)
+    for (const [source, error] of Object.entries(result.sourceErrors)) console.error(`${source}: ${error}`)
+    logMetricStatus(result.data)
     if (result.failed) process.exitCode = 1
   }).catch(error => { console.error(error.message); process.exitCode = 1 })
 }

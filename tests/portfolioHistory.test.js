@@ -89,7 +89,7 @@ test('current unclosed prices never enter the curve, and pre-calendar real histo
   const stats = analyze(entries, market(quotes), { now: new Date('2026-09-30T06:00:00Z') })
   assert.equal(stats.quoteEnd, '2026-09-29'); assert.equal(stats.points.at(-1).marketValue, null)
   assert.equal(stats.points.at(-1).invested, 503); assert.equal(stats.points.at(-1).valuationReason, '当日尚未收盘')
-  const early = analyze([entry('old', 'buy', '2022-06-06')], market([{ date: '2022-06-06', close: 1.1 }, { date: '2022-06-08', close: 1.2 }]))
+  const early = analyze([entry('old', 'buy', '2012-06-06')], market([{ date: '2012-06-06', close: 1.1 }, { date: '2012-06-08', close: 1.2 }]))
   assert.equal(early.points.length, 2); near(early.points[1].totalProfit, 20)
   assert.match(early.warnings.join(' '), /覆盖外仅使用真实行情与记账日期/)
   assert.throws(() => analyze([entry('future', 'buy', '2026-10-11')]), /未来交易/)

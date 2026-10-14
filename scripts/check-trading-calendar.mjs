@@ -10,6 +10,11 @@ function timestamp(day) {
   return time
 }
 
+function officialSource(url) {
+  const source = new URL(url)
+  return source.protocol === 'https:' && source.hostname === 'www.sse.com.cn' && source.pathname.endsWith('.shtml')
+}
+
 export function checkCalendar({ calendar = tradingCalendar, now = new Date() } = {}) {
   try {
     const start = timestamp(calendar.start), end = timestamp(calendar.end)
@@ -23,10 +28,10 @@ export function checkCalendar({ calendar = tradingCalendar, now = new Date() } =
       previous = to
     }
     for (let year = Number(calendar.start.slice(0, 4)); year <= Number(calendar.end.slice(0, 4)); year++) {
-      const source = new URL(calendar.annualSources?.[year])
-      if (source.protocol !== 'https:' || source.hostname !== 'www.sse.com.cn' || !source.pathname.endsWith('.shtml')) throw new Error(`${year} 年缺少官方公告来源`)
+      if (!officialSource(calendar.annualSources?.[year])) throw new Error(`${year} 年缺少官方公告来源`)
       if (!calendar.closures.some(([from]) => from.startsWith(`${year}-`))) throw new Error(`${year} 年没有已录入的休市安排`)
     }
+    if (!Array.isArray(calendar.supplementarySources ?? []) || (calendar.supplementarySources ?? []).some(url => !officialSource(url))) throw new Error('补充休市公告来源无效')
     const today = new Date(new Date(now).getTime() + 8 * 3600_000).toISOString().slice(0, 10)
     const remainingDays = (end - timestamp(today)) / DAY
     if (today < calendar.start || remainingDays < 0) return { level: 'error', remainingDays, message: `交易日历未覆盖北京时间 ${today}，现有覆盖 ${calendar.start} 至 ${calendar.end}；请按官方公告更新，见 docs/trading-calendar-maintenance.md。` }

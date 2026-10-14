@@ -38,7 +38,8 @@ function validAsOf(day, now) {
 
 export function isTradingDay(day, calendar = tradingCalendar) {
   const time = dateTimestamp(day)
-  requireValue(calendar && day >= calendar.start && day <= calendar.end, '交易日历待核验')
+  requireValue(calendar && day >= calendar.start && day <= calendar.end,
+    `交易日历待核验：${day} 不在日历覆盖 ${calendar?.start ?? '未知'} 至 ${calendar?.end ?? '未知'} 内`)
   const weekday = new Date(time).getUTCDay()
   return weekday !== 0 && weekday !== 6 && !calendar.closures.some(([start, end]) => day >= start && day <= end)
 }

@@ -79,7 +79,7 @@ test('国庆周仅统计三个已收盘交易日，无交易区间、缺日、�
 test('当日15点前仅用前一交易日，缺失当日和早年日历不伪造完整结果', () => {
   const report = buildReviewSummary(input({ type: 'week', now: new Date('2026-09-30T06:00:00Z') }))
   assert.match(find(report, 'return').detail, /→ 2026-09-29/)
-  const early = buildReviewSummary(input({ type: 'week', anchor: '2022-12-28' }))
+  const early = buildReviewSummary(input({ type: 'week', anchor: '2012-12-28' }))
   assert.match(find(early, 'return').detail, /交易日历未覆盖/)
 })
 

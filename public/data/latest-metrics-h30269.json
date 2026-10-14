@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "ruleVersion": "latest-metrics-v2-all-history",
   "code": "H30269",
-  "generatedAt": "2026-10-13T17:33:54.882Z",
+  "generatedAt": "2026-10-14T14:24:12.074Z",
   "metrics": {
     "pe": {
       "unit": "multiple",
@@ -35,60 +35,73 @@
       "unit": "ratio",
       "source": "/data/h30269.json",
       "basis": "price_index_act365",
-      "value": 0.03555048396628635,
-      "asOf": "2026-09-17",
-      "status": "stale",
-      "reason": "交易日历待核验"
+      "value": 0.053783941733243745,
+      "asOf": "2026-10-14",
+      "status": "ok",
+      "reason": null
     },
     "maxDrawdown": {
       "unit": "ratio",
       "source": "/data/h30269.json",
       "basis": "price_index_close_drawdown",
       "value": 0.1746781700633332,
-      "asOf": "2026-09-17",
-      "status": "stale",
-      "reason": "交易日历待核验"
+      "asOf": "2026-10-14",
+      "status": "ok",
+      "reason": null
     },
     "sharpe": {
       "unit": "dimensionless",
       "source": "/data/h30269.json",
       "basis": "price_index_daily_sample_rf0_252",
-      "value": 0.31677804475134697,
-      "asOf": "2026-09-17",
-      "status": "stale",
-      "reason": "交易日历待核验"
+      "value": 0.41763203632823265,
+      "asOf": "2026-10-14",
+      "status": "ok",
+      "reason": null
     }
   },
   "calculation": {
     "windowMode": "all_history",
-    "windowStart": "2023-03-01",
-    "windowEnd": "2026-09-17",
-    "calendarDays": 1296,
-    "priceCount": 864,
-    "returnCount": 863,
+    "windowStart": "2020-09-16",
+    "windowEnd": "2026-10-14",
+    "calendarDays": 2219,
+    "priceCount": 1469,
+    "returnCount": 1468,
     "calendarVerified": true,
-    "calendarId": "sse-a-share-2023-2026-v2",
+    "calendarId": "sse-a-share-2013-2026-v3",
     "calendarSources": [
+      "https://www.sse.com.cn/aboutus/mediacenter/hotandd/c/c_20150912_3988635.shtml",
+      "https://www.sse.com.cn/aboutus/mediacenter/hotandd/c/c_20150912_3988725.shtml",
+      "https://www.sse.com.cn/disclosure/dealinstruc/closed/list/c/c_20160104_3979217.shtml",
+      "https://www.sse.com.cn/disclosure/dealinstruc/closed/list/c/c_20160104_4028872.shtml",
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20161222_4218613.shtml",
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20171222_4438363.shtml",
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20181220_4696473.shtml",
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20191220_4969627.shtml",
+      "https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20201224_5286951.shtml",
+      "https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20211220_5663057.shtml",
       "https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20221227_5714459.shtml",
       "https://www.sse.com.cn/disclosure/dealinstruc/closed/c/c_20231226_5733941.shtml",
       "https://www.sse.com.cn/disclosure/announcement/general/c/c_20241223_10767108.shtml",
-      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml"
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml",
+      "https://www.sse.com.cn/disclosure/dealinstruc/closed/list/c/c_20160104_3979337.shtml",
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20190418_4771364.shtml",
+      "https://www.sse.com.cn/disclosure/announcement/general/c/c_20200127_4991582.shtml"
     ],
     "annualizationSessions": 252,
     "annualRiskFreeRate": 0,
     "riskFreeMode": "fixed_assumption",
-    "dailyMean": 0.00018829067827830535,
-    "dailySampleStd": 0.009435697653360477,
+    "dailyMean": 0.0002695337445001893,
+    "dailySampleStd": 0.010245180386406809,
     "drawdownPeakDate": "2024-05-27",
     "drawdownTroughDate": "2024-09-11",
     "inputSummary": {
       "code": "H30269",
       "source": "eastmoney",
-      "startClose": 9620.14,
-      "endClose": 10890.55,
-      "historyCount": 864,
-      "sourceUpdatedAt": "2026-09-17T13:38:12.563Z",
-      "sha256": "1b4f43e35ce4fdee0ac54b6f7c589bcebdd5a3f2844f737ddcd9336746ef6274"
+      "startClose": 8214.52,
+      "endClose": 11295.34,
+      "historyCount": 1469,
+      "sourceUpdatedAt": "2026-10-14T13:53:18.506Z",
+      "sha256": "ef31e2e03bdc99682dde71dfbe47ed755cd1fcb5da3aa3f567ddb2f3b2a5f053"
     }
   }
 }

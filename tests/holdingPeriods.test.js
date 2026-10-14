@@ -82,9 +82,9 @@ test('missing endpoints and interior sessions exclude only affected mature windo
 })
 
 test('calendar and stale ETF coverage restrict the scope without pretending later samples completed', () => {
-  const fixtureCalendar = { ...tradingCalendar, id: 'fixture', start: '2022-01-01' }
-  const result = analyze(market('2022-09-06', undefined, undefined, 'H30269', fixtureCalendar))
-  assert.equal(result.startDate, '2023-01-03'); assert.ok(result.excludedBefore > 0)
+  const fixtureCalendar = { ...tradingCalendar, id: 'fixture', start: '2012-01-01' }
+  const result = analyze(market('2012-09-06', undefined, undefined, 'H30269', fixtureCalendar))
+  assert.equal(result.startDate, '2013-01-04'); assert.ok(result.excludedBefore > 0)
   const m = market(undefined, undefined, undefined, '512890')
   const old = distribution({ status: 'stale', reason: 'offline', coverage: { start: '2018-12-19', end: '2025-09-30' }, checkedAt: '2025-09-30T08:00:00.000Z' })
   const limited = analyze(m, { distribution: old })
@@ -130,14 +130,14 @@ test('invalid identities, future/partial days, malformed/unknown events and non-
   assert.throws(() => analyze(etf, { distribution: distribution({ dividends: [{ recordDate: '2023-04-03', exDate: '2023-04-03', payDate: '2023-04-06', cashPerShare: .1 }] }) }), /同日/)
 })
 
-test('real snapshots have complete one/three-year samples matching independent date lookup and ECharts renders both charts', async () => {
+test('real snapshots in the 2023+ window have complete one/three-year samples matching independent date lookup and ECharts renders both charts', async () => {
   for (const name of ['h30269', '512890']) {
     const m = JSON.parse(await readFile(new URL(`../public/data/${name}.json`, import.meta.url)))
     const events = JSON.parse(await readFile(new URL('../public/data/distributions-512890.json', import.meta.url)))
     // Real snapshots advance independently of the fixed formula-test clock.
     // Validate them at their recorded observation time and after market close.
     const snapshotNow = new Date(Math.max(now.getTime(), Date.parse(events.checkedAt), Date.parse(`${m.latest.date}T08:00:00Z`)))
-    const result = analyze(m, { distribution: events, now: snapshotNow })
+    const result = analyze(m, { distribution: events, now: snapshotNow, calendar: { ...tradingCalendar, start: '2023-01-01' } })
     assert.ok(result.series.every(series => series.count > 100 && series.missingCount === 0))
     for (const series of result.series) for (const point of series.windows) {
       const target = new Date(`${point.buyDate}T00:00:00Z`); target.setUTCFullYear(target.getUTCFullYear() + series.years)
