@@ -8,9 +8,9 @@
   "basis": "unit_nav",
   "status": "ok",
   "reason": null,
-  "lastAttemptAt": "2026-10-02T06:29:06.389Z",
-  "lastSuccessAt": "2026-10-02T06:29:06.389Z",
-  "date": "2026-09-30",
+  "lastAttemptAt": "2026-10-13T17:34:20.554Z",
+  "lastSuccessAt": "2026-10-13T17:34:20.554Z",
+  "date": "2026-10-13",
   "history": [
     {
       "date": "2018-12-19",
@@ -9411,6 +9411,26 @@
       "date": "2026-09-30",
       "nav": 1.1973,
       "accumulatedNav": 2.3946
+    },
+    {
+      "date": "2026-10-08",
+      "nav": 1.2109,
+      "accumulatedNav": 2.4218
+    },
+    {
+      "date": "2026-10-09",
+      "nav": 1.2075,
+      "accumulatedNav": 2.415
+    },
+    {
+      "date": "2026-10-12",
+      "nav": 1.2302,
+      "accumulatedNav": 2.4604
+    },
+    {
+      "date": "2026-10-13",
+      "nav": 1.2236,
+      "accumulatedNav": 2.4472
     }
   ]
 }

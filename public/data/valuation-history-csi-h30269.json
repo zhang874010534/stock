@@ -6,7 +6,7 @@
   "basis": "dual_share_capital",
   "unit": "pe_multiple_dividend_percent",
   "collection": "rolling_file_accumulation",
-  "date": "2026-09-30",
+  "date": "2026-10-13",
   "history": [
     {
       "date": "2026-08-28",
@@ -175,7 +175,70 @@
       "peCalculation": 7.85,
       "dividendTotal": 4.39,
       "dividendCalculation": 5.03
+    },
+    {
+      "date": "2026-10-01",
+      "peTotal": 8.24,
+      "peCalculation": 7.85,
+      "dividendTotal": 4.39,
+      "dividendCalculation": 5.03
+    },
+    {
+      "date": "2026-10-02",
+      "peTotal": 8.24,
+      "peCalculation": 7.85,
+      "dividendTotal": 4.39,
+      "dividendCalculation": 5.03
+    },
+    {
+      "date": "2026-10-05",
+      "peTotal": 8.24,
+      "peCalculation": 7.85,
+      "dividendTotal": 4.39,
+      "dividendCalculation": 5.03
+    },
+    {
+      "date": "2026-10-06",
+      "peTotal": 8.24,
+      "peCalculation": 7.85,
+      "dividendTotal": 4.39,
+      "dividendCalculation": 5.03
+    },
+    {
+      "date": "2026-10-07",
+      "peTotal": 8.24,
+      "peCalculation": 7.85,
+      "dividendTotal": 4.39,
+      "dividendCalculation": 5.03
+    },
+    {
+      "date": "2026-10-08",
+      "peTotal": 8.33,
+      "peCalculation": 7.94,
+      "dividendTotal": 4.34,
+      "dividendCalculation": 4.98
+    },
+    {
+      "date": "2026-10-09",
+      "peTotal": 8.28,
+      "peCalculation": 7.92,
+      "dividendTotal": 4.37,
+      "dividendCalculation": 4.99
+    },
+    {
+      "date": "2026-10-12",
+      "peTotal": 8.49,
+      "peCalculation": 8.07,
+      "dividendTotal": 4.26,
+      "dividendCalculation": 4.9
+    },
+    {
+      "date": "2026-10-13",
+      "peTotal": 8.53,
+      "peCalculation": 8.03,
+      "dividendTotal": 4.24,
+      "dividendCalculation": 4.92
     }
   ],
-  "updatedAt": "2026-09-30T16:23:26.468021Z"
+  "updatedAt": "2026-10-13T17:33:57.195042Z"
 }
