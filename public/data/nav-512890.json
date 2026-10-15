@@ -8,9 +8,9 @@
   "basis": "unit_nav",
   "status": "ok",
   "reason": null,
-  "lastAttemptAt": "2026-10-14T15:04:10.317Z",
-  "lastSuccessAt": "2026-10-14T15:04:10.317Z",
-  "date": "2026-10-14",
+  "lastAttemptAt": "2026-10-15T14:57:49.439Z",
+  "lastSuccessAt": "2026-10-15T14:57:49.439Z",
+  "date": "2026-10-15",
   "history": [
     {
       "date": "2018-12-19",
@@ -9436,6 +9436,11 @@
       "date": "2026-10-14",
       "nav": 1.2305,
       "accumulatedNav": 2.461
+    },
+    {
+      "date": "2026-10-15",
+      "nav": 1.215,
+      "accumulatedNav": 2.43
     }
   ]
 }
