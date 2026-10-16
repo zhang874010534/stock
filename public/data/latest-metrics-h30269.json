@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "ruleVersion": "latest-metrics-v2-all-history",
   "code": "H30269",
-  "generatedAt": "2026-10-15T14:57:25.273Z",
+  "generatedAt": "2026-10-16T13:22:26.147Z",
   "metrics": {
     "pe": {
       "unit": "multiple",
@@ -35,8 +35,8 @@
       "unit": "ratio",
       "source": "/data/h30269.json",
       "basis": "price_index_act365",
-      "value": 0.06272141495749906,
-      "asOf": "2026-10-15",
+      "value": 0.06809887296468475,
+      "asOf": "2026-10-16",
       "status": "ok",
       "reason": null
     },
@@ -45,7 +45,7 @@
       "source": "/data/h30269.json",
       "basis": "price_index_close_drawdown",
       "value": 0.1746781700633332,
-      "asOf": "2026-10-15",
+      "asOf": "2026-10-16",
       "status": "ok",
       "reason": null
     },
@@ -53,19 +53,19 @@
       "unit": "dimensionless",
       "source": "/data/h30269.json",
       "basis": "price_index_daily_sample_rf0_252",
-      "value": 0.4635472357751584,
-      "asOf": "2026-10-15",
+      "value": 0.4966856015230806,
+      "asOf": "2026-10-16",
       "status": "ok",
       "reason": null
     }
   },
   "calculation": {
     "windowMode": "all_history",
-    "windowStart": "2020-06-18",
-    "windowEnd": "2026-10-15",
-    "calendarDays": 2310,
-    "priceCount": 1532,
-    "returnCount": 1531,
+    "windowStart": "2020-03-20",
+    "windowEnd": "2026-10-16",
+    "calendarDays": 2401,
+    "priceCount": 1593,
+    "returnCount": 1592,
     "calendarVerified": true,
     "calendarId": "sse-a-share-2013-2026-v3",
     "calendarSources": [
@@ -90,18 +90,18 @@
     "annualizationSessions": 252,
     "annualRiskFreeRate": 0,
     "riskFreeMode": "fixed_assumption",
-    "dailyMean": 0.00030664175546802393,
-    "dailySampleStd": 0.010501167051940163,
+    "dailyMean": 0.0003268038291510655,
+    "dailySampleStd": 0.010444937281684184,
     "drawdownPeakDate": "2024-05-27",
     "drawdownTroughDate": "2024-09-11",
     "inputSummary": {
       "code": "H30269",
       "source": "eastmoney",
-      "startClose": 7590.28,
-      "endClose": 11154.76,
-      "historyCount": 1532,
-      "sourceUpdatedAt": "2026-10-15T13:34:02.190Z",
-      "sha256": "32e747a3d3ae3103b4fd2140d016a91b551c81d8cdd620d25ca0a07da33f13a2"
+      "startClose": 7255.63,
+      "endClose": 11191.38,
+      "historyCount": 1593,
+      "sourceUpdatedAt": "2026-10-16T13:22:36.605Z",
+      "sha256": "ff0079c4c5bb2c680195156ce6c636cd1552efff3c5428cfb3b5f28bf2e29242"
     }
   }
 }
